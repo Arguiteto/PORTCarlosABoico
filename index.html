@@ -3,296 +3,126 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Tour / Sketch · Ferramenta Isolada</title>
-
+<title>Tour Planta / Sketch · Ferramenta Isolada</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
 <script defer src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
-
 <style>
 :root{
-  --bg:#050e1a;--bg2:#071422;--surface:rgba(5,14,26,.86);--surface2:rgba(7,20,34,.94);
-  --blue:#64b4dc;--blue2:rgba(100,180,220,.15);--line:rgba(100,180,220,.28);
-  --yellow:#f0c040;--red:#e05050;--green:#55d683;
-  --text:#c8dde8;--muted:rgba(200,220,232,.48);--faint:rgba(200,220,232,.28);
+  --bg:#050e1a;--bg2:#071422;--surface:rgba(5,14,26,.88);--surface2:rgba(7,20,34,.96);
+  --blue:#64b4dc;--blue2:rgba(100,180,220,.15);--line:rgba(100,180,220,.28);--line2:rgba(100,180,220,.46);
+  --yellow:#f0c040;--red:#e05050;--green:#55d683;--purple:#a78bfa;
+  --text:#c8dde8;--muted:rgba(200,220,232,.52);--faint:rgba(200,220,232,.28);
   --grid:rgba(100,180,220,.06);--mono:'Share Tech Mono',monospace;--sans:'Barlow',sans-serif;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{height:100vh;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--mono);cursor:crosshair}
+*{box-sizing:border-box;margin:0;padding:0} body{height:100vh;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--mono);cursor:crosshair}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0}
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
-.hidden{display:none!important}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+#scanline{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent);opacity:.3;animation:scan 4s linear infinite;pointer-events:none;z-index:50}@keyframes scan{0%{top:0;opacity:0}5%,95%{opacity:.3}100%{top:100vh;opacity:0}}
+.corner{position:fixed;width:20px;height:20px;pointer-events:none;z-index:52}.corner::before,.corner::after{content:'';position:absolute;background:var(--blue);opacity:.7}.corner::before{width:100%;height:1px;top:0;left:0}.corner::after{width:1px;height:100%;top:0;left:0}.corner.tl{top:10px;left:10px}.corner.tr{top:10px;right:10px;transform:scaleX(-1)}.corner.bl{bottom:10px;left:10px;transform:scaleY(-1)}.corner.br{bottom:10px;right:10px;transform:scale(-1)}
 
-#viewer,#sketch-stage{position:fixed;inset:0;z-index:1;background:#020712}
-#viewer{display:none}
-#viewer.active{display:block}
-#sketch-stage{display:none;align-items:center;justify-content:center;padding:86px 390px 76px 24px}
-#sketch-stage.active{display:flex}
-#sketch-wrap{position:relative;max-width:100%;max-height:100%;border:1px solid var(--line);box-shadow:0 0 35px rgba(100,180,220,.14);background:rgba(255,255,255,.025);overflow:hidden}
-#sketch-img{display:block;max-width:100%;max-height:calc(100vh - 170px);object-fit:contain;user-select:none}
-.sketch-hotspot{position:absolute;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;border:1.5px solid var(--blue);background:rgba(100,180,220,.08);box-shadow:0 0 14px rgba(100,180,220,.58),inset 0 0 8px rgba(100,180,220,.16);display:grid;place-items:center;color:var(--blue);font-size:12px;transition:.18s}
-.sketch-hotspot:hover{transform:translate(-50%,-50%) scale(1.16);border-color:var(--yellow);color:var(--yellow)}
-.sketch-hotspot::before,.sketch-hotspot::after{content:'';position:absolute;background:currentColor;opacity:.75}.sketch-hotspot::before{width:1px;height:58%;top:21%;left:50%}.sketch-hotspot::after{height:1px;width:58%;left:21%;top:50%}
-.sketch-hotspot span{position:absolute;top:38px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--surface);border:1px solid var(--line);padding:4px 8px;font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);opacity:0;pointer-events:none}.sketch-hotspot:hover span{opacity:1}
-
-.pnlm-controls-container,.pnlm-load-box,.pnlm-about-msg{display:none!important}
-.pnlm-hotspot-base{width:32px!important;height:32px!important;background:transparent!important;border:1.5px solid var(--blue)!important;border-radius:50%!important;box-shadow:0 0 12px rgba(100,180,220,.5),inset 0 0 8px rgba(100,180,220,.15)!important;cursor:pointer!important;transition:all .2s!important;animation:hotspot-pulse 2.4s infinite!important}
-.pnlm-hotspot-base::before,.pnlm-hotspot-base::after{content:'';position:absolute;background:var(--blue);opacity:.7}.pnlm-hotspot-base::before{width:1px;height:60%;top:20%;left:50%;transform:translateX(-50%)}.pnlm-hotspot-base::after{height:1px;width:60%;left:20%;top:50%;transform:translateY(-50%)}
-.pnlm-hotspot-base:hover{background:var(--blue2)!important;transform:scale(1.2)!important;box-shadow:0 0 20px rgba(100,180,220,.8)!important}
+#stage{position:fixed;left:0;top:0;right:392px;bottom:0;z-index:1;background:#020712;overflow:hidden}
+#plant-view,#tour-view,#empty-view{position:absolute;inset:0;display:none}#plant-view.active,#tour-view.active,#empty-view.active{display:block}
+#viewer{position:absolute;inset:0;display:none}#viewer.active{display:block}.pnlm-controls-container,.pnlm-load-box,.pnlm-about-msg{display:none!important}
+.pnlm-hotspot-base{width:32px!important;height:32px!important;background:transparent!important;border:1.5px solid var(--blue)!important;border-radius:50%!important;box-shadow:0 0 12px rgba(100,180,220,.5),inset 0 0 8px rgba(100,180,220,.15)!important;cursor:pointer!important;transition:all .2s!important;animation:hotspot-pulse 2.4s infinite!important}.pnlm-hotspot-base::before,.pnlm-hotspot-base::after{content:'';position:absolute;background:var(--blue);opacity:.7}.pnlm-hotspot-base::before{width:1px;height:60%;top:20%;left:50%;transform:translateX(-50%)}.pnlm-hotspot-base::after{height:1px;width:60%;left:20%;top:50%;transform:translateY(-50%)}.pnlm-hotspot-base:hover{background:var(--blue2)!important;transform:scale(1.2)!important;box-shadow:0 0 20px rgba(100,180,220,.8)!important}@keyframes hotspot-pulse{0%,100%{box-shadow:0 0 12px rgba(100,180,220,.4)}50%{box-shadow:0 0 22px rgba(100,180,220,.9)}}
 .pnlm-tooltip span{background:var(--surface)!important;border:1px solid var(--line)!important;color:var(--blue)!important;font-family:var(--mono)!important;font-size:9px!important;letter-spacing:.2em!important;text-transform:uppercase!important;padding:5px 10px!important;border-radius:0!important;backdrop-filter:blur(8px)!important;white-space:nowrap!important}.pnlm-tooltip span::after{display:none!important}
-@keyframes hotspot-pulse{0%,100%{box-shadow:0 0 12px rgba(100,180,220,.4)}50%{box-shadow:0 0 22px rgba(100,180,220,.9)}}
+#sketch-scene{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:92px 24px 76px 24px}#sketch-scene.active{display:flex}.sketch-wrap{position:relative;max-width:100%;max-height:100%;border:1px solid var(--line);background:rgba(255,255,255,.025);box-shadow:0 0 35px rgba(100,180,220,.14);overflow:hidden}.sketch-wrap img{display:block;max-width:100%;max-height:calc(100vh - 170px);object-fit:contain;user-select:none}
+.sketch-hotspot,.plan-node{position:absolute;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;border:1.5px solid var(--blue);background:rgba(100,180,220,.08);box-shadow:0 0 14px rgba(100,180,220,.58),inset 0 0 8px rgba(100,180,220,.16);display:grid;place-items:center;color:var(--blue);font-size:12px;transition:.18s;z-index:3}.sketch-hotspot:hover,.plan-node:hover{transform:translate(-50%,-50%) scale(1.12);border-color:var(--yellow);color:var(--yellow)}.sketch-hotspot::before,.sketch-hotspot::after,.plan-node::before,.plan-node::after{content:'';position:absolute;background:currentColor;opacity:.75}.sketch-hotspot::before,.plan-node::before{width:1px;height:58%;top:21%;left:50%}.sketch-hotspot::after,.plan-node::after{height:1px;width:58%;left:21%;top:50%}.sketch-hotspot span,.plan-node span{position:absolute;top:38px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--surface);border:1px solid var(--line);padding:4px 8px;font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);pointer-events:none}.plan-node.active{border-color:var(--yellow);color:var(--yellow);box-shadow:0 0 18px rgba(240,192,64,.55)}
+#plant-board{position:absolute;inset:92px 24px 76px 24px;display:flex;align-items:center;justify-content:center}.plant-wrap{position:relative;max-width:100%;max-height:100%;border:1px solid var(--line);background:rgba(7,20,34,.35);box-shadow:0 0 35px rgba(100,180,220,.12);overflow:hidden}.plant-wrap img{display:block;max-width:100%;max-height:calc(100vh - 168px);object-fit:contain;user-select:none}.plan-edge{position:absolute;height:1.5px;background:rgba(240,192,64,.72);transform-origin:left center;z-index:2;pointer-events:none;box-shadow:0 0 8px rgba(240,192,64,.35)}.plant-empty{font-family:var(--sans);font-size:14px;color:var(--muted);line-height:1.6;text-align:center;border:1px dashed var(--line);padding:32px;max-width:520px;background:rgba(5,14,26,.55)}
+#empty-view{display:flex;align-items:center;justify-content:center}.empty-card{border:1px solid var(--line);background:var(--surface);padding:28px;max-width:620px;text-align:center}.empty-card h1{font-size:24px;letter-spacing:.18em;color:var(--blue);text-transform:uppercase;margin-bottom:10px}.empty-card p{font-family:var(--sans);font-size:14px;color:var(--muted);line-height:1.6}
 
-#scanline{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent);opacity:.3;animation:scan 4s linear infinite;pointer-events:none;z-index:20}@keyframes scan{0%{top:0;opacity:0}5%,95%{opacity:.3}100%{top:100vh;opacity:0}}
-.corner{position:fixed;width:20px;height:20px;pointer-events:none;z-index:12}.corner::before,.corner::after{content:'';position:absolute;background:var(--blue);opacity:.7}.corner::before{width:100%;height:1px;top:0;left:0}.corner::after{width:1px;height:100%;top:0;left:0}.corner.tl{top:10px;left:10px}.corner.tr{top:10px;right:10px;transform:scaleX(-1)}.corner.bl{bottom:10px;left:10px;transform:scaleY(-1)}.corner.br{bottom:10px;right:10px;transform:scale(-1)}
+#hud{position:fixed;left:0;top:0;right:392px;bottom:0;pointer-events:none;z-index:10;display:flex;flex-direction:column;justify-content:space-between;padding:20px}.panel{background:var(--surface);border:1px solid var(--line);backdrop-filter:blur(10px)}#bar-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}#bloco-titulo{padding:10px 18px 10px 14px;border-left:3px solid var(--blue);min-width:220px}.label-proj{font-size:8px;letter-spacing:.35em;color:var(--muted);text-transform:uppercase;margin-bottom:4px}.nome-proj{font-size:15px;color:var(--blue);letter-spacing:.12em;text-transform:uppercase;line-height:1.1}.sub-proj{font-size:8px;color:var(--muted);letter-spacing:.2em;margin-top:3px}#bloco-ambiente{padding:8px 16px;flex:1;max-width:300px;text-align:center}.amb-label{font-size:7px;letter-spacing:.4em;color:var(--muted);text-transform:uppercase}.amb-nome{font-size:13px;color:var(--yellow);letter-spacing:.15em;text-transform:uppercase;margin-top:2px}#bloco-ambiente::after{content:'';display:block;height:1px;background:linear-gradient(90deg,transparent,var(--blue),transparent);margin-top:6px;opacity:.5}#compass-wrap{padding:10px;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:52px}#compass-svg{width:44px;height:44px;transition:transform .1s linear}.c-label{font-size:7px;letter-spacing:.2em;color:var(--muted)}#crosshair{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:24px;height:24px}#crosshair::before,#crosshair::after{content:'';position:absolute;background:rgba(100,180,220,.6)}#crosshair::before{width:1px;height:100%;left:50%;top:0}#crosshair::after{height:1px;width:100%;top:50%;left:0}#crosshair-ring{position:absolute;inset:-8px;border:1px solid rgba(100,180,220,.3);border-radius:50%}#bar-bottom{display:flex;justify-content:space-between;align-items:flex-end}#coords{font-size:8px;color:var(--muted);letter-spacing:.15em;line-height:1.9}#coords span{color:var(--blue)}#instrucoes{padding:10px 14px;font-size:8px;letter-spacing:.15em;color:var(--muted);text-align:right;line-height:2}.key{display:inline-block;border:1px solid var(--line);color:var(--blue);padding:0 5px;font-size:7px;margin:0 2px;letter-spacing:.05em}
 
-#hud{position:fixed;inset:0;pointer-events:none;z-index:10;display:flex;flex-direction:column;justify-content:space-between;padding:20px 390px 20px 20px}.panel{background:var(--surface);border:1px solid var(--line);backdrop-filter:blur(10px)}
-#bar-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}#bloco-titulo{padding:10px 18px 10px 14px;border-left:3px solid var(--blue);min-width:220px}.label-proj{font-size:8px;letter-spacing:.35em;color:var(--muted);text-transform:uppercase;margin-bottom:4px}.nome-proj{font-size:15px;color:var(--blue);letter-spacing:.12em;text-transform:uppercase;line-height:1.1}.sub-proj{font-size:8px;color:var(--muted);letter-spacing:.2em;margin-top:3px}
-#bloco-ambiente{padding:8px 16px;flex:1;max-width:280px;text-align:center}.amb-label{font-size:7px;letter-spacing:.4em;color:var(--muted);text-transform:uppercase}.amb-nome{font-size:13px;color:var(--yellow);letter-spacing:.15em;text-transform:uppercase;margin-top:2px}#bloco-ambiente::after{content:'';display:block;height:1px;background:linear-gradient(90deg,transparent,var(--blue),transparent);margin-top:6px;opacity:.5}
-#compass-wrap{padding:10px;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:52px}#compass-svg{width:44px;height:44px;transition:transform .1s linear}.c-label{font-size:7px;letter-spacing:.2em;color:var(--muted)}
-#crosshair{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:24px;height:24px}#crosshair::before,#crosshair::after{content:'';position:absolute;background:rgba(100,180,220,.6)}#crosshair::before{width:1px;height:100%;left:50%;top:0}#crosshair::after{height:1px;width:100%;top:50%;left:0}#crosshair-ring{position:absolute;inset:-8px;border:1px solid rgba(100,180,220,.3);border-radius:50%}
-#bar-bottom{display:flex;justify-content:space-between;align-items:flex-end}#coords{font-size:8px;color:var(--muted);letter-spacing:.15em;line-height:1.9}#coords span{color:var(--blue)}#instrucoes{padding:10px 14px;font-size:8px;letter-spacing:.15em;color:var(--muted);text-align:right;line-height:2}.key{display:inline-block;border:1px solid var(--line);color:var(--blue);padding:0 5px;font-size:7px;margin:0 2px;letter-spacing:.05em}
-
-#editor{position:fixed;right:0;top:0;bottom:0;width:370px;background:rgba(5,14,26,.95);border-left:1px solid var(--line);z-index:30;display:flex;flex-direction:column;box-shadow:-18px 0 48px rgba(0,0,0,.3)}
-.editor-head{padding:18px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.editor-title{font-size:15px;letter-spacing:.15em;color:var(--blue);text-transform:uppercase}.editor-sub{font-family:var(--sans);font-size:12px;color:var(--muted);line-height:1.4;margin-top:6px}.help-btn{border:1px solid rgba(240,192,64,.42);background:rgba(240,192,64,.08);color:var(--yellow);padding:8px 10px;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
-.editor-body{overflow:auto;padding:14px 18px 22px;display:flex;flex-direction:column;gap:16px}.block{border:1px solid var(--line);background:rgba(7,20,34,.74);padding:13px}.block h3{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--blue);margin-bottom:10px}.field{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}.field label{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.field input,.field select,.field textarea{width:100%;background:rgba(2,7,18,.88);border:1px solid var(--line);color:var(--text);padding:8px 9px;outline:none;font-size:12px;font-family:var(--sans)}.field textarea{min-height:68px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue)}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hint{font-family:var(--sans);font-size:11px;color:var(--muted);line-height:1.45}.btn-row{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:rgba(100,180,220,.06);color:var(--blue);padding:8px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase}.btn:hover{background:rgba(100,180,220,.12);border-color:var(--blue)}.btn.solid{background:var(--blue);border-color:var(--blue);color:#04101c}.btn.warn{border-color:rgba(240,192,64,.42);color:var(--yellow);background:rgba(240,192,64,.08)}.btn.danger{border-color:rgba(224,80,80,.42);color:#ff8f8f;background:rgba(224,80,80,.08)}
-.room-list{display:flex;flex-direction:column;gap:7px}.room-item{border:1px solid rgba(100,180,220,.18);background:rgba(2,7,18,.52);padding:10px;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}.room-item.active{border-color:var(--yellow);box-shadow:inset 3px 0 0 var(--yellow)}.room-name{font-family:var(--sans);font-size:13px;color:var(--text);font-weight:600}.room-meta{font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:3px}.mini-actions{display:flex;gap:5px}.mini{border:1px solid var(--line);background:transparent;color:var(--blue);font-size:10px;padding:4px 7px}.mini.danger{color:#ff8f8f;border-color:rgba(224,80,80,.4)}
-.hotspot-list{display:flex;flex-direction:column;gap:7px}.hotspot-item{border:1px solid rgba(100,180,220,.18);background:rgba(2,7,18,.42);padding:9px}.hotspot-item b{font-family:var(--sans);font-size:12px;color:var(--text)}.hotspot-item small{display:block;color:var(--muted);font-size:9px;margin-top:3px;line-height:1.4}
-.status{font-family:var(--sans);font-size:12px;color:var(--muted);line-height:1.45}.status.ok{color:var(--green)}.status.err{color:#ff8f8f}
-
-#empty-state{position:fixed;inset:0 370px 0 0;z-index:5;display:flex;align-items:center;justify-content:center;text-align:center;padding:2rem;pointer-events:none}.empty-card{max-width:520px;border:1px solid var(--line);background:var(--surface);padding:30px;backdrop-filter:blur(10px)}.empty-card h1{font-size:24px;color:var(--blue);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}.empty-card p{font-family:var(--sans);font-size:14px;color:var(--muted);line-height:1.6}
-
-#notif{position:fixed;top:50%;left:calc(50% - 185px);transform:translate(-50%,-50%);text-align:center;pointer-events:none;z-index:15;opacity:0;transition:opacity .4s}.notif-txt{font-size:10px;letter-spacing:.4em;color:var(--yellow);text-transform:uppercase;background:rgba(5,14,26,.7);padding:8px 24px;border-top:1px solid rgba(240,192,64,.3);border-bottom:1px solid rgba(240,192,64,.3);backdrop-filter:blur(6px)}#notif.show{opacity:1}
-
-#modal{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.68);display:none;align-items:center;justify-content:center;padding:24px}#modal.open{display:flex}.modal-card{width:min(760px,94vw);max-height:86vh;overflow:auto;background:var(--surface2);border:1px solid var(--line);box-shadow:0 24px 80px rgba(0,0,0,.55);padding:22px}.modal-card h2{font-size:18px;letter-spacing:.16em;color:var(--blue);text-transform:uppercase;margin-bottom:12px}.modal-card h3{font-size:12px;letter-spacing:.14em;color:var(--yellow);text-transform:uppercase;margin:18px 0 8px}.modal-card p,.modal-card li{font-family:var(--sans);font-size:13px;color:var(--text);line-height:1.6}.modal-card ul{padding-left:18px}.modal-code{background:rgba(2,7,18,.88);border:1px solid var(--line);padding:12px;white-space:pre-wrap;color:var(--muted);font-size:11px;line-height:1.55;margin-top:8px}.close-modal{float:right;border:1px solid var(--line);background:transparent;color:var(--blue);padding:6px 10px}
-
-@media(max-width:920px){body{overflow:auto}#editor{position:relative;width:100%;height:auto;min-height:60vh}#hud{padding:14px;pointer-events:none}#sketch-stage{padding:76px 14px 120px}#empty-state{inset:0;position:relative;min-height:60vh}#bar-top{flex-direction:column;align-items:flex-start}#compass-wrap{display:none}#bar-bottom{display:none}#notif{left:50%}}
+#editor{position:fixed;right:0;top:0;bottom:0;width:392px;background:rgba(5,14,26,.96);border-left:1px solid var(--line);z-index:30;display:flex;flex-direction:column;box-shadow:-18px 0 48px rgba(0,0,0,.34)}.editor-head{padding:18px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.editor-title{font-size:15px;letter-spacing:.15em;color:var(--blue);text-transform:uppercase}.editor-sub{font-family:var(--sans);font-size:12px;color:var(--muted);line-height:1.4;margin-top:6px}.help-btn{border:1px solid rgba(240,192,64,.42);background:rgba(240,192,64,.08);color:var(--yellow);padding:8px 10px;font-size:10px;letter-spacing:.12em;text-transform:uppercase}.editor-body{overflow:auto;padding:14px 18px 22px;display:flex;flex-direction:column;gap:14px}.block{border:1px solid var(--line);background:rgba(7,20,34,.74);padding:13px}.block h3{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--blue);margin-bottom:10px}.field{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}.field label{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.field input,.field select,.field textarea{width:100%;background:rgba(2,7,18,.88);border:1px solid var(--line);color:var(--text);padding:8px 9px;outline:none;font-size:12px;font-family:var(--sans)}.field textarea{min-height:62px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue)}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hint{font-family:var(--sans);font-size:11px;color:var(--muted);line-height:1.45}.btn-row{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:rgba(100,180,220,.06);color:var(--blue);padding:8px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase}.btn:hover{background:rgba(100,180,220,.12);border-color:var(--blue)}.btn.solid{background:var(--blue);border-color:var(--blue);color:#04101c}.btn.warn{border-color:rgba(240,192,64,.42);color:var(--yellow);background:rgba(240,192,64,.08)}.btn.danger{border-color:rgba(224,80,80,.42);color:#ff8f8f;background:rgba(224,80,80,.08)}.status{font-family:var(--sans);font-size:11px;color:var(--muted);min-height:16px}.status.ok{color:var(--green)}.status.err{color:#ff8f8f}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.tab{border:1px solid var(--line);background:rgba(2,7,18,.7);color:var(--muted);padding:8px 4px;font-size:9px;letter-spacing:.1em;text-transform:uppercase}.tab.active{border-color:var(--yellow);color:var(--yellow);background:rgba(240,192,64,.08)}.model-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.model-card{border:1px solid rgba(100,180,220,.22);background:rgba(2,7,18,.48);padding:10px;min-height:96px}.model-card b{display:block;font-size:10px;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}.model-card p{font-family:var(--sans);font-size:11px;color:var(--muted);line-height:1.35}.model-card.active{border-color:var(--yellow);box-shadow:inset 3px 0 0 var(--yellow)}.list{display:flex;flex-direction:column;gap:7px}.item{border:1px solid rgba(100,180,220,.18);background:rgba(2,7,18,.52);padding:10px;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}.item.active{border-color:var(--yellow);box-shadow:inset 3px 0 0 var(--yellow)}.item b{font-family:var(--sans);font-size:13px;color:var(--text);display:block}.item small{font-size:9px;color:var(--muted);line-height:1.45}.mini-actions{display:flex;gap:4px}.mini{border:1px solid rgba(100,180,220,.22);background:rgba(100,180,220,.05);color:var(--blue);font-size:10px;padding:5px 7px}.mini.danger{border-color:rgba(224,80,80,.32);color:#ff8f8f}.pill{font-size:9px;color:var(--yellow);border:1px solid rgba(240,192,64,.32);padding:2px 6px;background:rgba(240,192,64,.06)}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:80;display:none;align-items:center;justify-content:center;padding:20px}#modal.open{display:flex}.modal-card{width:min(720px,96vw);max-height:88vh;overflow:auto;background:var(--surface2);border:1px solid var(--line2);box-shadow:0 22px 70px rgba(0,0,0,.55);padding:20px}.modal-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:14px}.modal-head h2{font-size:16px;color:var(--yellow);letter-spacing:.14em;text-transform:uppercase}.modal-card h3{font-size:12px;color:var(--blue);letter-spacing:.12em;text-transform:uppercase;margin:16px 0 6px}.modal-card p,.modal-card li{font-family:var(--sans);font-size:13px;color:var(--muted);line-height:1.55}.modal-card ul{padding-left:18px}.close{border:1px solid var(--line);background:transparent;color:var(--muted);padding:6px 9px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(16px);opacity:0;z-index:90;background:var(--surface);border:1px solid var(--line);padding:10px 14px;color:var(--text);font-family:var(--sans);font-size:12px;transition:.18s;pointer-events:none}#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:900px){body{overflow:auto}#stage,#hud,#editor{position:relative;right:auto;left:auto;top:auto;bottom:auto;width:100%;height:auto;min-height:60vh}#stage{height:62vh}#hud{display:none}#editor{border-left:none;border-top:1px solid var(--line);box-shadow:none}.model-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+<script id="embedded-data" type="application/json">null</script>
 <div id="scanline"></div><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
-
-<div id="viewer"></div>
-<div id="sketch-stage"><div id="sketch-wrap"><img id="sketch-img" alt="Sketch do ambiente" /></div></div>
-
-<div id="empty-state">
-  <div class="empty-card">
-    <h1>Tour / Sketch</h1>
-    <p>Ferramenta isolada para GitHub. Adicione ambientes, carregue imagens 360° ou sketches, crie pontos de navegação e baixe um site pronto.</p>
-  </div>
-</div>
-
+<main id="stage">
+  <section id="empty-view" class="active"><div class="empty-card"><h1>Tour por planta</h1><p>Comece pelo modelo <b>Planta baixa</b>: envie um print da planta, clique nos ambientes, crie as ligações e depois troque cada ambiente por foto 360°, render ou sketch.</p></div></section>
+  <section id="plant-view"><div id="plant-board"></div></section>
+  <section id="tour-view"><div id="viewer"></div><div id="sketch-scene"><div class="sketch-wrap"><img id="sketch-img" alt="Cena sketch"></div></div></section>
+</main>
 <div id="hud">
-  <div id="bar-top">
-    <div class="panel" id="bloco-titulo"><div class="label-proj" id="hud-label-proj">Tour Virtual · Arquitetura</div><div class="nome-proj" id="hud-nome-proj">PROJETO</div><div class="sub-proj" id="hud-sub-proj">GitHub · Local</div></div>
-    <div class="panel" id="bloco-ambiente"><div class="amb-label">Ambiente atual</div><div class="amb-nome" id="hud-ambiente">—</div></div>
-    <div class="panel" id="compass-wrap"><svg id="compass-svg" viewBox="0 0 44 44"><circle cx="22" cy="22" r="20" fill="none" stroke="rgba(100,180,220,.2)" stroke-width="1"/><circle cx="22" cy="22" r="15" fill="none" stroke="rgba(100,180,220,.1)" stroke-width=".5" stroke-dasharray="2 3"/><polygon points="22,4 19,22 22,20 25,22" fill="#e05050" opacity=".9"/><polygon points="22,40 19,22 22,24 25,22" fill="rgba(100,180,220,.5)"/><circle cx="22" cy="22" r="2" fill="var(--blue)" opacity=".8"/><text x="22" y="3" text-anchor="middle" font-size="5" fill="var(--blue)" font-family="Share Tech Mono">N</text><text x="22" y="43" text-anchor="middle" font-size="5" fill="rgba(100,180,220,.4)" font-family="Share Tech Mono">S</text><text x="2" y="23" text-anchor="middle" font-size="5" fill="rgba(100,180,220,.4)" font-family="Share Tech Mono">O</text><text x="42" y="23" text-anchor="middle" font-size="5" fill="rgba(100,180,220,.4)" font-family="Share Tech Mono">L</text></svg><div class="c-label">NORTE</div></div>
-  </div>
+  <div id="bar-top"><div class="panel" id="bloco-titulo"><div class="label-proj" id="hud-label-proj">Tour Virtual · Arquitetura</div><div class="nome-proj" id="hud-nome-proj">PROJETO</div><div class="sub-proj" id="hud-sub-proj">—</div></div><div class="panel" id="bloco-ambiente"><div class="amb-label">Ambiente atual</div><div class="amb-nome" id="hud-ambiente">—</div></div><div class="panel" id="compass-wrap"><svg id="compass-svg" viewBox="0 0 44 44"><circle cx="22" cy="22" r="20" fill="none" stroke="rgba(100,180,220,0.2)" stroke-width="1"/><circle cx="22" cy="22" r="15" fill="none" stroke="rgba(100,180,220,0.1)" stroke-width="0.5" stroke-dasharray="2 3"/><polygon points="22,4 19,22 22,20 25,22" fill="#e05050" opacity="0.9"/><polygon points="22,40 19,22 22,24 25,22" fill="rgba(100,180,220,0.5)"/><circle cx="22" cy="22" r="2" fill="var(--blue)" opacity="0.8"/><text x="22" y="3" text-anchor="middle" font-size="5" fill="var(--blue)" font-family="Share Tech Mono">N</text><text x="22" y="43" text-anchor="middle" font-size="5" fill="rgba(100,180,220,0.4)" font-family="Share Tech Mono">S</text><text x="2" y="23" text-anchor="middle" font-size="5" fill="rgba(100,180,220,0.4)" font-family="Share Tech Mono">O</text><text x="42" y="23" text-anchor="middle" font-size="5" fill="rgba(100,180,220,0.4)" font-family="Share Tech Mono">L</text></svg><div class="c-label">NORTE</div></div></div>
   <div style="position:relative;flex:1"><div id="crosshair"><div id="crosshair-ring"></div></div></div>
-  <div id="bar-bottom"><div id="coords">YAW <span id="c-yaw">0°</span><br>PITCH <span id="c-pitch">0°</span><br>CENA <span id="c-cena">—</span></div><div class="panel" id="instrucoes"><span class="key">DRAG</span> Girar vista<br><span class="key">SCROLL</span> Zoom<br><span class="key">●</span> Navegar</div></div>
+  <div id="bar-bottom"><div id="coords">YAW <span id="c-yaw">0°</span><br>PITCH <span id="c-pitch">0°</span><br>CENA <span id="c-cena">—</span></div><div class="panel" id="instrucoes"><span class="key">PLANTA</span> Mapear ambientes<br><span class="key">360</span> Capturar yaw/pitch<br><span class="key">HTML</span> Publicar no GitHub</div></div>
 </div>
-
-<div id="notif"><div class="notif-txt" id="notif-txt"></div></div>
-
 <aside id="editor">
-  <div class="editor-head">
-    <div><div class="editor-title">Tour / Sketch</div><div class="editor-sub">Editor isolado. Tudo fica no navegador; no final você baixa um HTML ou um pacote pronto para GitHub.</div></div>
-    <button class="help-btn" onclick="openHelp()">? Como fazer</button>
-  </div>
+  <div class="editor-head"><div><div class="editor-title">Tour / Sketch</div><div class="editor-sub">Modelo prático: planta baixa → ambientes → ligações → renders/fotos 360.</div></div><button class="help-btn" onclick="openHelp()">? Como fazer</button></div>
   <div class="editor-body">
-    <section class="block">
-      <h3>Projeto</h3>
-      <div class="field"><label>Nome</label><input id="project-name" value="Projeto Tour" oninput="updateProject()" /></div>
-      <div class="row"><div class="field"><label>Local</label><input id="project-place" value="Campo Grande · MS" oninput="updateProject()" /></div><div class="field"><label>Ano</label><input id="project-year" value="2026" oninput="updateProject()" /></div></div>
-      <div class="btn-row"><button class="btn" onclick="saveLocal()">Salvar local</button><button class="btn warn" onclick="downloadSingleHTML()">Baixar HTML pronto</button><button class="btn solid" onclick="downloadProjectZip()">Baixar pacote GitHub</button><button class="btn" onclick="document.getElementById('import-file').click()">Carregar HTML</button><input class="hidden" type="file" id="import-file" accept=".html,text/html" onchange="importProjectHTML(event)" /></div>
-      <div class="status" id="project-status">Pronto.</div>
-    </section>
-
-    <section class="block">
-      <h3>Adicionar ambiente / estrutura</h3>
-      <div class="field"><label>Nome do ambiente</label><input id="room-name" placeholder="Ex.: Sala, Cozinha, Implantação" /></div>
-      <div class="row"><div class="field"><label>Tipo</label><select id="room-type"><option value="panorama">Foto 360°</option><option value="sketch">Sketch / foto comum</option></select></div><div class="field"><label>ID opcional</label><input id="room-id" placeholder="sala" /></div></div>
-      <div class="field"><label>Caminho da imagem no GitHub</label><input id="room-src" placeholder="assets/sala.jpg" /></div>
-      <div class="field"><label>Ou envie uma imagem agora</label><input id="room-file" type="file" accept="image/*" /></div>
-      <p class="hint">Para GitHub Pages, você pode usar o caminho <b>assets/sala.jpg</b> ou enviar a imagem. O botão <b>Baixar pacote GitHub</b> já organiza imagens enviadas dentro de <b>assets/</b>.</p>
-      <div class="btn-row"><button class="btn solid" onclick="addRoom()">Adicionar</button><button class="btn" onclick="clearRoomForm()">Limpar</button></div>
-    </section>
-
-    <section class="block">
-      <h3>Ambientes</h3>
-      <div class="room-list" id="room-list"></div>
-    </section>
-
-    <section class="block">
-      <h3>Pontos de navegação</h3>
-      <p class="hint" id="hotspot-help">Selecione um ambiente para criar pontos.</p>
-      <div class="field"><label>Destino</label><select id="hotspot-target"></select></div>
-      <div class="field"><label>Texto do ponto</label><input id="hotspot-text" placeholder="Ex.: Ir para cozinha" /></div>
-      <div class="btn-row"><button class="btn solid" onclick="startHotspotCapture()">Marcar ponto</button><button class="btn danger" onclick="removeLastHotspot()">Apagar último</button></div>
-      <div class="hotspot-list" id="hotspot-list"></div>
-    </section>
-
-    <section class="block">
-      <h3>GitHub</h3>
-      <p class="hint">Suba o pacote gerado para um repositório e ative GitHub Pages. Estrutura sugerida: <b>index.html</b> e pasta <b>assets/</b>.</p>
-      <div class="btn-row"><button class="btn warn" onclick="downloadSingleHTML()">Baixar HTML pronto</button><button class="btn solid" onclick="downloadProjectZip()">Baixar pacote GitHub</button><button class="btn danger" onclick="resetAll()">Zerar tudo</button></div>
-    </section>
+    <div class="tabs"><button class="tab active" id="tab-plant" onclick="setMode('plant')">Planta</button><button class="tab" id="tab-tour" onclick="setMode('tour')">Tour</button><button class="tab" id="tab-files" onclick="setMode('files')">GitHub</button></div>
+    <section class="block"><h3>Modelos de uso</h3><div class="model-grid"><div class="model-card active"><b>01 · Planta baixa</b><p>Envie a planta, clique nos cômodos e crie as conexões entre portas.</p></div><div class="model-card"><b>02 · Renders / 360</b><p>Depois troque a imagem de cada ambiente por render ou foto 360°.</p></div><div class="model-card"><b>03 · Sketch / Croqui</b><p>Use imagem comum clicável quando não tiver panorama renderizado.</p></div><div class="model-card"><b>04 · GitHub</b><p>Baixe HTML ou pacote zip. Sem editar JSON manualmente.</p></div></div></section>
+    <section class="block" id="project-block"><h3>Projeto</h3><div class="field"><label>Nome</label><input id="project-name" oninput="updateProject()" placeholder="Casa Cliente X"></div><div class="row"><div class="field"><label>Cidade / info</label><input id="project-place" oninput="updateProject()" placeholder="Campo Grande · MS"></div><div class="field"><label>Ano</label><input id="project-year" oninput="updateProject()" placeholder="2026"></div></div><div class="status" id="status"></div></section>
+    <section class="block" id="plant-block"><h3>01 · Planta baixa</h3><div class="field"><label>Upload da planta / print</label><input type="file" id="plan-file" accept="image/*" onchange="loadPlanFile(this.files[0])"></div><div class="btn-row"><button class="btn" onclick="startAddRoomFromPlan()">+ ambiente na planta</button><button class="btn warn" onclick="clearPlan()">limpar planta</button></div><p class="hint" id="plan-hint">Depois de clicar em “+ ambiente”, clique na posição do cômodo na planta.</p></section>
+    <section class="block" id="rooms-block"><h3>Ambientes extraídos / criados</h3><div class="field"><label>Adicionar sem clicar na planta</label><input id="room-name" placeholder="Ex.: Sala de Estar"></div><div class="btn-row"><button class="btn" onclick="addRoomManual()">Adicionar ambiente</button><button class="btn" onclick="renameCurrentRoom()">Renomear selecionado</button></div><div class="list" id="room-list"></div></section>
+    <section class="block" id="connection-block"><h3>Conexões / Portas</h3><div class="row"><div class="field"><label>De</label><select id="conn-from" onchange="selectRoom(this.value)"></select></div><div class="field"><label>Para</label><select id="conn-to"></select></div></div><div class="row"><div class="field"><label>Yaw aprox. ida</label><input id="conn-yaw" type="number" value="0" step="5"></div><div class="field"><label>Pitch</label><input id="conn-pitch" type="number" value="-5" step="1"></div></div><div class="field"><label>Texto do ponto</label><input id="conn-text" placeholder="Ex.: Cozinha"></div><div class="btn-row"><button class="btn solid" onclick="addConnection(true)">Criar ligação dupla</button><button class="btn" onclick="addConnection(false)">Só ida</button><button class="btn danger" onclick="removeLastHotspot()">Apagar último ponto</button></div><p class="hint">O yaw vira o ângulo aproximado do hotspot quando você trocar a cena por 360°. O ajuste fino pode ser capturado no modo Tour.</p></section>
+    <section class="block" id="image-block"><h3>02 · Imagem do ambiente</h3><div class="field"><label>Ambiente selecionado</label><select id="image-room" onchange="selectRoom(this.value)"></select></div><div class="row"><div class="field"><label>Tipo</label><select id="image-type"><option value="sketch">Sketch / imagem comum</option><option value="panorama">Foto 360° / render equiretangular</option></select></div><div class="field"><label>Caminho opcional</label><input id="image-src" placeholder="assets/sala.jpg"></div></div><div class="field"><label>Upload da imagem</label><input type="file" id="image-file" accept="image/*"></div><div class="btn-row"><button class="btn solid" onclick="replaceRoomImage()">Aplicar imagem</button><button class="btn" onclick="captureCurrentYawPitch()">Capturar yaw/pitch</button><button class="btn" onclick="addHotspotFromCurrentView()">Ponto pela vista</button></div><p class="hint">Para 360°, abra o ambiente, olhe para a passagem e clique em “Ponto pela vista” para criar o hotspot com yaw/pitch reais.</p></section>
+    <section class="block" id="export-block"><h3>04 · Salvar / GitHub</h3><div class="btn-row"><button class="btn solid" onclick="saveLocal()">Salvar local</button><button class="btn" onclick="downloadHTML()">Baixar HTML pronto</button><button class="btn" onclick="downloadZip()">Baixar pacote GitHub</button></div><div class="field" style="margin-top:10px"><label>Carregar HTML salvo</label><input type="file" accept=".html,text/html" onchange="loadHTMLFile(this.files[0])"></div><p class="hint">O HTML salvo carrega o projeto embutido. O zip cria assets/ com imagens quando possível.</p></section>
   </div>
 </aside>
-
-<div id="modal">
-  <div class="modal-card">
-    <button class="close-modal" onclick="closeHelp()">Fechar</button>
-    <h2>Como fazer o tour</h2>
-    <p>Essa ferramenta foi separada do sistema principal para você editar no GitHub. Ela funciona em HTML puro, com Pannellum por CDN para fotos 360°.</p>
-    <h3>1. Organize as imagens</h3>
-    <ul><li>Crie uma pasta <b>assets/</b> no repositório.</li><li>Coloque fotos 360° e sketches nela.</li><li>Use caminhos como <b>assets/sala.jpg</b> ou <b>assets/planta.png</b>.</li></ul>
-    <h3>2. Adicione ambientes</h3>
-    <ul><li>Escolha <b>Foto 360°</b> para imagens equiretangulares.</li><li>Escolha <b>Sketch / foto comum</b> para croquis, plantas, cortes, imagens de estudo ou moodboard.</li></ul>
-    <h3>3. Crie pontos</h3>
-    <ul><li>Em foto 360°, gire a câmera até o local desejado e clique em <b>Marcar ponto</b>.</li><li>Em sketch, clique em <b>Marcar ponto</b> e depois clique direto na imagem.</li><li>Escolha o destino para navegar entre ambientes.</li></ul>
-    <h3>4. Salve no GitHub</h3>
-    <p>Clique em <b>Baixar pacote GitHub</b>. Ele gera um ZIP com o <b>index.html</b>, a pasta <b>assets/</b> e instruções. Depois é só subir tudo no repositório.</p>
-    <div class="modal-code">tour-sketch-tool/
-├─ index.html
-└─ assets/
-   ├─ sala.jpg
-   ├─ cozinha.jpg
-   └─ sketch-planta.png</div>
-  </div>
-</div>
-
+<div id="modal"><div class="modal-card"><div class="modal-head"><h2>Como fazer</h2><button class="close" onclick="closeHelp()">Fechar</button></div><h3>Modelo 01 · Planta baixa</h3><ul><li>Envie um print ou imagem da planta baixa.</li><li>Clique em “+ ambiente na planta” e marque cada cômodo.</li><li>Crie as conexões entre os cômodos que têm porta/passagem.</li><li>Informe yaw aproximado: 0 frente, 90 direita, -90 esquerda, 180 atrás.</li></ul><h3>Modelo 02 · Renders ou fotos 360°</h3><ul><li>Selecione um ambiente e aplique a imagem correspondente.</li><li>Use tipo “Foto 360° / render equiretangular” para imagens panorâmicas.</li><li>Abra o Tour, olhe para a passagem e use “Ponto pela vista” para ajustar o yaw/pitch.</li></ul><h3>Modelo 03 · Sketch / croqui</h3><ul><li>Use imagem comum quando ainda não tiver render 360°.</li><li>Os pontos usam posição X/Y da imagem ou a posição marcada na planta.</li></ul><h3>Modelo 04 · GitHub</h3><ul><li>Clique em “Baixar HTML pronto” para ter um arquivo único.</li><li>Ou clique em “Baixar pacote GitHub” para gerar zip com assets/ e README.</li><li>Suba no GitHub Pages e publique.</li></ul></div></div>
+<div id="toast"></div>
 <script>
-window.__TOUR_PROJECT__ = null;
-const STORAGE_KEY='tourSketchTool.v2';
-let state={project:{name:'Projeto Tour',place:'Campo Grande · MS',year:'2026',label:'Tour Virtual · Arquitetura'},rooms:[],current:null};
-let viewer=null;
-let captureMode=false;
-let yawPitchTimer=null;
-
+const STORAGE_KEY='chaos_tour_planta_modelos_v1';
+let state={project:{name:'Projeto',place:'Campo Grande · MS',year:'2026',label:'Tour Virtual · Arquitetura'},planSrc:'',rooms:[],current:null,mode:'plant'};
+let viewer=null,yawPitchTimer=null,addingRoomOnPlan=false;
 const $=id=>document.getElementById(id);
 const slug=s=>(s||'ambiente').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'ambiente';
 const room=()=>state.rooms.find(r=>r.id===state.current);
-
-window.addEventListener('load',()=>{loadLocal();bindSketchClick();renderAll();});
-
-function updateProject(){state.project.name=$('project-name').value||'Projeto';state.project.place=$('project-place').value||'';state.project.year=$('project-year').value||'';renderProject();persistQuiet();}
-function renderProject(){ $('hud-label-proj').textContent=state.project.label||'Tour Virtual';$('hud-nome-proj').textContent=(state.project.name||'Projeto').toUpperCase();$('hud-sub-proj').textContent=[state.project.place,state.project.year].filter(Boolean).join(' · ');document.title='Tour / Sketch · '+(state.project.name||'Projeto');}
-
-function loadLocal(){try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){state=JSON.parse(raw);}else if(window.__TOUR_PROJECT__&&window.__TOUR_PROJECT__.rooms){state=JSON.parse(JSON.stringify(window.__TOUR_PROJECT__));}}catch(e){console.warn(e)}$('project-name').value=state.project.name||'';$('project-place').value=state.project.place||'';$('project-year').value=state.project.year||'';}
-function saveLocal(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));setStatus('Salvo no navegador.',true)}
-function persistQuiet(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}}
-function setStatus(msg,ok){const el=$('project-status');el.textContent=msg;el.className='status '+(ok?'ok':'err');setTimeout(()=>{el.className='status';},2200)}
-
-async function addRoom(){
-  const name=$('room-name').value.trim(); if(!name){setStatus('Dê um nome ao ambiente.',false);return}
-  const idBase=$('room-id').value.trim()||slug(name); let id=idBase; let n=2; while(state.rooms.some(r=>r.id===id)){id=idBase+'-'+n++;}
-  const type=$('room-type').value; let src=$('room-src').value.trim(); const file=$('room-file').files[0];
-  if(file){src=await fileToDataURL(file);} if(!src){setStatus('Informe um caminho ou envie uma imagem.',false);return}
-  state.rooms.push({id,name,type,src,yaw:0,pitch:0,hotspots:[]}); state.current=id; clearRoomForm(); renderAll(); saveLocal(); mostrarNotif(name);
-}
-function fileToDataURL(file){return new Promise((resolve,reject)=>{const fr=new FileReader();fr.onload=()=>resolve(fr.result);fr.onerror=reject;fr.readAsDataURL(file);});}
-function clearRoomForm(){$('room-name').value='';$('room-id').value='';$('room-src').value='';$('room-file').value='';}
-function selectRoom(id){state.current=id;renderAll();persistQuiet();mostrarNotif(room()?.name||id)}
-function removeRoom(id){if(!confirm('Remover este ambiente e os pontos ligados a ele?'))return;state.rooms=state.rooms.filter(r=>r.id!==id).map(r=>({...r,hotspots:(r.hotspots||[]).filter(h=>h.target!==id)}));if(state.current===id)state.current=state.rooms[0]?.id||null;renderAll();saveLocal();}
-
-function renderAll(){renderProject();renderRooms();renderTargets();renderHotspots();renderScene();}
-function renderRooms(){const list=$('room-list');list.innerHTML=''; if(!state.rooms.length){list.innerHTML='<p class="hint">Nenhum ambiente adicionado ainda.</p>';return} state.rooms.forEach(r=>{const div=document.createElement('div');div.className='room-item '+(r.id===state.current?'active':'');div.innerHTML=`<div><div class="room-name">${escapeHTML(r.name)}</div><div class="room-meta">${r.type==='panorama'?'360°':'Sketch'} · ${escapeHTML(r.id)}</div></div><div class="mini-actions"><button class="mini" title="abrir">Abrir</button><button class="mini danger" title="remover">×</button></div>`;div.querySelector('.mini').onclick=()=>selectRoom(r.id);div.querySelector('.danger').onclick=()=>removeRoom(r.id);div.ondblclick=()=>selectRoom(r.id);list.appendChild(div);});}
-function renderTargets(){const sel=$('hotspot-target');sel.innerHTML='';state.rooms.filter(r=>r.id!==state.current).forEach(r=>{const opt=document.createElement('option');opt.value=r.id;opt.textContent=r.name;sel.appendChild(opt);}); if(!sel.options.length){const opt=document.createElement('option');opt.value='';opt.textContent='Adicione outro ambiente';sel.appendChild(opt);}}
-function renderHotspots(){const r=room();const list=$('hotspot-list');list.innerHTML='';$('hotspot-help').textContent=r?`Ambiente atual: ${r.name}`:'Selecione um ambiente para criar pontos.'; if(!r){return} (r.hotspots||[]).forEach((h,i)=>{const target=state.rooms.find(x=>x.id===h.target);const div=document.createElement('div');div.className='hotspot-item';div.innerHTML=`<b>${escapeHTML(h.text||target?.name||h.target)}</b><small>Destino: ${escapeHTML(target?.name||h.target)}<br>${r.type==='panorama'?`yaw ${Number(h.yaw).toFixed(1)} / pitch ${Number(h.pitch).toFixed(1)}`:`x ${Math.round(h.x)}% / y ${Math.round(h.y)}%`}</small>`;list.appendChild(div);});}
-function renderScene(){const r=room();$('empty-state').classList.toggle('hidden',!!r);$('hud').classList.toggle('hidden',!r);if(!r){$('viewer').classList.remove('active');$('sketch-stage').classList.remove('active');destroyViewer();return} $('hud-ambiente').textContent=r.name.toUpperCase();$('c-cena').textContent=r.name;if(r.type==='panorama')renderPanorama(r);else renderSketch(r);}
-
-function renderPanorama(r){$('sketch-stage').classList.remove('active');$('viewer').classList.add('active');destroyViewer(); const scenes={}; state.rooms.filter(x=>x.type==='panorama').forEach(x=>{scenes[x.id]={type:'equirectangular',panorama:x.src,title:x.name,yaw:x.yaw||0,pitch:x.pitch||0,hotSpots:(x.hotspots||[]).filter(h=>state.rooms.some(t=>t.id===h.target)).map(h=>({pitch:h.pitch,yaw:h.yaw,type:'scene',sceneId:h.target,text:h.text||state.rooms.find(t=>t.id===h.target)?.name||h.target,cssClass:'pnlm-hotspot-base'}))};});
-  try{viewer=pannellum.viewer('viewer',{default:{firstScene:r.id,sceneFadeDuration:650,autoLoad:true,showControls:false,compass:false,mouseZoom:true,keyboardZoom:false,hfov:100,minHfov:50,maxHfov:120},scenes});viewer.on('scenechange',id=>{state.current=id;renderProject();renderRooms();renderTargets();renderHotspots();$('hud-ambiente').textContent=(room()?.name||id).toUpperCase();$('c-cena').textContent=room()?.name||id;mostrarNotif(room()?.name||id);persistQuiet();});startYawPitch();}catch(e){console.error(e);setStatus('Falha ao abrir 360°. Confira a imagem.',false)} }
-function destroyViewer(){if(yawPitchTimer){clearInterval(yawPitchTimer);yawPitchTimer=null}if(viewer&&viewer.destroy){try{viewer.destroy()}catch(e){}}viewer=null;$('viewer').innerHTML='';}
-function startYawPitch(){if(yawPitchTimer)clearInterval(yawPitchTimer);yawPitchTimer=setInterval(()=>{if(!viewer)return;const yaw=viewer.getYaw();const pitch=viewer.getPitch();$('c-yaw').textContent=yaw.toFixed(0)+'°';$('c-pitch').textContent=pitch.toFixed(0)+'°';$('compass-svg').style.transform=`rotate(${-yaw}deg)`;},80)}
-
-function renderSketch(r){destroyViewer();$('viewer').classList.remove('active');$('sketch-stage').classList.add('active');$('sketch-img').src=r.src;renderSketchHotspots(r);$('c-yaw').textContent='—';$('c-pitch').textContent='—';$('compass-svg').style.transform='rotate(0deg)';}
-function renderSketchHotspots(r){const wrap=$('sketch-wrap');wrap.querySelectorAll('.sketch-hotspot').forEach(x=>x.remove());(r.hotspots||[]).filter(h=>state.rooms.some(t=>t.id===h.target)).forEach((h,i)=>{const target=state.rooms.find(t=>t.id===h.target);const btn=document.createElement('button');btn.className='sketch-hotspot';btn.style.left=(h.x||50)+'%';btn.style.top=(h.y||50)+'%';btn.innerHTML=`<span>${escapeHTML(h.text||target?.name||'Ir')}</span>`;btn.onclick=(ev)=>{ev.stopPropagation();selectRoom(h.target)};wrap.appendChild(btn);});}
-function bindSketchClick(){$('sketch-wrap').addEventListener('click',ev=>{if(!captureMode)return;const r=room();if(!r||r.type!=='sketch')return;const rect=$('sketch-img').getBoundingClientRect();const x=((ev.clientX-rect.left)/rect.width)*100;const y=((ev.clientY-rect.top)/rect.height)*100;finishHotspot({x:clamp(x,0,100),y:clamp(y,0,100)});});}
-
-function startHotspotCapture(){const r=room();if(!r){setStatus('Selecione ou crie um ambiente.',false);return}const target=$('hotspot-target').value;if(!target){setStatus('Crie outro ambiente para usar como destino.',false);return}if(r.type==='panorama'){if(!viewer){setStatus('Viewer 360 ainda não abriu.',false);return}finishHotspot({yaw:viewer.getYaw(),pitch:viewer.getPitch()});}else{captureMode=true;setStatus('Clique no local da imagem para marcar o ponto.',true);}}
-function finishHotspot(pos){const r=room();const target=$('hotspot-target').value;const targetRoom=state.rooms.find(x=>x.id===target);const text=$('hotspot-text').value.trim()||targetRoom?.name||'Ir';if(!r||!target)return;captureMode=false;r.hotspots=r.hotspots||[];r.hotspots.push({target,text,...pos});$('hotspot-text').value='';renderHotspots();renderScene();saveLocal();setStatus('Ponto criado.',true)}
-function removeLastHotspot(){const r=room();if(!r||!r.hotspots?.length){setStatus('Não há pontos para apagar.',false);return}r.hotspots.pop();renderAll();saveLocal();}
-
-
-function cloneState(){return JSON.parse(JSON.stringify(state));}
-function safeScriptData(obj){return JSON.stringify(obj).replace(/</g,'\\u003c').replace(/-->/g,'--\\>');}
-function exportStateAndAssets(){
-  const copy=cloneState();
-  const files=[];
-  (copy.rooms||[]).forEach((r,idx)=>{
-    if(typeof r.src==='string'&&r.src.startsWith('data:image/')){
-      const parsed=parseDataURL(r.src);
-      if(parsed){
-        const base=slug(r.id||r.name||('ambiente-'+(idx+1)));
-        const path=`assets/${base}.${parsed.ext}`;
-        files.push({path,base64:parsed.base64});
-        r.src=path;
-      }
-    }
-  });
-  return {projectState:copy,files};
-}
-function makeExportHTML(projectState){
-  let html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
-  html=html.replace(/window\.__TOUR_PROJECT__\s*=\s*null;/,'window.__TOUR_PROJECT__ = '+safeScriptData(projectState)+';');
-  return html;
-}
-function downloadSingleHTML(){
-  const {projectState}=exportStateAndAssets();
-  const html=makeExportHTML(projectState);
-  downloadBlob(html,'index.html','text/html');
-  setStatus('HTML pronto baixado.',true);
-}
-async function downloadProjectZip(){
-  if(!window.JSZip){setStatus('Não consegui carregar o gerador de ZIP. Use o botão HTML pronto.',false);return}
-  const {projectState,files}=exportStateAndAssets();
-  const zip=new JSZip();
-  zip.file('index.html',makeExportHTML(projectState));
-  zip.folder('assets');
-  files.forEach(f=>zip.file(f.path,f.base64,{base64:true}));
-  zip.file('README.md',makeReadme(projectState,files));
-  const blob=await zip.generateAsync({type:'blob'});
-  saveBlob(blob,'tour-sketch-github.zip');
-  setStatus('Pacote GitHub baixado.',true);
-}
-async function importProjectHTML(ev){
-  const file=ev.target.files[0]; if(!file)return;
-  try{
-    const raw=await file.text();
-    const match=raw.match(/window\.__TOUR_PROJECT__\s*=\s*({[\s\S]*?});\s*const\s+STORAGE_KEY/);
-    if(!match)throw new Error('sem projeto embutido');
-    const imported=JSON.parse(match[1]);
-    if(!imported.rooms||!Array.isArray(imported.rooms))throw new Error('projeto inválido');
-    state=imported;
-    state.current=state.current||state.rooms[0]?.id||null;
-    $('project-name').value=state.project?.name||'';
-    $('project-place').value=state.project?.place||'';
-    $('project-year').value=state.project?.year||'';
-    renderAll();saveLocal();setStatus('HTML carregado.',true);
-  }catch(e){setStatus('Esse HTML não tem um projeto salvo pela ferramenta.',false)}
-  ev.target.value='';
-}
-function parseDataURL(dataURL){
-  const m=String(dataURL).match(/^data:(image\/[-+.\w]+);base64,(.+)$/);
-  if(!m)return null;
-  const mime=m[1];
-  const ext=mime.includes('png')?'png':mime.includes('webp')?'webp':mime.includes('gif')?'gif':mime.includes('svg')?'svg':mime.includes('jpeg')||mime.includes('jpg')?'jpg':'jpg';
-  return {mime,ext,base64:m[2]};
-}
-function makeReadme(projectState,files){
-  const name=projectState.project?.name||'Tour Sketch';
-  return `# ${name}\n\nProjeto gerado pela ferramenta Tour / Sketch.\n\n## Como publicar no GitHub Pages\n\n1. Crie um repositório no GitHub.\n2. Envie o arquivo \`index.html\` e a pasta \`assets/\`.\n3. Em Settings > Pages, escolha a branch principal e salve.\n4. Abra o link gerado pelo GitHub Pages.\n\n## Editar depois\n\nAbra o \`index.html\` no navegador, faça ajustes e clique em \"Baixar pacote GitHub\" novamente.\n\n## Imagens exportadas\n\n${files.length?files.map(f=>'- '+f.path).join('\n'):'Nenhuma imagem enviada foi convertida; os ambientes usam caminhos já informados.'}\n`;
-}
-function saveBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
-function resetAll(){if(!confirm('Zerar todos os ambientes e configurações locais?'))return;state={project:{name:'Projeto Tour',place:'Campo Grande · MS',year:'2026',label:'Tour Virtual · Arquitetura'},rooms:[],current:null};localStorage.removeItem(STORAGE_KEY);$('project-name').value=state.project.name;$('project-place').value=state.project.place;$('project-year').value=state.project.year;renderAll();setStatus('Projeto zerado.',true)}
-function downloadBlob(content,name,type){const blob=new Blob([content],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+window.addEventListener('load',()=>{loadInitial();bindPlanClick();setMode(state.mode||'plant');renderAll();});
+function loadInitial(){try{const embedded=JSON.parse($('embedded-data').textContent||'null');if(embedded&&embedded.rooms){state=embedded}else{const raw=localStorage.getItem(STORAGE_KEY);if(raw)state=JSON.parse(raw)}}catch(e){console.warn(e)}$('project-name').value=state.project.name||'';$('project-place').value=state.project.place||'';$('project-year').value=state.project.year||''}
+function updateProject(){state.project.name=$('project-name').value||'Projeto';state.project.place=$('project-place').value||'';state.project.year=$('project-year').value||'';renderProject();persistQuiet()}
+function renderProject(){$('hud-label-proj').textContent=state.project.label||'Tour Virtual · Arquitetura';$('hud-nome-proj').textContent=(state.project.name||'Projeto').toUpperCase();$('hud-sub-proj').textContent=[state.project.place,state.project.year].filter(Boolean).join(' · ')||'—';document.title='Tour Planta / Sketch · '+(state.project.name||'Projeto')}
+function persistQuiet(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){}}
+function saveLocal(){persistQuiet();toast('Salvo no navegador.');setStatus('Salvo no navegador.',true)}
+function setStatus(msg,ok=true){const el=$('status');el.textContent=msg;el.className='status '+(ok?'ok':'err');setTimeout(()=>{el.className='status'},2200)}
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300)}
+function setMode(mode){state.mode=mode;['plant','tour','files'].forEach(m=>$('tab-'+m).classList.toggle('active',m===mode));$('empty-view').classList.toggle('active',!state.planSrc&&!state.rooms.length);$('plant-view').classList.toggle('active',mode==='plant'&&(state.planSrc||state.rooms.length));$('tour-view').classList.toggle('active',mode==='tour'&&!!room());if(mode==='plant'){destroyViewer();renderPlan()}else if(mode==='tour'){renderScene()}persistQuiet()}
+function renderAll(){renderProject();renderRooms();renderSelectors();if(state.mode==='tour')renderScene();else renderPlan();if(!state.rooms.length&&!state.planSrc){$('empty-view').classList.add('active')}}
+function fileToDataURL(file){return new Promise((resolve,reject)=>{const fr=new FileReader();fr.onload=()=>resolve(fr.result);fr.onerror=reject;fr.readAsDataURL(file)})}
+async function loadPlanFile(file){if(!file)return;state.planSrc=await fileToDataURL(file);setMode('plant');renderAll();saveLocal();toast('Planta carregada. Clique nos ambientes.')}
+function clearPlan(){if(!confirm('Limpar a planta baixa? Os ambientes continuam.'))return;state.planSrc='';renderPlan();saveLocal()}
+function startAddRoomFromPlan(){addingRoomOnPlan=true;setMode('plant');setStatus('Clique na posição do ambiente na planta.',true);$('plan-hint').textContent='Clique na planta para marcar o ambiente.'}
+function bindPlanClick(){$('plant-board').addEventListener('click',ev=>{if(!addingRoomOnPlan)return;const img=$('plan-img');if(!img)return;const rect=img.getBoundingClientRect();const x=((ev.clientX-rect.left)/rect.width)*100;const y=((ev.clientY-rect.top)/rect.height)*100;if(x<0||x>100||y<0||y>100)return;const name=prompt('Nome do ambiente:','Ambiente');if(!name)return;addRoom({name,planX:clamp(x,0,100),planY:clamp(y,0,100),src:state.planSrc,type:'sketch'});addingRoomOnPlan=false;$('plan-hint').textContent='Ambiente criado. Repita para os demais cômodos.'})}
+function addRoomManual(){const name=$('room-name').value.trim();if(!name){setStatus('Digite o nome do ambiente.',false);return}addRoom({name,src:state.planSrc,type:'sketch'});$('room-name').value=''}
+function addRoom(data){let base=slug(data.name),id=base,n=2;while(state.rooms.some(r=>r.id===id)){id=base+'-'+n++}state.rooms.push({id,name:data.name,type:data.type||'sketch',src:data.src||'',planX:data.planX??50,planY:data.planY??50,yaw:0,pitch:0,hotspots:[]});state.current=id;renderAll();saveLocal();toast('Ambiente criado: '+data.name)}
+function renameCurrentRoom(){const r=room();if(!r){setStatus('Selecione um ambiente.',false);return}const name=prompt('Novo nome:',r.name);if(!name)return;r.name=name;renderAll();saveLocal()}
+function selectRoom(id){if(!id)return;state.current=id;renderAll();persistQuiet();const r=room();if(r)toast('Selecionado: '+r.name)}
+function removeRoom(id){if(!confirm('Remover este ambiente e pontos ligados a ele?'))return;state.rooms=state.rooms.filter(r=>r.id!==id).map(r=>({...r,hotspots:(r.hotspots||[]).filter(h=>h.target!==id)}));if(state.current===id)state.current=state.rooms[0]?.id||null;renderAll();saveLocal()}
+function renderRooms(){const list=$('room-list');list.innerHTML='';if(!state.rooms.length){list.innerHTML='<p class="hint">Nenhum ambiente criado ainda.</p>';return}state.rooms.forEach(r=>{const div=document.createElement('div');div.className='item '+(r.id===state.current?'active':'');div.innerHTML=`<div><b>${esc(r.name)}</b><small><span class="pill">${r.type==='panorama'?'360°':'Sketch'}</span> · ${esc(r.id)} · ${r.hotspots?.length||0} pontos</small></div><div class="mini-actions"><button class="mini">Abrir</button><button class="mini danger">×</button></div>`;div.querySelector('.mini').onclick=()=>selectRoom(r.id);div.querySelector('.danger').onclick=()=>removeRoom(r.id);div.ondblclick=()=>{selectRoom(r.id);setMode('tour')};list.appendChild(div)})}
+function renderSelectors(){const selects=['conn-from','conn-to','image-room'];selects.forEach(id=>$(id).innerHTML='');state.rooms.forEach(r=>{['conn-from','conn-to','image-room'].forEach(id=>{const opt=document.createElement('option');opt.value=r.id;opt.textContent=r.name;$(id).appendChild(opt)})});if(state.current){$('conn-from').value=state.current;$('image-room').value=state.current}const r=room();if(r){$('image-type').value=r.type||'sketch';$('image-src').value=(r.src&&!(r.src||'').startsWith('data:'))?r.src:''}}
+function renderPlan(){const board=$('plant-board');board.innerHTML='';if(!state.planSrc){board.innerHTML='<div class="plant-empty">Envie uma planta baixa/print para mapear os ambientes. Também dá para criar ambientes sem planta e depois aplicar renders ou fotos 360°.</div>';return}const wrap=document.createElement('div');wrap.className='plant-wrap';wrap.innerHTML=`<img id="plan-img" src="${state.planSrc}" alt="Planta baixa">`;board.appendChild(wrap);drawPlanEdges(wrap);state.rooms.forEach((r,i)=>{const n=document.createElement('button');n.className='plan-node '+(r.id===state.current?'active':'');n.style.left=(r.planX??50)+'%';n.style.top=(r.planY??50)+'%';n.innerHTML=`${i+1}<span>${esc(r.name)}</span>`;n.onclick=(ev)=>{ev.stopPropagation();selectRoom(r.id)};wrap.appendChild(n)})}
+function drawPlanEdges(wrap){const pairs=new Set();state.rooms.forEach(a=>(a.hotspots||[]).forEach(h=>{const b=state.rooms.find(x=>x.id===h.target);if(!b)return;const key=[a.id,b.id].sort().join('>');if(pairs.has(key))return;pairs.add(key);const edge=document.createElement('div');edge.className='plan-edge';const x1=a.planX??50,y1=a.planY??50,x2=b.planX??50,y2=b.planY??50;const dx=x2-x1,dy=y2-y1,len=Math.sqrt(dx*dx+dy*dy);edge.style.left=x1+'%';edge.style.top=y1+'%';edge.style.width=len+'%';edge.style.transform=`rotate(${Math.atan2(dy,dx)}rad)`;wrap.appendChild(edge)}))}
+function addConnection(twoWay){const from=$('conn-from').value,to=$('conn-to').value;if(!from||!to||from===to){setStatus('Escolha dois ambientes diferentes.',false);return}const a=state.rooms.find(r=>r.id===from),b=state.rooms.find(r=>r.id===to);if(!a||!b)return;const yaw=Number($('conn-yaw').value||0),pitch=Number($('conn-pitch').value||-5);const text=$('conn-text').value.trim()||b.name;addHot(a,b,{yaw,pitch,text});if(twoWay)addHot(b,a,{yaw:normYaw(yaw+180),pitch,text:a.name});$('conn-text').value='';renderAll();saveLocal();toast(twoWay?'Ligação dupla criada.':'Ligação criada.')}
+function addHot(fromRoom,targetRoom,data){fromRoom.hotspots=fromRoom.hotspots||[];fromRoom.hotspots.push({target:targetRoom.id,text:data.text||targetRoom.name,yaw:data.yaw??0,pitch:data.pitch??-5,x:targetRoom.planX??50,y:targetRoom.planY??50})}
+function removeLastHotspot(){const r=room();if(!r||!r.hotspots?.length){setStatus('Sem pontos para apagar.',false);return}r.hotspots.pop();renderAll();saveLocal();toast('Último ponto removido.')}
+async function replaceRoomImage(){const id=$('image-room').value;const r=state.rooms.find(x=>x.id===id);if(!r){setStatus('Selecione um ambiente.',false);return}let src=$('image-src').value.trim();const file=$('image-file').files[0];if(file)src=await fileToDataURL(file);if(!src){setStatus('Informe caminho ou faça upload.',false);return}r.type=$('image-type').value;r.src=src;state.current=r.id;renderAll();saveLocal();toast('Imagem aplicada em '+r.name)}
+function renderScene(){const r=room();$('tour-view').classList.toggle('active',!!r);$('empty-view').classList.toggle('active',!r&&!state.planSrc);if(!r){destroyViewer();return}$('hud-ambiente').textContent=r.name.toUpperCase();$('c-cena').textContent=r.name;if(r.type==='panorama')renderPanorama(r);else renderSketch(r)}
+function renderPanorama(r){$('sketch-scene').classList.remove('active');$('viewer').classList.add('active');destroyViewer(false);const scenes={};state.rooms.filter(x=>x.type==='panorama'&&x.src).forEach(x=>{scenes[x.id]={type:'equirectangular',panorama:x.src,title:x.name,yaw:x.yaw||0,pitch:x.pitch||0,hotSpots:(x.hotspots||[]).filter(h=>state.rooms.some(t=>t.id===h.target)).map(h=>({pitch:h.pitch??-5,yaw:h.yaw??0,type:'scene',sceneId:h.target,text:h.text||state.rooms.find(t=>t.id===h.target)?.name||h.target,cssClass:'pnlm-hotspot-base'}))}});try{viewer=pannellum.viewer('viewer',{default:{firstScene:r.id,sceneFadeDuration:650,autoLoad:true,showControls:false,compass:false,mouseZoom:true,keyboardZoom:false,hfov:100,minHfov:50,maxHfov:120},scenes});viewer.on('scenechange',id=>{state.current=id;renderRooms();renderSelectors();const rr=room();$('hud-ambiente').textContent=(rr?.name||id).toUpperCase();$('c-cena').textContent=rr?.name||id;persistQuiet()});startYawPitch()}catch(e){console.error(e);setStatus('Falha ao abrir 360°. Confira se a imagem é equiretangular.',false)}}
+function renderSketch(r){destroyViewer();$('viewer').classList.remove('active');$('sketch-scene').classList.add('active');$('sketch-img').src=r.src||state.planSrc||'';$('c-yaw').textContent='—';$('c-pitch').textContent='—';$('compass-svg').style.transform='rotate(0deg)';const wrap=document.querySelector('#sketch-scene .sketch-wrap');wrap.querySelectorAll('.sketch-hotspot').forEach(x=>x.remove());(r.hotspots||[]).filter(h=>state.rooms.some(t=>t.id===h.target)).forEach((h,i)=>{const target=state.rooms.find(t=>t.id===h.target);const btn=document.createElement('button');btn.className='sketch-hotspot';btn.style.left=(h.x??50)+'%';btn.style.top=(h.y??50)+'%';btn.innerHTML=`${i+1}<span>${esc(h.text||target?.name||'Ir')}</span>`;btn.onclick=(ev)=>{ev.stopPropagation();selectRoom(h.target);setMode('tour')};wrap.appendChild(btn)})}
+function destroyViewer(clear=true){if(yawPitchTimer){clearInterval(yawPitchTimer);yawPitchTimer=null}if(viewer&&viewer.destroy){try{viewer.destroy()}catch(e){}}viewer=null;if(clear)$('viewer').innerHTML=''}
+function startYawPitch(){if(yawPitchTimer)clearInterval(yawPitchTimer);yawPitchTimer=setInterval(()=>{if(!viewer)return;const yaw=viewer.getYaw(),pitch=viewer.getPitch();$('c-yaw').textContent=yaw.toFixed(0)+'°';$('c-pitch').textContent=pitch.toFixed(0)+'°';$('compass-svg').style.transform=`rotate(${-yaw}deg)`},80)}
+function captureCurrentYawPitch(){const r=room();if(!r||!viewer){setStatus('Abra uma cena 360° para capturar.',false);return}r.yaw=viewer.getYaw();r.pitch=viewer.getPitch();saveLocal();toast('Vista inicial capturada.')}
+function addHotspotFromCurrentView(){const r=room();const target=$('conn-to').value;if(!r||!viewer||!target||target===r.id){setStatus('Abra 360° e escolha destino diferente.',false);return}const t=state.rooms.find(x=>x.id===target);addHot(r,t,{yaw:viewer.getYaw(),pitch:viewer.getPitch(),text:$('conn-text').value.trim()||t.name});renderAll();setMode('tour');saveLocal();toast('Ponto criado pela vista atual.')}
+function cloneState(){return JSON.parse(JSON.stringify(state))}
+function setEmbeddedData(data){$('embedded-data').textContent=JSON.stringify(data).replace(/</g,'\\u003c')}
+function downloadHTML(){const data=cloneState();setEmbeddedData(data);const html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;downloadBlob(html,'tour-planta-sketch.html','text/html');toast('HTML pronto baixado.')}
+function parseDataURL(s){const m=/^data:(image\/(png|jpe?g|webp|gif));base64,(.+)$/i.exec(s||'');if(!m)return null;let ext=m[2].toLowerCase();if(ext==='jpeg')ext='jpg';return{ext,base64:m[3]}}
+function exportAssetsState(){const copy=cloneState(),files=[];if(copy.planSrc&&copy.planSrc.startsWith('data:image/')){const p=parseDataURL(copy.planSrc);if(p){files.push({path:'assets/planta-baixa.'+p.ext,base64:p.base64});copy.planSrc='assets/planta-baixa.'+p.ext}}copy.rooms.forEach((r,i)=>{if(r.src&&r.src.startsWith('data:image/')){const p=parseDataURL(r.src);if(p){const path='assets/'+slug(r.id||r.name||('ambiente-'+(i+1)))+'.'+p.ext;files.push({path,base64:p.base64});r.src=path}}});return{copy,files}}
+async function downloadZip(){if(!window.JSZip){setStatus('JSZip ainda está carregando. Tente novamente.',false);return}const {copy,files}=exportAssetsState();setEmbeddedData(copy);const html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;const zip=new JSZip();zip.file('index.html',html);zip.file('README.md',readmeText(copy));files.forEach(f=>zip.file(f.path,f.base64,{base64:true}));zip.folder('assets');const blob=await zip.generateAsync({type:'blob'});downloadBlob(blob,'tour-planta-sketch-github.zip','application/zip');toast('Pacote GitHub baixado.')}
+function readmeText(data){return `# ${data.project.name||'Tour Planta / Sketch'}\n\nFerramenta isolada para tour virtual por planta, sketch, renders e fotos 360.\n\n## Como publicar no GitHub Pages\n\n1. Envie todos os arquivos deste pacote para um repositório.\n2. Deixe o arquivo \`index.html\` na raiz.\n3. Ative Settings > Pages > Deploy from branch.\n4. Escolha a branch principal e salve.\n\n## Fluxo\n\n- Planta baixa: marque ambientes e conexões.\n- Renders / 360: troque a imagem de cada ambiente.\n- Sketch: use imagens comuns clicáveis.\n\nProjeto gerado pela ferramenta Tour / Sketch.\n`}
+function downloadBlob(content,name,type){const blob=content instanceof Blob?content:new Blob([content],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+async function loadHTMLFile(file){if(!file)return;const txt=await file.text();const m=txt.match(/<script[^>]+id=["']embedded-data["'][^>]*>([\s\S]*?)<\/script>/i);if(!m){setStatus('Não encontrei dados embutidos nesse HTML.',false);return}try{const data=JSON.parse(m[1]);if(!data||!data.rooms)throw new Error('sem rooms');state=data;saveLocal();loadInitial();renderAll();setMode(state.mode||'plant');toast('HTML carregado para edição.')}catch(e){setStatus('Não consegui ler o projeto do HTML.',false)}}
 function openHelp(){$('modal').classList.add('open')}function closeHelp(){$('modal').classList.remove('open')}
-function mostrarNotif(nome){const el=$('notif');$('notif-txt').textContent=(nome||'Ambiente').toUpperCase();el.classList.add('show');clearTimeout(window.__notifTimer);window.__notifTimer=setTimeout(()=>el.classList.remove('show'),1800)}
-function escapeHTML(s){return String(s||'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\'':'&#39;','"':'&quot;'}[c]))}
-function clamp(n,a,b){return Math.max(a,Math.min(b,n))}
+function esc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function clamp(n,a,b){return Math.max(a,Math.min(b,n))}function normYaw(v){let x=((v+180)%360+360)%360-180;return x}
 </script>
 </body>
 </html>
