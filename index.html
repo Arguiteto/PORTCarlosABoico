@@ -2156,6 +2156,167 @@
       }
     }
 
+  
+/* ── AJUSTES V10: hall sem rolagem vertical, fundo limpo e fotos sem moldura ── */
+:root {
+  --bg: #f4efe8;
+  --paper: #f4efe8;
+}
+
+html,
+body {
+  min-height: 100%;
+  background: #f4efe8 !important;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.home-view {
+  min-height: calc(100vh - 68px);
+  overflow: hidden;
+  background: #f4efe8 !important;
+}
+
+.project-strip {
+  min-height: calc(100vh - 68px);
+  height: calc(100vh - 68px);
+  padding: clamp(22px, 3vw, 38px) 0 0 !important;
+  overflow: hidden !important;
+  background: #f4efe8 !important;
+  border-bottom: 0 !important;
+}
+
+.carousel-shell {
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  overflow: hidden;
+}
+
+.project-track {
+  height: 100%;
+  align-items: flex-start;
+  padding-bottom: 0 !important;
+  overflow-y: hidden !important;
+}
+
+.project-card {
+  flex-basis: clamp(190px, 18vw, 260px) !important;
+}
+
+.project-image {
+  height: min(66vh, 430px) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+.project-image,
+.project-image img,
+.project-image.has-real-image {
+  border-radius: 18px !important;
+  overflow: hidden;
+  background-color: transparent !important;
+}
+
+.project-title {
+  color: #6f5f4e !important;
+  margin-top: 10px !important;
+  font-size: 14px !important;
+}
+
+.project-meta {
+  color: rgba(111, 95, 78, .72) !important;
+  font-size: 10px !important;
+}
+
+.carousel-controls {
+  display: none !important;
+}
+
+.project-view {
+  background: #f4efe8 !important;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.project-stage {
+  padding-top: clamp(14px, 2vw, 26px) !important;
+  padding-bottom: 24px !important;
+}
+
+.project-media-area {
+  overflow: hidden;
+}
+
+.vertical-carousel {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.vertical-carousel-track {
+  gap: clamp(18px, 2.4vw, 34px) !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+.media-block {
+  flex-basis: clamp(240px, 30vw, 440px) !important;
+  height: min(58vh, 440px) !important;
+  min-height: 330px !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  background-color: transparent !important;
+}
+
+.media-block img,
+.media-block picture {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  border-radius: 18px !important;
+}
+
+.project-header {
+  background: rgba(244, 239, 232, .92) !important;
+  border-bottom: 1px solid rgba(111, 95, 78, .16) !important;
+}
+
+.site-header {
+  background: rgba(244, 239, 232, .92) !important;
+  border-bottom: 1px solid rgba(111, 95, 78, .16) !important;
+}
+
+@media (max-width: 760px) {
+  .home-view,
+  .project-strip {
+    min-height: calc(100dvh - 66px);
+    height: calc(100dvh - 66px);
+  }
+
+  .project-card {
+    flex-basis: 64vw !important;
+  }
+
+  .project-image {
+    height: min(62dvh, 430px) !important;
+  }
+
+  .media-block {
+    flex-basis: 82vw !important;
+    height: min(54dvh, 420px) !important;
+    min-height: 300px !important;
+  }
+}
+
   </style>
 </head>
 
@@ -3239,6 +3400,14 @@
     // ── 14. INICIALIZAÇÃO DO SITE ─────────────────────────
     renderHallCarousel();
     setupHallDrag();
+
+    projectTrack.addEventListener('click', (event) => {
+      const card = event.target.closest('.project-card');
+      if (!card) return;
+      if (card.dataset.wasDragged === 'true') return;
+      event.preventDefault();
+      openProject(card.dataset.project);
+    }, true);
     window.requestAnimationFrame(() => {
       projectTrack.scrollLeft = 1;
       startHallAutoCarousel();
