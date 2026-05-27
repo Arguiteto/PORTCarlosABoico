@@ -1313,6 +1313,166 @@
         flex-direction: column;
       }
     }
+  
+
+    /* Ajustes v9: topo centralizado, logo menor, contato organizado e carrossel fluido */
+    .site-header {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      justify-content: initial;
+      height: 68px;
+      padding-inline: var(--edge);
+    }
+
+    .site-header .logo {
+      justify-self: start;
+      width: clamp(34px, 3vw, 48px);
+      height: 28px;
+    }
+
+    .site-header .logo img {
+      width: 100%;
+      height: auto;
+      max-height: 28px;
+      object-fit: contain;
+    }
+
+    .top-actions {
+      grid-column: 2;
+      justify-self: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(24px, 4.2vw, 56px);
+      margin: 0;
+      text-align: center;
+    }
+
+    .top-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 0;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(12px, .95vw, 15px);
+      line-height: 1;
+      letter-spacing: 0;
+      text-transform: none;
+      white-space: nowrap;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+
+    .top-link:hover,
+    .top-link:focus-visible {
+      opacity: .6;
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .system-view[data-page="contato"] .system-shell {
+      padding-top: clamp(42px, 6vw, 82px);
+    }
+
+    .system-view[data-page="contato"] .system-title {
+      margin-bottom: clamp(24px, 4vw, 48px);
+    }
+
+    .system-view[data-page="contato"] .system-grid {
+      display: block;
+    }
+
+    .system-view[data-page="contato"] .system-copy {
+      max-width: 760px;
+      font-size: clamp(14px, 1.1vw, 17px);
+      line-height: 1.7;
+    }
+
+    .system-view[data-page="contato"] .system-cards {
+      margin-top: clamp(28px, 4vw, 48px);
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0;
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+    }
+
+    .system-view[data-page="contato"] .system-card {
+      min-height: 170px;
+      padding: clamp(18px, 2.2vw, 28px);
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .system-view[data-page="contato"] .system-card h3 {
+      font-size: clamp(25px, 3vw, 42px);
+    }
+
+    .system-view[data-page="contato"] .system-card p {
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .system-actions .button {
+      min-height: 42px;
+      padding-inline: 18px;
+      font-size: 12px;
+    }
+
+    @media (max-width: 760px) {
+      .site-header {
+        grid-template-columns: auto 1fr;
+        min-height: 66px;
+        gap: 16px;
+      }
+
+      .site-header .logo {
+        width: 40px;
+        height: 26px;
+      }
+
+      .top-actions {
+        grid-column: 2;
+        justify-self: end;
+        gap: 18px;
+      }
+
+      .top-link {
+        font-size: 12px;
+      }
+
+      .system-view[data-page="contato"] .system-cards {
+        grid-template-columns: 1fr;
+      }
+    }
+
+
+    /* Ajustes v10: aba Projeto e logo superior menor */
+    .site-header .logo {
+      width: clamp(34px, 3vw, 48px) !important;
+      height: 28px !important;
+    }
+
+    .site-header .logo img {
+      width: 100% !important;
+      height: auto !important;
+      max-height: 28px !important;
+      object-fit: contain;
+    }
+
+    @media (max-width: 760px) {
+      .site-header .logo {
+        width: 40px !important;
+        height: 26px !important;
+      }
+    }
+
   </style>
 </head>
 
@@ -1321,7 +1481,7 @@
     <a class="logo" href="#inicio" aria-label="Carlos A. Boico."><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8IS0tIENyZWF0b3I6IENvcmVsRFJBVyAtLT4NCjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWw6c3BhY2U9InByZXNlcnZlIiB3aWR0aD0iMTIuODU5OW1tIiBoZWlnaHQ9IjYuNzg4NW1tIiB2ZXJzaW9uPSIxLjEiIHN0eWxlPSJzaGFwZS1yZW5kZXJpbmc6Z2VvbWV0cmljUHJlY2lzaW9uOyB0ZXh0LXJlbmRlcmluZzpnZW9tZXRyaWNQcmVjaXNpb247IGltYWdlLXJlbmRlcmluZzpvcHRpbWl6ZVF1YWxpdHk7IGZpbGwtcnVsZTpldmVub2RkOyBjbGlwLXJ1bGU6ZXZlbm9kZCINCnZpZXdCb3g9IjAgMCAxMjg1Ljk4IDY3OC44NCINCiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayINCiB4bWxuczp4b2RtPSJodHRwOi8vd3d3LmNvcmVsLmNvbS9jb3JlbGRyYXcvb2RtLzIwMDMiPg0KIDxkZWZzPg0KICA8Zm9udCBpZD0iRm9udElEMCIgaG9yaXotYWR2LXg9IjcwMCIgZm9udC12YXJpYW50PSJub3JtYWwiIHN0eWxlPSJmaWxsLXJ1bGU6bm9uemVybyIgZm9udC1zdHlsZT0ibm9ybWFsIiBmb250LXdlaWdodD0iNjAwIj4NCgk8Zm9udC1mYWNlIA0KCQlmb250LWZhbWlseT0iRkxVUk8gU2VtaWJvbGQiPg0KCQk8Zm9udC1mYWNlLXNyYz4NCgkJCTxmb250LWZhY2UtbmFtZSBuYW1lPSJGTFVSTyBTZW1pYm9sZCIvPg0KCQk8L2ZvbnQtZmFjZS1zcmM+DQoJPC9mb250LWZhY2U+DQogICA8bWlzc2luZy1nbHlwaD48cGF0aCBkPSJNMCAweiIvPjwvbWlzc2luZy1nbHlwaD4NCiAgIDxnbHlwaCB1bmljb2RlPSIrIiBob3Jpei1hZHYteD0iNTYzIiBkPSJNMjM0Ljk5NiAwbDk0LjAwMjcgMCAwIDE1OC45OTYgMTgzLjAwNiAwIDAgODIuMDA4MiAtMTgzLjAwNiAwIDAgMTYwLjAwNCAtOTQuMDAyNyAwIDAgLTE2MC4wMDQgLTE4My4wMDYgMCAwIC04Mi4wMDgyIDE4My4wMDYgMCAwIC0xNTguOTk2eiIvPg0KICAgPGdseXBoIHVuaWNvZGU9IkIiIGhvcml6LWFkdi14PSI2MTAiIGQ9Ik01Mi4wMDM3IDBsMzIwLjk5OSAwYzMyLjk5OTksMCA2Mi45OTk4LDQuOTk2MDQgODguOTk1NywxMy45OTYgMjUuOTk2LDEwLjAwMzkgNDcuOTk5OCwyMi4wMDM5IDY1Ljk5OTcsMzguMDA3NyAxNy4wMDc4LDE1Ljk5MjEgMzEuMDAzOCwzMy45OTIgNDAuMDAzOCw1NC45OTE5IDguOTk5OTYsMjAuMDA3OCAxMy45OTYsNDEuMDA3NyAxMy45OTYsNjIuOTk5OCAwLDM1Ljk5OTkgLTEyLDY4LjAwNzYgLTM0Ljk5NTksOTQuMDAzNiAtMTQuOTk5OSwxNi4wMDM5IC0zNC4wMDM4LDI4Ljk5NTkgLTU2Ljk5OTgsMzcuOTk1OSAxNC45OTk5LDguOTk5OTYgMjguMDAzOCwyMC45OTk5IDM3Ljk5NTksMzQuMDAzOCAxNy45OTk5LDIyLjk5NiAyOC4wMDM4LDUwLjk5OTggMjguMDAzOCw4Mi45OTU3IDAsMjkuOTk5OSAtOC45OTk5Niw1Ni4wMDc3IC0yNS4wMDM4LDc3LjAwNzYgLTE1Ljk5MjEsMjAuOTk5OSAtMzUuOTk5OSwzNy4wMDM4IC01OC4wMDM3LDQ3Ljk5OTggLTEwLjk5Niw1Ljk5OTk4IC0yMy45OTk5LDEwLjAwMzkgLTM4Ljk5OTgsMTMuMDAzOSAtMTMuOTk2LDIuOTk5OTkgLTI4Ljk5NTksNC45OTYwNCAtNDQuOTk5OCw1Ljk5OTk4IC0xNS45OTIxLDAuOTkyMTIyIC0zMS45OTU5LDEuOTk2MDYgLTQ3Ljk5OTgsMi45OTk5OWwtNDIuOTkyIDAgLTI0NS45OTkgMCAwIC01NjYuMDA2em0yNjcuOTkxIDMzNy4wMDNsLTE0Ny45OTIgMCAwIDEzNS45OTIgMTQ3Ljk5MiAwYzE3Ljk5OTksMCAzNC4wMDM4LC0wLjk5MjEyMiA1MC4wMDc3LC0xLjk5NjA2IDEzLjk5NiwtMS45OTYwNiAyNS45OTYsLTQuOTk2MDQgMzUuOTk5OSwtMTAuMDAzOSA4Ljk5OTk2LC00Ljk5NjA0IDE2Ljk5NiwtMTAuOTk2IDIxLjk5MiwtMTguOTkyMSA1LjAwNzg1LC04Ljk5OTk2IDguMDA3ODQsLTIwLjk5OTkgOC4wMDc4NCwtMzcuMDAzOCAwLC0yMi45OTYgLTguMDA3ODQsLTM4Ljk5OTggLTIzLjk5OTksLTQ5Ljk5NTkgLTE3LjAwNzgsLTEyIC00Ny45OTk4LC0xNy45OTk5IC05Mi4wMDc1LC0xNy45OTk5em00My4wMDM4IC0yNDQuMDAzbC0xOTAuOTk1IDAgMCAxNTEuMDAzIDE3MS45OTEgMGMxNy4wMDc4LDAgMzIuOTk5OSwtMS4wMDM5MyA0Ny45OTk4LC00LjAwMzkyIDE0LjAwNzgsLTEuOTk2MDYgMjYuOTk5OSwtNS45OTk5OCAzOC4wMDc3LC0xMiA5Ljk5MjA5LC00Ljk5NjA0IDE2Ljk5NiwtMTIgMjMuOTk5OSwtMjIuMDAzOSA0Ljk5NjA0LC03Ljk5NjAzIDcuOTk2MDMsLTE5Ljk5NiA3Ljk5NjAzLC0zMy45OTIgMCwtMjUuMDAzOCAtNy45OTYwMywtNDQuMDA3NyAtMjUuMDAzOCwtNTguMDAzNyAtMTYuOTk2LC0xMy45OTYgLTQxLjk5OTgsLTIwLjk5OTkgLTczLjk5NTgsLTIwLjk5OTl6Ii8+DQogICA8Z2x5cGggdW5pY29kZT0iQyIgaG9yaXotYWR2LXg9IjY2NyIgZD0iTTU0Mi42NjcgNDMuOTk1OWM1MC4xNjEyLDM4Ljk5OTggODEuMTY1LDk4Ljk5OTYgOTAuMTY1LDE3Mi4wMDNsMS45OTYwNiAxNy45OTk5IC0xMjIuMTYxIDAgLTEuMDAzOTMgLTE0Ljk5OTljLTEuOTk2MDYsLTIyLjAwMzkgLTcuOTk2MDMsLTQzLjk5NTkgLTE0Ljk5OTksLTU5Ljk5OTggLTcuOTk2MDMsLTE2Ljk5NiAtMTguOTkyMSwtMzEuMDAzOCAtMzIuOTk5OSwtNDMuMDAzOCAtMTMuOTk2LC0xMi45OTIxIC0zMS45OTU5LC0yMS45OTIgLTUwLjk5OTgsLTI4Ljk5NTkgLTE5Ljk5NiwtNy4wMDM5MSAtNDIuODI2NiwtMTAuOTk2IC02OC44MzQ0LC0xMC45OTYgLTM0Ljk5NTksMCAtNjUuOTk5Nyw1Ljk5OTk4IC05MC45OTE4LDE2Ljk5NiAtMjUuMDAzOCwxMC45OTYgLTQ2LjAwMzgsMjUuMDAzOCAtNjIuMDA3Niw0My4wMDM4IC0xNS45OTIxLDE4Ljk5MjEgLTI3LjgyNjcsNDAuOTk1OSAtMzQuODMwNiw2NC45OTU4IC03Ljk5NjAzLDI1Ljk5NiAtMTIsNTIuOTk1OSAtMTIsODIuMDAzNiAwLDI1Ljk5NiA0LjAwMzkyLDUxLjk5MTkgMTAuOTk2LDc1Ljk5MTggOC4wMDc4NCwyMy45OTk5IDE5Ljg0MjQsNDQuOTk5OCAzNS44MzQ1LDYyLjk5OTggMTYuMDAzOSwxOS4wMDM5IDM3LjAwMzgsMzIuOTk5OSA2Mi4wMDc2LDQ0LjAwNzcgMjMuOTk5OSwxMC45OTYgNTQuOTkxOSwxNS45OTIxIDg5Ljk5OTYsMTUuOTkyMWwxLjk5NjA2IDBjMCwwIDEuMDAzOTMsMS4wMDM5MyA0LjAwMzkyLDEuMDAzOTMgMzIuOTk5OSwwIDE0Mi44MywtMTAuOTk2IDE2OS44MywtMTQyLjk5NmwyLjk5OTk5IC0xMy4wMDM5IDEyMS4xNjkgMCAtMi45OTk5OSAxOS4wMDM5Yy0zNS45OTk5LDIyMy4wMDMgLTI2NS4wMDMsMjI5LjAwMyAtMjkwLjk5OSwyMjkuMDAzbC01LjAwNzg1IDBjLTUwLjk5OTgsMCAtOTcuOTk1NywtOC4wMDc4NCAtMTM3Ljk5OSwtMjMuMDA3OCAtMzkuODI2NiwtMTUuOTkyMSAtNzMuODMwNCwtMzYuOTkyIC0xMDAuODMsLTY0LjAwMzcgLTI2Ljk5OTksLTI2Ljk5OTkgLTQ3Ljk5OTgsLTU4Ljk5NTggLTYxLjk5NTgsLTk0Ljk5NTcgLTE0LjAwNzgsLTM1Ljk5OTkgLTIwLjk5OTksLTc0Ljk5OTcgLTIwLjk5OTksLTExNS4wMDMgMCwtNDAuOTk1OSA2Ljk5MjEsLTc4Ljk5MTggMTguOTkyMSwtMTE0IDEzLjAwMzksLTM1Ljk5OTkgMzIuOTk5OSwtNjcuOTk1OCA1OS4wMDc2LC05My45OTE4IDI2Ljk5OTksLTI2Ljk5OTkgNTkuOTk5OCwtNDcuOTk5OCA5OS44MjY0LC02Mi45OTk4IDM4Ljk5OTgsLTE0Ljk5OTkgODUuMDAzNiwtMjMuMDA3OCAxMzcuMDA3LC0yMy4wMDc4IDg1LjgzMDQsMCAxNTUuODM0LDIwLjAwNzggMjA1LjgzLDU5Ljk5OTh6Ii8+DQogIDwvZm9udD4NCiAgPHN0eWxlIHR5cGU9InRleHQvY3NzIj4NCiAgIDwhW0NEQVRBWw0KICAgIEBmb250LWZhY2UgeyBmb250LWZhbWlseToiRkxVUk8gU2VtaWJvbGQiO2ZvbnQtdmFyaWFudDpub3JtYWw7Zm9udC1zdHlsZTpub3JtYWw7Zm9udC13ZWlnaHQ6NjAwO3NyYzp1cmwoIiNGb250SUQwIikgZm9ybWF0KHN2Zyl9DQogICAgLmZpbDAge2ZpbGw6IzM3MzQzNX0NCiAgICAuZm50MSB7Zm9udC13ZWlnaHQ6NjAwO2ZvbnQtc2l6ZTo0NzYuMDVweDtmb250LWZhbWlseTonRkxVUk8gU2VtaWJvbGQnfQ0KICAgIC5mbnQwIHtmb250LXdlaWdodDo2MDA7Zm9udC1zaXplOjg0Ni42NnB4O2ZvbnQtZmFtaWx5OidGTFVSTyBTZW1pYm9sZCd9DQogICBdXT4NCiAgPC9zdHlsZT4NCiA8L2RlZnM+DQogPGcgaWQ9IkNhbWFkYV94MDAyMF8xIj4NCiAgPG1ldGFkYXRhIGlkPSJDb3JlbENvcnBJRF8wQ29yZWwtTGF5ZXIiLz4NCiAgPHRleHQgeD0iLTE4LjYzIiB5PSI2NjUuMjkiICBjbGFzcz0iZmlsMCBmbnQwIj5DPC90ZXh0Pg0KICA8ZyB0cmFuc2Zvcm09Im1hdHJpeCgwLjg1MjAyMiAwLjUyMzUwNyAtMC41MjM1MDcgMC44NTIwMjIgOTQuNzY2NyAtNTIxLjcyNSkiPg0KICAgPHRleHQgeD0iNjQzIiB5PSIzMzkuNDMiICBjbGFzcz0iZmlsMCBmbnQxIj4rPC90ZXh0Pg0KICA8L2c+DQogIDx0ZXh0IHg9Ijc5My4yMiIgeT0iNjY1LjI5IiAgY2xhc3M9ImZpbDAgZm50MCI+QjwvdGV4dD4NCiA8L2c+DQo8L3N2Zz4NCg==" alt="Carlos A. Boico." /></a>
     <nav class="top-actions" aria-label="Informações do site">
       <a class="top-link" href="#sobre" data-system-page="sobre" aria-label="Abrir Sobre mim">Sobre mim</a>
-      <a class="top-link" href="#processo" data-system-page="processo" aria-label="Abrir Processo">Processo</a>
+      <a class="top-link" href="#processo" data-system-page="processo" aria-label="Abrir Projeto">Projeto</a>
       <a class="top-link" href="#contato" data-system-page="contato" aria-label="Abrir Contato">Contato</a>
     </nav>
   </header>
@@ -1333,7 +1493,7 @@
     </div>
     <nav class="menu-links" aria-label="Menu principal">
       <a href="#sobre" data-system-page="sobre">Sobre mim</a>
-      <a href="#processo" data-system-page="processo">Processo</a>
+      <a href="#processo" data-system-page="processo">Projeto</a>
       <a href="#contato" data-system-page="contato">Contato</a>
     </nav>
     <p class="menu-note">Portfólio digital de Carlos A. Boico. O hall apresenta os projetos e cada capa abre uma página interna com fotos, renders, informações do terreno e desenhos.</p>
@@ -1636,10 +1796,10 @@
         ]
       },
       processo: {
-        label: 'Processo',
-        title: 'Processo',
+        label: 'Projeto',
+        title: 'Projeto',
         copy: [
-          'A página de processo também fica fora do hall. O cliente pode acessá-la pelo menu sem descer a tela inicial.',
+          'A página de projeto também fica fora do hall. O cliente pode acessá-la pelo menu sem descer a tela inicial.',
           'Aqui você pode explicar as etapas de atendimento, levantamento, estudo preliminar, apresentação, executivo e entrega.'
         ],
         cards: [
@@ -1744,7 +1904,8 @@
     }
 
     function renderHallCarousel() {
-      projectTrack.innerHTML = projects.map((project) => `
+      const hallProjects = [...projects, ...projects];
+      projectTrack.innerHTML = hallProjects.map((project) => `
         <button class="project-card" type="button" data-project="${project.id}" aria-label="Abrir ${project.title}">
           <div class="project-image ${mediaClass(project)}" role="img" aria-label="Capa de ${project.title}" style="${mediaStyle(project)}"></div>
           <h2 class="project-title">${project.title}</h2>
@@ -1772,18 +1933,17 @@
       const maxScroll = projectTrack.scrollWidth - projectTrack.clientWidth;
       if (maxScroll <= 0) return;
 
-      const nearEnd = projectTrack.scrollLeft >= maxScroll - 12;
-      if (nearEnd) {
-        projectTrack.scrollTo({ left: 0, behavior: 'smooth' });
-        return;
-      }
+      const loopPoint = projectTrack.scrollWidth / 2;
+      projectTrack.scrollLeft += 0.75;
 
-      moveHallCarousel(1);
+      if (projectTrack.scrollLeft >= loopPoint) {
+        projectTrack.scrollLeft = 0;
+      }
     }
 
     function startHallAutoCarousel() {
       stopHallAutoCarousel();
-      hallAutoTimer = window.setInterval(nextHallSlide, 3200);
+      hallAutoTimer = window.setInterval(nextHallSlide, 16);
     }
 
     function stopHallAutoCarousel() {
@@ -1840,15 +2000,14 @@
         hallWheelTimer = window.setTimeout(restartHallAutoCarousel, 900);
       }, { passive: false });
 
-      projectTrack.addEventListener('mouseenter', stopHallAutoCarousel);
-      projectTrack.addEventListener('mouseleave', restartHallAutoCarousel);
-      projectTrack.addEventListener('focusin', stopHallAutoCarousel);
-      projectTrack.addEventListener('focusout', restartHallAutoCarousel);
+      // O carrossel continua girando quando o mouse está sobre ele;
+      // ele pausa apenas durante arraste ou rolagem manual.
     }
 
 
     function renderSystemPage(pageId) {
       const page = systemPages[pageId] || systemPages.sobre;
+      systemPage.dataset.page = pageId;
       systemLabel.textContent = page.label;
       systemTitle.textContent = page.title;
 
@@ -1863,25 +2022,13 @@
       const actionHtml = page.action ? `
         <div class="system-actions">
           <a class="button primary" href="https://wa.me/message/DAOAAENEEHYBA1" target="_blank" rel="noopener">Solicitar orçamento</a>
-          <a class="button" href="#inicio" data-go-home>Voltar ao hall</a>
         </div>
-      ` : `
-        <div class="system-actions">
-          <a class="button" href="#inicio" data-go-home>Voltar ao hall</a>
-        </div>
-      `;
+      ` : '';
 
       systemBody.innerHTML = `
         <div class="system-copy">${copyHtml}${actionHtml}</div>
         <div class="system-cards">${cardsHtml}</div>
       `;
-
-      systemBody.querySelectorAll('[data-go-home]').forEach((button) => {
-        button.addEventListener('click', (event) => {
-          event.preventDefault();
-          backHome();
-        });
-      });
     }
 
     function openSystemPage(pageId, replaceHash = false) {
