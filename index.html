@@ -2490,6 +2490,14 @@ body {
   }
 }
 
+
+
+/* ── AJUSTE V14: carrossel interno em movimento contínuo ── */
+.project-view .vertical-carousel-track.is-auto-scrolling {
+  scroll-snap-type: none !important;
+  scroll-behavior: auto !important;
+}
+
 </style>
 </head>
 
@@ -3326,28 +3334,47 @@ body {
       });
     }
 
-    function tickProjectCarousel() {
-      if (!projectPage.classList.contains('is-active') || projectAutoPaused || currentProject.images.length <= 1) return;
-
+    function syncProjectDotFromScroll() {
       const step = getProjectCarouselStep();
-      const loopPoint = projectPhotoTrack.scrollWidth / 2;
-      if (!step || loopPoint <= projectPhotoTrack.clientWidth) return;
-
-      currentPhotoIndex = (currentPhotoIndex + 1) % currentProject.images.length;
-      updateProjectDotsOnly();
-
-      if (projectPhotoTrack.scrollLeft + step >= loopPoint - 2) {
-        projectPhotoTrack.scrollTo({ left: 0, behavior: 'auto' });
-      } else {
-        projectPhotoTrack.scrollBy({ left: step, behavior: 'smooth' });
+      if (!step || currentProject.images.length <= 1) return;
+      const nextIndex = Math.round(projectPhotoTrack.scrollLeft / step) % currentProject.images.length;
+      if (nextIndex !== currentPhotoIndex) {
+        currentPhotoIndex = nextIndex;
+        updateProjectDotsOnly();
       }
+    }
+
+    function animateProjectCarousel(timestamp) {
+      if (!projectPage.classList.contains('is-active') || projectAutoPaused || currentProject.images.length <= 1) {
+        autoScrollFrame = null;
+        return;
+      }
+
+      const loopPoint = projectPhotoTrack.scrollWidth / 2;
+      if (loopPoint > projectPhotoTrack.clientWidth) {
+        if (!window.__projectLastAutoTs) window.__projectLastAutoTs = timestamp;
+        const delta = Math.min(timestamp - window.__projectLastAutoTs, 34);
+        window.__projectLastAutoTs = timestamp;
+
+        projectPhotoTrack.scrollLeft += delta * 0.045;
+
+        if (projectPhotoTrack.scrollLeft >= loopPoint) {
+          projectPhotoTrack.scrollLeft -= loopPoint;
+        }
+
+        syncProjectDotFromScroll();
+      }
+
+      autoScrollFrame = window.requestAnimationFrame(animateProjectCarousel);
     }
 
     function startAutoCarousel() {
       stopAutoCarousel();
       projectAutoPaused = false;
+      window.__projectLastAutoTs = 0;
       if (currentProject.images.length > 1) {
-        autoTimer = window.setInterval(tickProjectCarousel, 2600);
+        projectPhotoTrack.classList.add('is-auto-scrolling');
+        autoScrollFrame = window.requestAnimationFrame(animateProjectCarousel);
       }
     }
 
@@ -3356,6 +3383,7 @@ body {
       autoTimer = null;
       if (autoScrollFrame) window.cancelAnimationFrame(autoScrollFrame);
       autoScrollFrame = null;
+      window.__projectLastAutoTs = 0;
       projectPhotoTrack.classList.remove('is-auto-scrolling');
     }
 
@@ -3533,6 +3561,8 @@ body {
       window.clearTimeout(hallWheelTimer);
       hallWheelTimer = window.setTimeout(restartAutoCarousel, 900);
     }, { passive: true });
+
+    projectPhotoTrack.addEventListener('scroll', syncProjectDotFromScroll, { passive: true });
 
     if (closeProjectPage) closeProjectPage.addEventListener('click', backHome);
 
