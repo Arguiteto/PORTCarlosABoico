@@ -1,176 +1,784 @@
 <!doctype html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Portfólio minimalista em tons de roxo, pronto para GitHub Pages." />
-    <meta name="theme-color" content="#1a0b2e" />
-    <title>Eder Ramalho | Portfólio</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <div class="page-glow page-glow-one"></div>
-    <div class="page-glow page-glow-two"></div>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Carlos A. Boico. — Portfólio</title>
+  <meta name="description" content="Portfólio digital de Carlos A. Boico." />
+  <style>
+    :root {
+      --bg: #f7f2ec;
+      --paper: #fbf8f4;
+      --text: #171217;
+      --muted: #6e6372;
+      --purple: #6d28d9;
+      --purple-dark: #2e1065;
+      --purple-soft: #ddd6fe;
+      --purple-pale: #f1eaff;
+      --line: rgba(46, 16, 101, .16);
+      --shadow: 0 18px 55px rgba(46, 16, 101, .10);
+      --radius: 26px;
+    }
 
-    <header class="site-header" id="topo">
-      <a class="brand" href="#topo" aria-label="Voltar para o início">
-        <span class="brand-mark">ER</span>
-        <span class="brand-name">Eder Ramalho</span>
-      </a>
+    * { box-sizing: border-box; }
 
-      <button class="menu-button" type="button" aria-label="Abrir menu" aria-expanded="false">
-        <span></span>
-        <span></span>
-      </button>
+    html {
+      scroll-behavior: smooth;
+    }
 
-      <nav class="site-nav" aria-label="Navegação principal">
-        <a href="#projetos">Projetos</a>
-        <a href="#sobre">Sobre</a>
-        <a href="#processo">Processo</a>
-        <a href="#contato">Contato</a>
-      </nav>
-    </header>
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--text);
+      background: var(--bg);
+      overflow-x: hidden;
+    }
 
-    <main>
-      <section class="hero section-space" aria-labelledby="hero-title">
-        <div class="hero-copy">
-          <p class="eyebrow">Portfólio digital</p>
-          <h1 id="hero-title">Projetos com presença, estratégia e visual minimalista.</h1>
-          <p class="hero-text">
-            Uma base simples para apresentar trabalhos, serviços e estudos de caso. Troque os textos,
-            imagens e cards quando quiser atualizar com seus projetos reais.
-          </p>
-          <div class="hero-actions">
-            <a class="button button-primary" href="#projetos">Ver projetos</a>
-            <a class="button button-secondary" href="https://wa.me/message/DAOAAENEEHYBA1" target="_blank" rel="noopener noreferrer">Chamar no WhatsApp</a>
-          </div>
-        </div>
+    a { color: inherit; text-decoration: none; }
 
-        <aside class="hero-panel" aria-label="Resumo do portfólio">
-          <div class="panel-topline"></div>
-          <div>
-            <p class="panel-label">Disponível para</p>
-            <h2>Novos trabalhos</h2>
-          </div>
-          <div class="panel-grid">
-            <div>
-              <strong>03</strong>
-              <span>Áreas em destaque</span>
-            </div>
-            <div>
-              <strong>08+</strong>
-              <span>Espaços editáveis</span>
-            </div>
-          </div>
-          <p class="panel-note">Design responsivo, rápido e pronto para publicar no GitHub Pages.</p>
-        </aside>
-      </section>
+    button, input, textarea {
+      font: inherit;
+    }
 
-      <section class="section-space intro-strip" aria-label="Especialidades">
-        <span>Identidade visual</span>
-        <span>Landing pages</span>
-        <span>Portfólio</span>
-        <span>Conteúdo digital</span>
-      </section>
+    .site-header {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      background: rgba(247, 242, 236, .86);
+      backdrop-filter: blur(18px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(46, 16, 101, .06);
+    }
 
-      <section class="projects section-space" id="projetos" aria-labelledby="projects-title">
-        <div class="section-heading">
-          <p class="eyebrow">Projetos</p>
-          <h2 id="projects-title">Trabalhos em destaque</h2>
-          <p>Substitua os cards abaixo por fotos, links e descrições dos seus projetos.</p>
-        </div>
+    .logo {
+      width: 52px;
+      height: 52px;
+      border: 1.4px solid var(--text);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      letter-spacing: -5px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 20px;
+      line-height: 1;
+      background: rgba(255, 255, 255, .16);
+    }
 
-        <div class="project-grid">
-          <article class="project-card featured-card">
-            <div class="project-visual visual-one"></div>
-            <div class="project-content">
-              <span>Projeto 01</span>
-              <h3>Landing page institucional</h3>
-              <p>Espaço para explicar objetivo, resultado e tecnologias usadas.</p>
-              <a href="#contato">Ver detalhes</a>
-            </div>
+    .menu-button {
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      font-size: clamp(16px, 1.6vw, 22px);
+      padding: 8px 0 8px 18px;
+    }
+
+    .menu-panel {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      background: var(--purple-dark);
+      color: var(--paper);
+      transform: translateY(-101%);
+      transition: transform .55s cubic-bezier(.76, 0, .24, 1);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .menu-panel.is-open {
+      transform: translateY(0);
+    }
+
+    .menu-panel__top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .menu-panel .logo {
+      border-color: var(--paper);
+      color: var(--paper);
+    }
+
+    .close-menu {
+      background: transparent;
+      color: var(--paper);
+      border: 0;
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    .menu-links {
+      display: grid;
+      gap: 10px;
+      margin: 10vh 0;
+    }
+
+    .menu-links a {
+      font-size: clamp(42px, 8vw, 112px);
+      line-height: .94;
+      letter-spacing: -0.06em;
+      border-bottom: 1px solid rgba(255, 255, 255, .18);
+      padding-bottom: 12px;
+    }
+
+    .menu-note {
+      max-width: 640px;
+      color: rgba(255, 255, 255, .72);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .project-strip {
+      padding: 0 0 24px;
+      overflow: hidden;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .carousel-shell {
+      position: relative;
+    }
+
+    .project-track {
+      display: flex;
+      gap: 30px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      padding: 0 28px 10px;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .project-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .project-track.is-dragging {
+      cursor: grabbing;
+      scroll-snap-type: none;
+    }
+
+    .project-card {
+      flex: 0 0 min(346px, 74vw);
+      scroll-snap-align: start;
+    }
+
+    .project-image {
+      height: 460px;
+      border-radius: 0;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(46, 16, 101, .18), rgba(255,255,255,.36));
+      filter: grayscale(.82) contrast(.9) brightness(1.03);
+      isolation: isolate;
+    }
+
+    .project-image::before,
+    .project-image::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+    }
+
+    .project-image::before {
+      background: var(--art, linear-gradient(135deg, rgba(46, 16, 101, .18), rgba(255,255,255,.36)));
+      z-index: -2;
+    }
+
+    .project-image::after {
+      background: linear-gradient(180deg, rgba(46,16,101,.04), rgba(46,16,101,.18));
+      mix-blend-mode: multiply;
+      z-index: -1;
+    }
+
+    .art-1 { --art: linear-gradient(90deg, rgba(23,18,23,.14) 0 18%, transparent 18% 24%, rgba(23,18,23,.1) 24% 42%, transparent 42%), linear-gradient(135deg, #d7d1c9, #f6f2ec 52%, #b7abbc); }
+    .art-2 { --art: linear-gradient(90deg, transparent 0 16%, rgba(255,255,255,.48) 16% 26%, transparent 26% 46%, rgba(46,16,101,.15) 46% 58%, transparent 58%), linear-gradient(180deg, #d7d3cd, #f7f2ec 42%, #c2bbc7); }
+    .art-3 { --art: radial-gradient(circle at 18% 20%, rgba(255,255,255,.92) 0 9%, transparent 10%), linear-gradient(90deg, rgba(46,16,101,.14) 0 2px, transparent 2px 80px), linear-gradient(160deg, #dbe0db, #f5f1ea 48%, #b8afbc); }
+    .art-4 { --art: radial-gradient(circle at 82% 18%, rgba(46,16,101,.22) 0 12%, transparent 13%), linear-gradient(110deg, transparent 0 43%, rgba(255,255,255,.76) 43% 70%, transparent 70%), linear-gradient(180deg, #d0d0c9, #f3eee8 60%, #b4a9bc); }
+    .art-5 { --art: linear-gradient(90deg, rgba(23,18,23,.11) 0 18%, transparent 18% 29%, rgba(46,16,101,.14) 29% 52%, transparent 52%), repeating-linear-gradient(0deg, #dad5cf 0 22px, #f7f2ec 22px 44px); }
+    .art-6 { --art: linear-gradient(140deg, rgba(255,255,255,.72) 0 28%, transparent 28% 44%, rgba(46,16,101,.16) 44% 72%, transparent 72%), linear-gradient(180deg, #cac6c0, #f7f2ec 50%, #b5acbd); }
+
+    .project-title {
+      margin: 12px 0 0;
+      font-size: 16px;
+      line-height: 1.25;
+      color: #302834;
+    }
+
+    .project-meta {
+      margin: 5px 0 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--muted);
+    }
+
+    .carousel-controls {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 4px 28px 0;
+    }
+
+    .carousel-controls button {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--purple-dark);
+      cursor: pointer;
+      transition: transform .2s ease, background .2s ease;
+    }
+
+    .carousel-controls button:hover {
+      background: var(--purple-pale);
+      transform: translateY(-2px);
+    }
+
+    .hero {
+      min-height: 70vh;
+      padding: clamp(44px, 7vw, 110px) 28px;
+      display: grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap: clamp(32px, 8vw, 120px);
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: Arial, Helvetica, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: 11px;
+      color: var(--purple);
+      margin: 0 0 18px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 26px;
+      height: 1px;
+      background: var(--purple);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(52px, 10vw, 142px);
+      line-height: .86;
+      letter-spacing: -0.08em;
+      font-weight: 400;
+      max-width: 980px;
+    }
+
+    .hero-text {
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--muted);
+      font-size: clamp(15px, 1.4vw, 19px);
+      line-height: 1.75;
+      max-width: 520px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid var(--purple-dark);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 13px;
+      transition: transform .2s ease, background .2s ease, color .2s ease;
+    }
+
+    .button.primary {
+      background: var(--purple-dark);
+      color: var(--paper);
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+      background: var(--purple);
+      border-color: var(--purple);
+      color: var(--paper);
+    }
+
+    section {
+      padding: clamp(48px, 8vw, 110px) 28px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 34px;
+    }
+
+    .section-label {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--purple);
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 8px 0 0;
+      font-size: clamp(36px, 5.5vw, 82px);
+      line-height: .92;
+      letter-spacing: -0.06em;
+      font-weight: 400;
+    }
+
+    .small-copy {
+      margin: 0;
+      max-width: 420px;
+      color: var(--muted);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+    }
+
+    .info-card {
+      min-height: 230px;
+      padding: 24px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, .22);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .info-card span {
+      color: var(--purple);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .info-card h3 {
+      margin: 18px 0 0;
+      font-size: 25px;
+      font-weight: 400;
+      letter-spacing: -0.04em;
+    }
+
+    .info-card p {
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .about {
+      display: grid;
+      grid-template-columns: .95fr 1.05fr;
+      gap: clamp(32px, 8vw, 100px);
+      align-items: start;
+    }
+
+    .about-mark {
+      min-height: 420px;
+      border-radius: var(--radius);
+      background: radial-gradient(circle at 30% 24%, rgba(167, 139, 250, .42), transparent 24%), linear-gradient(135deg, var(--purple-dark), var(--purple), #a78bfa);
+      color: var(--paper);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
+    }
+
+    .about-mark strong {
+      font-size: clamp(48px, 8vw, 100px);
+      line-height: .86;
+      letter-spacing: -0.08em;
+      font-weight: 400;
+    }
+
+    .about-copy p {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(16px, 1.6vw, 21px);
+      line-height: 1.75;
+    }
+
+    .contact {
+      min-height: 60vh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      background: var(--purple-dark);
+      color: var(--paper);
+    }
+
+    .contact h2 {
+      max-width: 900px;
+    }
+
+    .contact p {
+      margin: 22px auto 0;
+      max-width: 560px;
+      color: rgba(255, 255, 255, .72);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.75;
+    }
+
+    .contact .button {
+      margin-top: 28px;
+      border-color: rgba(255, 255, 255, .55);
+      color: var(--paper);
+    }
+
+    .contact .button:hover {
+      background: var(--paper);
+      color: var(--purple-dark);
+      border-color: var(--paper);
+    }
+
+    .whatsapp-float {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 30;
+      min-height: 46px;
+      padding: 0 16px;
+      border-radius: 999px;
+      background: var(--purple-dark);
+      color: var(--paper);
+      border: 1px solid rgba(255, 255, 255, .2);
+      box-shadow: 0 16px 40px rgba(46, 16, 101, .25);
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 13px;
+      letter-spacing: .01em;
+    }
+
+    .whatsapp-float::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #a7f3d0;
+      box-shadow: 0 0 0 6px rgba(167, 243, 208, .12);
+    }
+
+    footer {
+      padding: 24px 28px 88px;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      color: var(--muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .about {
+        grid-template-columns: 1fr;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .project-image {
+        height: 390px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .site-header {
+        height: 64px;
+      }
+
+      .logo {
+        width: 46px;
+        height: 46px;
+        font-size: 18px;
+      }
+
+      .project-track {
+        gap: 18px;
+        padding: 0 18px 10px;
+      }
+
+      .project-card {
+        flex-basis: 78vw;
+      }
+
+      .project-image {
+        height: 360px;
+      }
+
+      .carousel-controls {
+        padding-inline: 18px;
+      }
+
+      .hero,
+      section {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      footer {
+        flex-direction: column;
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="logo" href="#inicio" aria-label="Carlos A. Boico.">CB</a>
+    <button class="menu-button" type="button" aria-label="Abrir menu">Menu</button>
+  </header>
+
+  <div class="menu-panel" aria-hidden="true">
+    <div class="menu-panel__top">
+      <a class="logo" href="#inicio" aria-label="Carlos A. Boico.">CB</a>
+      <button class="close-menu" type="button" aria-label="Fechar menu">Fechar</button>
+    </div>
+    <nav class="menu-links" aria-label="Menu principal">
+      <a href="#projetos">Projetos</a>
+      <a href="#sobre">Sobre</a>
+      <a href="#processo">Processo</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <p class="menu-note">Portfólio digital de Carlos A. Boico. Estrutura inicial pronta para você trocar imagens, textos e links dos seus projetos.</p>
+  </div>
+
+  <main id="inicio">
+    <section class="project-strip" id="projetos" aria-label="Carrossel de projetos">
+      <div class="carousel-shell">
+        <div class="project-track" id="projectTrack">
+          <article class="project-card">
+            <div class="project-image art-1" role="img" aria-label="Imagem placeholder do Projeto 01"></div>
+            <h2 class="project-title">Projeto 01</h2>
+            <p class="project-meta">Identidade visual</p>
           </article>
 
           <article class="project-card">
-            <div class="project-visual visual-two"></div>
-            <div class="project-content">
-              <span>Projeto 02</span>
-              <h3>Identidade para marca</h3>
-              <p>Use este card para mostrar branding, arte, social media ou campanha.</p>
-              <a href="#contato">Ver detalhes</a>
-            </div>
+            <div class="project-image art-2" role="img" aria-label="Imagem placeholder do Projeto 02"></div>
+            <h2 class="project-title">Projeto 02</h2>
+            <p class="project-meta">Landing page</p>
           </article>
 
           <article class="project-card">
-            <div class="project-visual visual-three"></div>
-            <div class="project-content">
-              <span>Projeto 03</span>
-              <h3>Experiência digital</h3>
-              <p>Área para destacar interface, automação, sistema ou estudo de caso.</p>
-              <a href="#contato">Ver detalhes</a>
-            </div>
+            <div class="project-image art-3" role="img" aria-label="Imagem placeholder do Projeto 03"></div>
+            <h2 class="project-title">Projeto 03</h2>
+            <p class="project-meta">Portfólio</p>
+          </article>
+
+          <article class="project-card">
+            <div class="project-image art-4" role="img" aria-label="Imagem placeholder do Projeto 04"></div>
+            <h2 class="project-title">Projeto 04</h2>
+            <p class="project-meta">Conteúdo digital</p>
+          </article>
+
+          <article class="project-card">
+            <div class="project-image art-5" role="img" aria-label="Imagem placeholder do Projeto 05"></div>
+            <h2 class="project-title">Projeto 05</h2>
+            <p class="project-meta">Social media</p>
+          </article>
+
+          <article class="project-card">
+            <div class="project-image art-6" role="img" aria-label="Imagem placeholder do Projeto 06"></div>
+            <h2 class="project-title">Projeto 06</h2>
+            <p class="project-meta">Estudo de caso</p>
           </article>
         </div>
-      </section>
+        <div class="carousel-controls" aria-label="Controles do carrossel">
+          <button type="button" id="prevProject" aria-label="Projeto anterior">←</button>
+          <button type="button" id="nextProject" aria-label="Próximo projeto">→</button>
+        </div>
+      </div>
+    </section>
 
-      <section class="about section-space purple-block" id="sobre" aria-labelledby="about-title">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Portfólio digital</p>
+        <h1>Carlos A. Boico.</h1>
+      </div>
+      <div>
+        <p class="hero-text">Uma base visual minimalista para apresentar projetos, serviços e estudos de caso. O layout já vem com carrossel horizontal, menu limpo, áreas em roxo e contato direto pelo WhatsApp.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#projetos">Ver projetos</a>
+          <a class="button" href="https://wa.me/message/DAOAAENEEHYBA1" target="_blank" rel="noopener">Chamar no WhatsApp</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="processo">
+      <div class="section-head">
         <div>
-          <p class="eyebrow">Sobre</p>
-          <h2 id="about-title">Um portfólio direto, elegante e fácil de manter.</h2>
+          <p class="section-label">Processo</p>
+          <h2>Simples, direto e editável.</h2>
         </div>
-        <p>
-          Este espaço pode receber sua bio, sua área de atuação e o tipo de cliente ou projeto que você procura.
-          A estrutura já está preparada para crescer: você pode adicionar galerias, depoimentos, páginas internas ou links externos.
-        </p>
-      </section>
+        <p class="small-copy">Troque os nomes dos projetos, substitua as imagens e atualize as descrições conforme seus trabalhos forem entrando no portfólio.</p>
+      </div>
 
-      <section class="process section-space" id="processo" aria-labelledby="process-title">
-        <div class="section-heading">
-          <p class="eyebrow">Processo</p>
-          <h2 id="process-title">Como apresentar seus trabalhos</h2>
-        </div>
+      <div class="info-grid">
+        <article class="info-card">
+          <span>01</span>
+          <div>
+            <h3>Apresentação</h3>
+            <p>Use a abertura para posicionar seu nome e deixar claro o tipo de trabalho que você entrega.</p>
+          </div>
+        </article>
+        <article class="info-card">
+          <span>02</span>
+          <div>
+            <h3>Projetos</h3>
+            <p>O carrossel foi pensado para fotos, capas, mockups ou prints dos seus trabalhos.</p>
+          </div>
+        </article>
+        <article class="info-card">
+          <span>03</span>
+          <div>
+            <h3>Contato</h3>
+            <p>O botão de WhatsApp fica sempre disponível, sem ocupar muito espaço na tela.</p>
+          </div>
+        </article>
+      </div>
+    </section>
 
-        <div class="steps-grid">
-          <article>
-            <span>01</span>
-            <h3>Contexto</h3>
-            <p>Explique o problema, o objetivo e o público do projeto.</p>
-          </article>
-          <article>
-            <span>02</span>
-            <h3>Solução</h3>
-            <p>Mostre sua ideia, ferramentas usadas e escolhas de design.</p>
-          </article>
-          <article>
-            <span>03</span>
-            <h3>Resultado</h3>
-            <p>Inclua números, aprendizados, imagens e links de demonstração.</p>
-          </article>
-        </div>
-      </section>
+    <section class="about" id="sobre">
+      <div class="about-mark">
+        <span class="eyebrow" style="color:rgba(255,255,255,.8)">Sobre</span>
+        <strong>CB</strong>
+      </div>
+      <div class="about-copy">
+        <p>Este espaço é para uma apresentação curta sobre Carlos A. Boico: área de atuação, estilo de trabalho, diferenciais e o tipo de projeto que deseja atrair.</p>
+        <p>Você pode substituir este texto por uma bio profissional, colocar resultados, ferramentas que domina ou um resumo do seu processo.</p>
+        <a class="button primary" href="https://wa.me/message/DAOAAENEEHYBA1" target="_blank" rel="noopener">Conversar sobre um projeto</a>
+      </div>
+    </section>
 
-      <section class="contact section-space" id="contato" aria-labelledby="contact-title">
-        <div class="contact-card">
-          <p class="eyebrow">Contato</p>
-          <h2 id="contact-title">Vamos conversar sobre o próximo projeto?</h2>
-          <p>Use este bloco para receber clientes, recrutadores ou pessoas interessadas no seu trabalho.</p>
-          <a class="button button-primary" href="https://wa.me/message/DAOAAENEEHYBA1" target="_blank" rel="noopener noreferrer">Falar no WhatsApp</a>
-        </div>
-      </section>
-    </main>
+    <section class="contact" id="contato">
+      <div>
+        <p class="section-label" style="color:#c4b5fd">Contato</p>
+        <h2>Vamos construir o próximo projeto?</h2>
+        <p>Entre em contato pelo WhatsApp para falar sobre orçamento, parceria ou novas ideias para o portfólio.</p>
+        <a class="button" href="https://wa.me/message/DAOAAENEEHYBA1" target="_blank" rel="noopener">Abrir WhatsApp</a>
+      </div>
+    </section>
+  </main>
 
-    <footer class="site-footer">
-      <p>© <span id="year"></span> Eder Ramalho. Todos os direitos reservados.</p>
-      <a href="#topo">Voltar ao topo</a>
-    </footer>
+  <a class="whatsapp-float" href="https://wa.me/message/DAOAAENEEHYBA1" target="_blank" rel="noopener" aria-label="Contato pelo WhatsApp">WhatsApp</a>
 
-    <a class="whatsapp-float" href="https://wa.me/message/DAOAAENEEHYBA1" target="_blank" rel="noopener noreferrer" aria-label="Entrar em contato pelo WhatsApp">
-      <span>WhatsApp</span>
-    </a>
+  <footer>
+    <span>© <span id="year"></span> Carlos A. Boico.</span>
+    <span>Portfólio digital — pronto para GitHub Pages</span>
+  </footer>
 
-    <script src="script.js"></script>
-  </body>
+  <script>
+    const menuButton = document.querySelector('.menu-button');
+    const closeButton = document.querySelector('.close-menu');
+    const menuPanel = document.querySelector('.menu-panel');
+    const menuLinks = document.querySelectorAll('.menu-links a');
+
+    function openMenu() {
+      menuPanel.classList.add('is-open');
+      menuPanel.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+      menuPanel.classList.remove('is-open');
+      menuPanel.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    menuButton.addEventListener('click', openMenu);
+    closeButton.addEventListener('click', closeMenu);
+    menuLinks.forEach(link => link.addEventListener('click', closeMenu));
+
+    const track = document.getElementById('projectTrack');
+    const prev = document.getElementById('prevProject');
+    const next = document.getElementById('nextProject');
+
+    function moveCarousel(direction) {
+      const card = track.querySelector('.project-card');
+      const gap = 30;
+      const amount = card.offsetWidth + gap;
+      track.scrollBy({ left: direction * amount, behavior: 'smooth' });
+    }
+
+    prev.addEventListener('click', () => moveCarousel(-1));
+    next.addEventListener('click', () => moveCarousel(1));
+
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
+    track.addEventListener('pointerdown', (event) => {
+      isDown = true;
+      track.classList.add('is-dragging');
+      startX = event.pageX - track.offsetLeft;
+      scrollLeft = track.scrollLeft;
+      track.setPointerCapture(event.pointerId);
+    });
+
+    track.addEventListener('pointermove', (event) => {
+      if (!isDown) return;
+      event.preventDefault();
+      const x = event.pageX - track.offsetLeft;
+      const walk = (x - startX) * 1.3;
+      track.scrollLeft = scrollLeft - walk;
+    });
+
+    function stopDragging() {
+      isDown = false;
+      track.classList.remove('is-dragging');
+    }
+
+    track.addEventListener('pointerup', stopDragging);
+    track.addEventListener('pointerleave', stopDragging);
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
 </html>
