@@ -63,26 +63,77 @@
     }
 
     .logo {
-      width: 52px;
+      width: clamp(76px, 7vw, 112px);
       height: 52px;
-      border: 1.4px solid var(--text);
-      border-radius: 50%;
+      border: 0;
+      border-radius: 0;
       display: grid;
       place-items: center;
-      letter-spacing: -5px;
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 20px;
       line-height: 1;
-      background: rgba(255, 255, 255, .16);
+      background: transparent;
+      flex: 0 0 auto;
+      overflow: visible;
+    }
+
+    .logo img {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .menu-button { display: none; }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: clamp(12px, 2.4vw, 34px);
+      margin-left: auto;
+    }
+
+    .top-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(12px, 1vw, 14px);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 10px 0;
+      cursor: pointer;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+
+    .top-icon:hover,
+    .top-icon:focus-visible {
+      opacity: .62;
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .icon-mark {
+      width: 21px;
+      height: 21px;
+      display: inline-grid;
+      place-items: center;
+      color: var(--text);
       flex: 0 0 auto;
     }
 
-    .menu-button {
-      background: transparent;
-      border: 0;
-      cursor: pointer;
-      font-size: clamp(16px, 1.6vw, 22px);
-      padding: 8px 0 8px 18px;
+    .icon-mark svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.35;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .menu-panel {
@@ -107,9 +158,10 @@
       align-items: center;
     }
 
-    .menu-panel .logo {
-      border-color: var(--paper);
-      color: var(--paper);
+    .menu-panel .logo { color: var(--paper); }
+
+    .menu-panel .logo img {
+      filter: invert(1);
     }
 
     .close-menu {
@@ -135,11 +187,7 @@
     }
 
     .menu-note {
-      max-width: 640px;
-      color: rgba(255, 255, 255, .72);
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 14px;
-      line-height: 1.7;
+      display: none;
     }
 
     .home-view.is-hidden { display: none; }
@@ -1020,6 +1068,95 @@
       box-shadow: var(--shadow);
     }
 
+
+
+    .system-view {
+      display: none;
+      min-height: calc(100vh - 70px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .system-view.is-active {
+      display: block;
+    }
+
+    .system-shell {
+      width: min(100%, var(--content-width));
+      margin-inline: auto;
+      padding: clamp(48px, 8vw, 118px) var(--edge);
+    }
+
+    .system-title {
+      margin: 8px 0 clamp(34px, 6vw, 76px);
+      font-size: clamp(72px, 13vw, 184px);
+      line-height: .82;
+      letter-spacing: -0.085em;
+      font-weight: 400;
+    }
+
+    .system-grid {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: clamp(30px, 7vw, 96px);
+      align-items: start;
+    }
+
+    .system-copy {
+      color: var(--muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(16px, 1.45vw, 20px);
+      line-height: 1.75;
+    }
+
+    .system-copy p {
+      margin: 0 0 20px;
+    }
+
+    .system-cards {
+      display: grid;
+      gap: 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .system-card {
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .system-card span {
+      display: block;
+      margin-bottom: 12px;
+      color: var(--purple);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .system-card h3 {
+      margin: 0;
+      font-size: clamp(26px, 3.2vw, 46px);
+      line-height: .96;
+      letter-spacing: -0.055em;
+      font-weight: 400;
+    }
+
+    .system-card p {
+      margin: 14px 0 0;
+      max-width: 620px;
+      color: var(--muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .system-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+    }
+
     .whatsapp-float {
       position: fixed;
       right: 18px;
@@ -1028,10 +1165,10 @@
       min-height: 46px;
       padding: 0 16px;
       border-radius: 999px;
-      background: var(--purple-dark);
-      color: var(--paper);
-      border: 1px solid rgba(255, 255, 255, .2);
-      box-shadow: 0 16px 40px rgba(46, 16, 101, .25);
+      background: rgba(251, 248, 244, .96);
+      color: var(--text);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
       display: inline-flex;
       align-items: center;
       gap: 9px;
@@ -1045,8 +1182,8 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #a7f3d0;
-      box-shadow: 0 0 0 6px rgba(167, 243, 208, .12);
+      background: var(--text);
+      box-shadow: 0 0 0 6px rgba(23, 18, 23, .08);
     }
 
     footer {
@@ -1095,6 +1232,10 @@
       .drawings-grid {
         grid-template-columns: 1fr;
       }
+
+      .system-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     @media (max-width: 660px) {
@@ -1103,10 +1244,22 @@
         min-height: 64px;
       }
 
+      .site-header {
+        height: auto;
+        min-height: 86px;
+        flex-wrap: wrap;
+        align-content: center;
+        gap: 4px 18px;
+        padding-block: 8px;
+      }
+
       .logo {
         width: 46px;
         height: 46px;
-        font-size: 18px;
+      }
+
+      .logo img {
+        width: 32px;
       }
 
       .project-card {
@@ -1165,20 +1318,23 @@
 
 <body>
   <header class="site-header home-header">
-    <a class="logo" href="#inicio" aria-label="Carlos A. Boico.">CB</a>
-    <button class="menu-button" type="button" aria-label="Abrir menu">Menu</button>
+    <a class="logo" href="#inicio" aria-label="Carlos A. Boico."><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8IS0tIENyZWF0b3I6IENvcmVsRFJBVyAtLT4NCjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWw6c3BhY2U9InByZXNlcnZlIiB3aWR0aD0iMTIuODU5OW1tIiBoZWlnaHQ9IjYuNzg4NW1tIiB2ZXJzaW9uPSIxLjEiIHN0eWxlPSJzaGFwZS1yZW5kZXJpbmc6Z2VvbWV0cmljUHJlY2lzaW9uOyB0ZXh0LXJlbmRlcmluZzpnZW9tZXRyaWNQcmVjaXNpb247IGltYWdlLXJlbmRlcmluZzpvcHRpbWl6ZVF1YWxpdHk7IGZpbGwtcnVsZTpldmVub2RkOyBjbGlwLXJ1bGU6ZXZlbm9kZCINCnZpZXdCb3g9IjAgMCAxMjg1Ljk4IDY3OC44NCINCiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayINCiB4bWxuczp4b2RtPSJodHRwOi8vd3d3LmNvcmVsLmNvbS9jb3JlbGRyYXcvb2RtLzIwMDMiPg0KIDxkZWZzPg0KICA8Zm9udCBpZD0iRm9udElEMCIgaG9yaXotYWR2LXg9IjcwMCIgZm9udC12YXJpYW50PSJub3JtYWwiIHN0eWxlPSJmaWxsLXJ1bGU6bm9uemVybyIgZm9udC1zdHlsZT0ibm9ybWFsIiBmb250LXdlaWdodD0iNjAwIj4NCgk8Zm9udC1mYWNlIA0KCQlmb250LWZhbWlseT0iRkxVUk8gU2VtaWJvbGQiPg0KCQk8Zm9udC1mYWNlLXNyYz4NCgkJCTxmb250LWZhY2UtbmFtZSBuYW1lPSJGTFVSTyBTZW1pYm9sZCIvPg0KCQk8L2ZvbnQtZmFjZS1zcmM+DQoJPC9mb250LWZhY2U+DQogICA8bWlzc2luZy1nbHlwaD48cGF0aCBkPSJNMCAweiIvPjwvbWlzc2luZy1nbHlwaD4NCiAgIDxnbHlwaCB1bmljb2RlPSIrIiBob3Jpei1hZHYteD0iNTYzIiBkPSJNMjM0Ljk5NiAwbDk0LjAwMjcgMCAwIDE1OC45OTYgMTgzLjAwNiAwIDAgODIuMDA4MiAtMTgzLjAwNiAwIDAgMTYwLjAwNCAtOTQuMDAyNyAwIDAgLTE2MC4wMDQgLTE4My4wMDYgMCAwIC04Mi4wMDgyIDE4My4wMDYgMCAwIC0xNTguOTk2eiIvPg0KICAgPGdseXBoIHVuaWNvZGU9IkIiIGhvcml6LWFkdi14PSI2MTAiIGQ9Ik01Mi4wMDM3IDBsMzIwLjk5OSAwYzMyLjk5OTksMCA2Mi45OTk4LDQuOTk2MDQgODguOTk1NywxMy45OTYgMjUuOTk2LDEwLjAwMzkgNDcuOTk5OCwyMi4wMDM5IDY1Ljk5OTcsMzguMDA3NyAxNy4wMDc4LDE1Ljk5MjEgMzEuMDAzOCwzMy45OTIgNDAuMDAzOCw1NC45OTE5IDguOTk5OTYsMjAuMDA3OCAxMy45OTYsNDEuMDA3NyAxMy45OTYsNjIuOTk5OCAwLDM1Ljk5OTkgLTEyLDY4LjAwNzYgLTM0Ljk5NTksOTQuMDAzNiAtMTQuOTk5OSwxNi4wMDM5IC0zNC4wMDM4LDI4Ljk5NTkgLTU2Ljk5OTgsMzcuOTk1OSAxNC45OTk5LDguOTk5OTYgMjguMDAzOCwyMC45OTk5IDM3Ljk5NTksMzQuMDAzOCAxNy45OTk5LDIyLjk5NiAyOC4wMDM4LDUwLjk5OTggMjguMDAzOCw4Mi45OTU3IDAsMjkuOTk5OSAtOC45OTk5Niw1Ni4wMDc3IC0yNS4wMDM4LDc3LjAwNzYgLTE1Ljk5MjEsMjAuOTk5OSAtMzUuOTk5OSwzNy4wMDM4IC01OC4wMDM3LDQ3Ljk5OTggLTEwLjk5Niw1Ljk5OTk4IC0yMy45OTk5LDEwLjAwMzkgLTM4Ljk5OTgsMTMuMDAzOSAtMTMuOTk2LDIuOTk5OTkgLTI4Ljk5NTksNC45OTYwNCAtNDQuOTk5OCw1Ljk5OTk4IC0xNS45OTIxLDAuOTkyMTIyIC0zMS45OTU5LDEuOTk2MDYgLTQ3Ljk5OTgsMi45OTk5OWwtNDIuOTkyIDAgLTI0NS45OTkgMCAwIC01NjYuMDA2em0yNjcuOTkxIDMzNy4wMDNsLTE0Ny45OTIgMCAwIDEzNS45OTIgMTQ3Ljk5MiAwYzE3Ljk5OTksMCAzNC4wMDM4LC0wLjk5MjEyMiA1MC4wMDc3LC0xLjk5NjA2IDEzLjk5NiwtMS45OTYwNiAyNS45OTYsLTQuOTk2MDQgMzUuOTk5OSwtMTAuMDAzOSA4Ljk5OTk2LC00Ljk5NjA0IDE2Ljk5NiwtMTAuOTk2IDIxLjk5MiwtMTguOTkyMSA1LjAwNzg1LC04Ljk5OTk2IDguMDA3ODQsLTIwLjk5OTkgOC4wMDc4NCwtMzcuMDAzOCAwLC0yMi45OTYgLTguMDA3ODQsLTM4Ljk5OTggLTIzLjk5OTksLTQ5Ljk5NTkgLTE3LjAwNzgsLTEyIC00Ny45OTk4LC0xNy45OTk5IC05Mi4wMDc1LC0xNy45OTk5em00My4wMDM4IC0yNDQuMDAzbC0xOTAuOTk1IDAgMCAxNTEuMDAzIDE3MS45OTEgMGMxNy4wMDc4LDAgMzIuOTk5OSwtMS4wMDM5MyA0Ny45OTk4LC00LjAwMzkyIDE0LjAwNzgsLTEuOTk2MDYgMjYuOTk5OSwtNS45OTk5OCAzOC4wMDc3LC0xMiA5Ljk5MjA5LC00Ljk5NjA0IDE2Ljk5NiwtMTIgMjMuOTk5OSwtMjIuMDAzOSA0Ljk5NjA0LC03Ljk5NjAzIDcuOTk2MDMsLTE5Ljk5NiA3Ljk5NjAzLC0zMy45OTIgMCwtMjUuMDAzOCAtNy45OTYwMywtNDQuMDA3NyAtMjUuMDAzOCwtNTguMDAzNyAtMTYuOTk2LC0xMy45OTYgLTQxLjk5OTgsLTIwLjk5OTkgLTczLjk5NTgsLTIwLjk5OTl6Ii8+DQogICA8Z2x5cGggdW5pY29kZT0iQyIgaG9yaXotYWR2LXg9IjY2NyIgZD0iTTU0Mi42NjcgNDMuOTk1OWM1MC4xNjEyLDM4Ljk5OTggODEuMTY1LDk4Ljk5OTYgOTAuMTY1LDE3Mi4wMDNsMS45OTYwNiAxNy45OTk5IC0xMjIuMTYxIDAgLTEuMDAzOTMgLTE0Ljk5OTljLTEuOTk2MDYsLTIyLjAwMzkgLTcuOTk2MDMsLTQzLjk5NTkgLTE0Ljk5OTksLTU5Ljk5OTggLTcuOTk2MDMsLTE2Ljk5NiAtMTguOTkyMSwtMzEuMDAzOCAtMzIuOTk5OSwtNDMuMDAzOCAtMTMuOTk2LC0xMi45OTIxIC0zMS45OTU5LC0yMS45OTIgLTUwLjk5OTgsLTI4Ljk5NTkgLTE5Ljk5NiwtNy4wMDM5MSAtNDIuODI2NiwtMTAuOTk2IC02OC44MzQ0LC0xMC45OTYgLTM0Ljk5NTksMCAtNjUuOTk5Nyw1Ljk5OTk4IC05MC45OTE4LDE2Ljk5NiAtMjUuMDAzOCwxMC45OTYgLTQ2LjAwMzgsMjUuMDAzOCAtNjIuMDA3Niw0My4wMDM4IC0xNS45OTIxLDE4Ljk5MjEgLTI3LjgyNjcsNDAuOTk1OSAtMzQuODMwNiw2NC45OTU4IC03Ljk5NjAzLDI1Ljk5NiAtMTIsNTIuOTk1OSAtMTIsODIuMDAzNiAwLDI1Ljk5NiA0LjAwMzkyLDUxLjk5MTkgMTAuOTk2LDc1Ljk5MTggOC4wMDc4NCwyMy45OTk5IDE5Ljg0MjQsNDQuOTk5OCAzNS44MzQ1LDYyLjk5OTggMTYuMDAzOSwxOS4wMDM5IDM3LjAwMzgsMzIuOTk5OSA2Mi4wMDc2LDQ0LjAwNzcgMjMuOTk5OSwxMC45OTYgNTQuOTkxOSwxNS45OTIxIDg5Ljk5OTYsMTUuOTkyMWwxLjk5NjA2IDBjMCwwIDEuMDAzOTMsMS4wMDM5MyA0LjAwMzkyLDEuMDAzOTMgMzIuOTk5OSwwIDE0Mi44MywtMTAuOTk2IDE2OS44MywtMTQyLjk5NmwyLjk5OTk5IC0xMy4wMDM5IDEyMS4xNjkgMCAtMi45OTk5OSAxOS4wMDM5Yy0zNS45OTk5LDIyMy4wMDMgLTI2NS4wMDMsMjI5LjAwMyAtMjkwLjk5OSwyMjkuMDAzbC01LjAwNzg1IDBjLTUwLjk5OTgsMCAtOTcuOTk1NywtOC4wMDc4NCAtMTM3Ljk5OSwtMjMuMDA3OCAtMzkuODI2NiwtMTUuOTkyMSAtNzMuODMwNCwtMzYuOTkyIC0xMDAuODMsLTY0LjAwMzcgLTI2Ljk5OTksLTI2Ljk5OTkgLTQ3Ljk5OTgsLTU4Ljk5NTggLTYxLjk5NTgsLTk0Ljk5NTcgLTE0LjAwNzgsLTM1Ljk5OTkgLTIwLjk5OTksLTc0Ljk5OTcgLTIwLjk5OTksLTExNS4wMDMgMCwtNDAuOTk1OSA2Ljk5MjEsLTc4Ljk5MTggMTguOTkyMSwtMTE0IDEzLjAwMzksLTM1Ljk5OTkgMzIuOTk5OSwtNjcuOTk1OCA1OS4wMDc2LC05My45OTE4IDI2Ljk5OTksLTI2Ljk5OTkgNTkuOTk5OCwtNDcuOTk5OCA5OS44MjY0LC02Mi45OTk4IDM4Ljk5OTgsLTE0Ljk5OTkgODUuMDAzNiwtMjMuMDA3OCAxMzcuMDA3LC0yMy4wMDc4IDg1LjgzMDQsMCAxNTUuODM0LDIwLjAwNzggMjA1LjgzLDU5Ljk5OTh6Ii8+DQogIDwvZm9udD4NCiAgPHN0eWxlIHR5cGU9InRleHQvY3NzIj4NCiAgIDwhW0NEQVRBWw0KICAgIEBmb250LWZhY2UgeyBmb250LWZhbWlseToiRkxVUk8gU2VtaWJvbGQiO2ZvbnQtdmFyaWFudDpub3JtYWw7Zm9udC1zdHlsZTpub3JtYWw7Zm9udC13ZWlnaHQ6NjAwO3NyYzp1cmwoIiNGb250SUQwIikgZm9ybWF0KHN2Zyl9DQogICAgLmZpbDAge2ZpbGw6IzM3MzQzNX0NCiAgICAuZm50MSB7Zm9udC13ZWlnaHQ6NjAwO2ZvbnQtc2l6ZTo0NzYuMDVweDtmb250LWZhbWlseTonRkxVUk8gU2VtaWJvbGQnfQ0KICAgIC5mbnQwIHtmb250LXdlaWdodDo2MDA7Zm9udC1zaXplOjg0Ni42NnB4O2ZvbnQtZmFtaWx5OidGTFVSTyBTZW1pYm9sZCd9DQogICBdXT4NCiAgPC9zdHlsZT4NCiA8L2RlZnM+DQogPGcgaWQ9IkNhbWFkYV94MDAyMF8xIj4NCiAgPG1ldGFkYXRhIGlkPSJDb3JlbENvcnBJRF8wQ29yZWwtTGF5ZXIiLz4NCiAgPHRleHQgeD0iLTE4LjYzIiB5PSI2NjUuMjkiICBjbGFzcz0iZmlsMCBmbnQwIj5DPC90ZXh0Pg0KICA8ZyB0cmFuc2Zvcm09Im1hdHJpeCgwLjg1MjAyMiAwLjUyMzUwNyAtMC41MjM1MDcgMC44NTIwMjIgOTQuNzY2NyAtNTIxLjcyNSkiPg0KICAgPHRleHQgeD0iNjQzIiB5PSIzMzkuNDMiICBjbGFzcz0iZmlsMCBmbnQxIj4rPC90ZXh0Pg0KICA8L2c+DQogIDx0ZXh0IHg9Ijc5My4yMiIgeT0iNjY1LjI5IiAgY2xhc3M9ImZpbDAgZm50MCI+QjwvdGV4dD4NCiA8L2c+DQo8L3N2Zz4NCg==" alt="Carlos A. Boico." /></a>
+    <nav class="top-actions" aria-label="Informações do site">
+      <a class="top-link" href="#sobre" data-system-page="sobre" aria-label="Abrir Sobre mim">Sobre mim</a>
+      <a class="top-link" href="#processo" data-system-page="processo" aria-label="Abrir Processo">Processo</a>
+      <a class="top-link" href="#contato" data-system-page="contato" aria-label="Abrir Contato">Contato</a>
+    </nav>
   </header>
 
   <div class="menu-panel" aria-hidden="true">
     <div class="menu-panel__top">
-      <a class="logo" href="#inicio" aria-label="Carlos A. Boico.">CB</a>
+      <a class="logo" href="#inicio" aria-label="Carlos A. Boico."><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8IS0tIENyZWF0b3I6IENvcmVsRFJBVyAtLT4NCjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWw6c3BhY2U9InByZXNlcnZlIiB3aWR0aD0iMTIuODU5OW1tIiBoZWlnaHQ9IjYuNzg4NW1tIiB2ZXJzaW9uPSIxLjEiIHN0eWxlPSJzaGFwZS1yZW5kZXJpbmc6Z2VvbWV0cmljUHJlY2lzaW9uOyB0ZXh0LXJlbmRlcmluZzpnZW9tZXRyaWNQcmVjaXNpb247IGltYWdlLXJlbmRlcmluZzpvcHRpbWl6ZVF1YWxpdHk7IGZpbGwtcnVsZTpldmVub2RkOyBjbGlwLXJ1bGU6ZXZlbm9kZCINCnZpZXdCb3g9IjAgMCAxMjg1Ljk4IDY3OC44NCINCiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayINCiB4bWxuczp4b2RtPSJodHRwOi8vd3d3LmNvcmVsLmNvbS9jb3JlbGRyYXcvb2RtLzIwMDMiPg0KIDxkZWZzPg0KICA8Zm9udCBpZD0iRm9udElEMCIgaG9yaXotYWR2LXg9IjcwMCIgZm9udC12YXJpYW50PSJub3JtYWwiIHN0eWxlPSJmaWxsLXJ1bGU6bm9uemVybyIgZm9udC1zdHlsZT0ibm9ybWFsIiBmb250LXdlaWdodD0iNjAwIj4NCgk8Zm9udC1mYWNlIA0KCQlmb250LWZhbWlseT0iRkxVUk8gU2VtaWJvbGQiPg0KCQk8Zm9udC1mYWNlLXNyYz4NCgkJCTxmb250LWZhY2UtbmFtZSBuYW1lPSJGTFVSTyBTZW1pYm9sZCIvPg0KCQk8L2ZvbnQtZmFjZS1zcmM+DQoJPC9mb250LWZhY2U+DQogICA8bWlzc2luZy1nbHlwaD48cGF0aCBkPSJNMCAweiIvPjwvbWlzc2luZy1nbHlwaD4NCiAgIDxnbHlwaCB1bmljb2RlPSIrIiBob3Jpei1hZHYteD0iNTYzIiBkPSJNMjM0Ljk5NiAwbDk0LjAwMjcgMCAwIDE1OC45OTYgMTgzLjAwNiAwIDAgODIuMDA4MiAtMTgzLjAwNiAwIDAgMTYwLjAwNCAtOTQuMDAyNyAwIDAgLTE2MC4wMDQgLTE4My4wMDYgMCAwIC04Mi4wMDgyIDE4My4wMDYgMCAwIC0xNTguOTk2eiIvPg0KICAgPGdseXBoIHVuaWNvZGU9IkIiIGhvcml6LWFkdi14PSI2MTAiIGQ9Ik01Mi4wMDM3IDBsMzIwLjk5OSAwYzMyLjk5OTksMCA2Mi45OTk4LDQuOTk2MDQgODguOTk1NywxMy45OTYgMjUuOTk2LDEwLjAwMzkgNDcuOTk5OCwyMi4wMDM5IDY1Ljk5OTcsMzguMDA3NyAxNy4wMDc4LDE1Ljk5MjEgMzEuMDAzOCwzMy45OTIgNDAuMDAzOCw1NC45OTE5IDguOTk5OTYsMjAuMDA3OCAxMy45OTYsNDEuMDA3NyAxMy45OTYsNjIuOTk5OCAwLDM1Ljk5OTkgLTEyLDY4LjAwNzYgLTM0Ljk5NTksOTQuMDAzNiAtMTQuOTk5OSwxNi4wMDM5IC0zNC4wMDM4LDI4Ljk5NTkgLTU2Ljk5OTgsMzcuOTk1OSAxNC45OTk5LDguOTk5OTYgMjguMDAzOCwyMC45OTk5IDM3Ljk5NTksMzQuMDAzOCAxNy45OTk5LDIyLjk5NiAyOC4wMDM4LDUwLjk5OTggMjguMDAzOCw4Mi45OTU3IDAsMjkuOTk5OSAtOC45OTk5Niw1Ni4wMDc3IC0yNS4wMDM4LDc3LjAwNzYgLTE1Ljk5MjEsMjAuOTk5OSAtMzUuOTk5OSwzNy4wMDM4IC01OC4wMDM3LDQ3Ljk5OTggLTEwLjk5Niw1Ljk5OTk4IC0yMy45OTk5LDEwLjAwMzkgLTM4Ljk5OTgsMTMuMDAzOSAtMTMuOTk2LDIuOTk5OTkgLTI4Ljk5NTksNC45OTYwNCAtNDQuOTk5OCw1Ljk5OTk4IC0xNS45OTIxLDAuOTkyMTIyIC0zMS45OTU5LDEuOTk2MDYgLTQ3Ljk5OTgsMi45OTk5OWwtNDIuOTkyIDAgLTI0NS45OTkgMCAwIC01NjYuMDA2em0yNjcuOTkxIDMzNy4wMDNsLTE0Ny45OTIgMCAwIDEzNS45OTIgMTQ3Ljk5MiAwYzE3Ljk5OTksMCAzNC4wMDM4LC0wLjk5MjEyMiA1MC4wMDc3LC0xLjk5NjA2IDEzLjk5NiwtMS45OTYwNiAyNS45OTYsLTQuOTk2MDQgMzUuOTk5OSwtMTAuMDAzOSA4Ljk5OTk2LC00Ljk5NjA0IDE2Ljk5NiwtMTAuOTk2IDIxLjk5MiwtMTguOTkyMSA1LjAwNzg1LC04Ljk5OTk2IDguMDA3ODQsLTIwLjk5OTkgOC4wMDc4NCwtMzcuMDAzOCAwLC0yMi45OTYgLTguMDA3ODQsLTM4Ljk5OTggLTIzLjk5OTksLTQ5Ljk5NTkgLTE3LjAwNzgsLTEyIC00Ny45OTk4LC0xNy45OTk5IC05Mi4wMDc1LC0xNy45OTk5em00My4wMDM4IC0yNDQuMDAzbC0xOTAuOTk1IDAgMCAxNTEuMDAzIDE3MS45OTEgMGMxNy4wMDc4LDAgMzIuOTk5OSwtMS4wMDM5MyA0Ny45OTk4LC00LjAwMzkyIDE0LjAwNzgsLTEuOTk2MDYgMjYuOTk5OSwtNS45OTk5OCAzOC4wMDc3LC0xMiA5Ljk5MjA5LC00Ljk5NjA0IDE2Ljk5NiwtMTIgMjMuOTk5OSwtMjIuMDAzOSA0Ljk5NjA0LC03Ljk5NjAzIDcuOTk2MDMsLTE5Ljk5NiA3Ljk5NjAzLC0zMy45OTIgMCwtMjUuMDAzOCAtNy45OTYwMywtNDQuMDA3NyAtMjUuMDAzOCwtNTguMDAzNyAtMTYuOTk2LC0xMy45OTYgLTQxLjk5OTgsLTIwLjk5OTkgLTczLjk5NTgsLTIwLjk5OTl6Ii8+DQogICA8Z2x5cGggdW5pY29kZT0iQyIgaG9yaXotYWR2LXg9IjY2NyIgZD0iTTU0Mi42NjcgNDMuOTk1OWM1MC4xNjEyLDM4Ljk5OTggODEuMTY1LDk4Ljk5OTYgOTAuMTY1LDE3Mi4wMDNsMS45OTYwNiAxNy45OTk5IC0xMjIuMTYxIDAgLTEuMDAzOTMgLTE0Ljk5OTljLTEuOTk2MDYsLTIyLjAwMzkgLTcuOTk2MDMsLTQzLjk5NTkgLTE0Ljk5OTksLTU5Ljk5OTggLTcuOTk2MDMsLTE2Ljk5NiAtMTguOTkyMSwtMzEuMDAzOCAtMzIuOTk5OSwtNDMuMDAzOCAtMTMuOTk2LC0xMi45OTIxIC0zMS45OTU5LC0yMS45OTIgLTUwLjk5OTgsLTI4Ljk5NTkgLTE5Ljk5NiwtNy4wMDM5MSAtNDIuODI2NiwtMTAuOTk2IC02OC44MzQ0LC0xMC45OTYgLTM0Ljk5NTksMCAtNjUuOTk5Nyw1Ljk5OTk4IC05MC45OTE4LDE2Ljk5NiAtMjUuMDAzOCwxMC45OTYgLTQ2LjAwMzgsMjUuMDAzOCAtNjIuMDA3Niw0My4wMDM4IC0xNS45OTIxLDE4Ljk5MjEgLTI3LjgyNjcsNDAuOTk1OSAtMzQuODMwNiw2NC45OTU4IC03Ljk5NjAzLDI1Ljk5NiAtMTIsNTIuOTk1OSAtMTIsODIuMDAzNiAwLDI1Ljk5NiA0LjAwMzkyLDUxLjk5MTkgMTAuOTk2LDc1Ljk5MTggOC4wMDc4NCwyMy45OTk5IDE5Ljg0MjQsNDQuOTk5OCAzNS44MzQ1LDYyLjk5OTggMTYuMDAzOSwxOS4wMDM5IDM3LjAwMzgsMzIuOTk5OSA2Mi4wMDc2LDQ0LjAwNzcgMjMuOTk5OSwxMC45OTYgNTQuOTkxOSwxNS45OTIxIDg5Ljk5OTYsMTUuOTkyMWwxLjk5NjA2IDBjMCwwIDEuMDAzOTMsMS4wMDM5MyA0LjAwMzkyLDEuMDAzOTMgMzIuOTk5OSwwIDE0Mi44MywtMTAuOTk2IDE2OS44MywtMTQyLjk5NmwyLjk5OTk5IC0xMy4wMDM5IDEyMS4xNjkgMCAtMi45OTk5OSAxOS4wMDM5Yy0zNS45OTk5LDIyMy4wMDMgLTI2NS4wMDMsMjI5LjAwMyAtMjkwLjk5OSwyMjkuMDAzbC01LjAwNzg1IDBjLTUwLjk5OTgsMCAtOTcuOTk1NywtOC4wMDc4NCAtMTM3Ljk5OSwtMjMuMDA3OCAtMzkuODI2NiwtMTUuOTkyMSAtNzMuODMwNCwtMzYuOTkyIC0xMDAuODMsLTY0LjAwMzcgLTI2Ljk5OTksLTI2Ljk5OTkgLTQ3Ljk5OTgsLTU4Ljk5NTggLTYxLjk5NTgsLTk0Ljk5NTcgLTE0LjAwNzgsLTM1Ljk5OTkgLTIwLjk5OTksLTc0Ljk5OTcgLTIwLjk5OTksLTExNS4wMDMgMCwtNDAuOTk1OSA2Ljk5MjEsLTc4Ljk5MTggMTguOTkyMSwtMTE0IDEzLjAwMzksLTM1Ljk5OTkgMzIuOTk5OSwtNjcuOTk1OCA1OS4wMDc2LC05My45OTE4IDI2Ljk5OTksLTI2Ljk5OTkgNTkuOTk5OCwtNDcuOTk5OCA5OS44MjY0LC02Mi45OTk4IDM4Ljk5OTgsLTE0Ljk5OTkgODUuMDAzNiwtMjMuMDA3OCAxMzcuMDA3LC0yMy4wMDc4IDg1LjgzMDQsMCAxNTUuODM0LDIwLjAwNzggMjA1LjgzLDU5Ljk5OTh6Ii8+DQogIDwvZm9udD4NCiAgPHN0eWxlIHR5cGU9InRleHQvY3NzIj4NCiAgIDwhW0NEQVRBWw0KICAgIEBmb250LWZhY2UgeyBmb250LWZhbWlseToiRkxVUk8gU2VtaWJvbGQiO2ZvbnQtdmFyaWFudDpub3JtYWw7Zm9udC1zdHlsZTpub3JtYWw7Zm9udC13ZWlnaHQ6NjAwO3NyYzp1cmwoIiNGb250SUQwIikgZm9ybWF0KHN2Zyl9DQogICAgLmZpbDAge2ZpbGw6IzM3MzQzNX0NCiAgICAuZm50MSB7Zm9udC13ZWlnaHQ6NjAwO2ZvbnQtc2l6ZTo0NzYuMDVweDtmb250LWZhbWlseTonRkxVUk8gU2VtaWJvbGQnfQ0KICAgIC5mbnQwIHtmb250LXdlaWdodDo2MDA7Zm9udC1zaXplOjg0Ni42NnB4O2ZvbnQtZmFtaWx5OidGTFVSTyBTZW1pYm9sZCd9DQogICBdXT4NCiAgPC9zdHlsZT4NCiA8L2RlZnM+DQogPGcgaWQ9IkNhbWFkYV94MDAyMF8xIj4NCiAgPG1ldGFkYXRhIGlkPSJDb3JlbENvcnBJRF8wQ29yZWwtTGF5ZXIiLz4NCiAgPHRleHQgeD0iLTE4LjYzIiB5PSI2NjUuMjkiICBjbGFzcz0iZmlsMCBmbnQwIj5DPC90ZXh0Pg0KICA8ZyB0cmFuc2Zvcm09Im1hdHJpeCgwLjg1MjAyMiAwLjUyMzUwNyAtMC41MjM1MDcgMC44NTIwMjIgOTQuNzY2NyAtNTIxLjcyNSkiPg0KICAgPHRleHQgeD0iNjQzIiB5PSIzMzkuNDMiICBjbGFzcz0iZmlsMCBmbnQxIj4rPC90ZXh0Pg0KICA8L2c+DQogIDx0ZXh0IHg9Ijc5My4yMiIgeT0iNjY1LjI5IiAgY2xhc3M9ImZpbDAgZm50MCI+QjwvdGV4dD4NCiA8L2c+DQo8L3N2Zz4NCg==" alt="Carlos A. Boico." /></a>
       <button class="close-menu" type="button" aria-label="Fechar menu">Fechar</button>
     </div>
     <nav class="menu-links" aria-label="Menu principal">
-      <a href="#projetos">Projetos</a>
-      <a href="#sobre">Sobre</a>
-      <a href="#processo">Processo</a>
-      <a href="#contato">Contato</a>
+      <a href="#sobre" data-system-page="sobre">Sobre mim</a>
+      <a href="#processo" data-system-page="processo">Processo</a>
+      <a href="#contato" data-system-page="contato">Contato</a>
     </nav>
     <p class="menu-note">Portfólio digital de Carlos A. Boico. O hall apresenta os projetos e cada capa abre uma página interna com fotos, renders, informações do terreno e desenhos.</p>
   </div>
@@ -1193,90 +1349,20 @@
         </div>
       </div>
     </section>
-
-    <section class="hero content-scale">
-      <div>
-        <p class="eyebrow">Portfólio digital</p>
-        <h1>Carlos A. Boico.</h1>
-      </div>
-      <div>
-        <p class="hero-text">Uma base visual minimalista para apresentar projetos de arquitetura, interiores, fotos, renders, plantas e dados técnicos em uma navegação mais limpa.</p>
-        <div class="hero-actions">
-          <a class="button primary" href="#projetos">Ver projetos</a>
-          <a class="button" href="https://wa.me/message/DAOAAENEEHYBA1" target="_blank" rel="noopener">Chamar no WhatsApp</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="home-section" id="processo">
-      <div class="content-scale">
-        <div class="section-head">
-          <div>
-            <p class="section-label">Processo</p>
-            <h2>Escolhe, abre e navega.</h2>
-          </div>
-          <p class="small-copy">O cliente entra pelo hall, escolhe uma capa no carrossel e abre a página do projeto com fotos, renders, informações e desenhos.</p>
-        </div>
-
-        <div class="info-grid">
-          <article class="info-card">
-            <span>01</span>
-            <div>
-              <h3>Hall de entrada</h3>
-              <p>Carrossel horizontal corrigido, com setas, arraste no mouse/toque e rolagem pelo trackpad.</p>
-            </div>
-          </article>
-          <article class="info-card">
-            <span>02</span>
-            <div>
-              <h3>Página do projeto</h3>
-              <p>Cada projeto abre uma tela interna com barra superior, logo como home, nome do projeto e botões Info e Desenhos.</p>
-            </div>
-          </article>
-          <article class="info-card">
-            <span>03</span>
-            <div>
-              <h3>Fotos e plantas</h3>
-              <p>A galeria vertical passa automaticamente. Ao clicar, abre uma visualização horizontal ampla com setas laterais.</p>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="home-section about" id="sobre">
-      <div class="content-scale about">
-        <div class="about-mark">
-          <span class="eyebrow" style="color:rgba(255,255,255,.8)">Sobre</span>
-          <strong>CB</strong>
-        </div>
-        <div class="about-copy">
-          <p>Este espaço é para uma apresentação curta sobre Carlos A. Boico: área de atuação, estilo de trabalho, diferenciais e o tipo de projeto que deseja atrair.</p>
-          <p>A estrutura já está preparada para substituir os placeholders por fotos reais, renders e desenhos técnicos enviados para o sistema.</p>
-          <a class="button primary" href="https://wa.me/message/DAOAAENEEHYBA1" target="_blank" rel="noopener">Conversar sobre um projeto</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="contact" id="contato">
-      <div class="content-scale">
-        <p class="section-label" style="color:#c4b5fd">Contato</p>
-        <h2>Vamos construir o próximo projeto?</h2>
-        <p>Entre em contato pelo WhatsApp para falar sobre orçamento, parceria ou novas ideias para o portfólio.</p>
-        <a class="button" href="https://wa.me/message/DAOAAENEEHYBA1" target="_blank" rel="noopener">Abrir WhatsApp</a>
-      </div>
-    </section>
-
-    <footer class="content-scale">
-      <span>© <span id="year"></span> Carlos A. Boico.</span>
-      <span>Portfólio digital — pronto para GitHub Pages</span>
-    </footer>
   </main>
+
+  <section class="system-view" id="systemPage" aria-label="Página do sistema">
+    <div class="system-shell">
+      <p class="section-label" id="systemLabel">Sobre mim</p>
+      <h1 class="system-title" id="systemTitle">Sobre mim</h1>
+      <div class="system-grid" id="systemBody"></div>
+    </div>
+  </section>
 
   <section class="project-view" id="projectPage" aria-label="Página do projeto">
     <header class="project-header">
       <div class="project-header-left">
-        <a class="logo" href="#inicio" id="homeLogo" aria-label="Voltar para o hall">CB</a>
+        <a class="logo" href="#inicio" id="homeLogo" aria-label="Voltar para o hall"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8IS0tIENyZWF0b3I6IENvcmVsRFJBVyAtLT4NCjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWw6c3BhY2U9InByZXNlcnZlIiB3aWR0aD0iMTIuODU5OW1tIiBoZWlnaHQ9IjYuNzg4NW1tIiB2ZXJzaW9uPSIxLjEiIHN0eWxlPSJzaGFwZS1yZW5kZXJpbmc6Z2VvbWV0cmljUHJlY2lzaW9uOyB0ZXh0LXJlbmRlcmluZzpnZW9tZXRyaWNQcmVjaXNpb247IGltYWdlLXJlbmRlcmluZzpvcHRpbWl6ZVF1YWxpdHk7IGZpbGwtcnVsZTpldmVub2RkOyBjbGlwLXJ1bGU6ZXZlbm9kZCINCnZpZXdCb3g9IjAgMCAxMjg1Ljk4IDY3OC44NCINCiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayINCiB4bWxuczp4b2RtPSJodHRwOi8vd3d3LmNvcmVsLmNvbS9jb3JlbGRyYXcvb2RtLzIwMDMiPg0KIDxkZWZzPg0KICA8Zm9udCBpZD0iRm9udElEMCIgaG9yaXotYWR2LXg9IjcwMCIgZm9udC12YXJpYW50PSJub3JtYWwiIHN0eWxlPSJmaWxsLXJ1bGU6bm9uemVybyIgZm9udC1zdHlsZT0ibm9ybWFsIiBmb250LXdlaWdodD0iNjAwIj4NCgk8Zm9udC1mYWNlIA0KCQlmb250LWZhbWlseT0iRkxVUk8gU2VtaWJvbGQiPg0KCQk8Zm9udC1mYWNlLXNyYz4NCgkJCTxmb250LWZhY2UtbmFtZSBuYW1lPSJGTFVSTyBTZW1pYm9sZCIvPg0KCQk8L2ZvbnQtZmFjZS1zcmM+DQoJPC9mb250LWZhY2U+DQogICA8bWlzc2luZy1nbHlwaD48cGF0aCBkPSJNMCAweiIvPjwvbWlzc2luZy1nbHlwaD4NCiAgIDxnbHlwaCB1bmljb2RlPSIrIiBob3Jpei1hZHYteD0iNTYzIiBkPSJNMjM0Ljk5NiAwbDk0LjAwMjcgMCAwIDE1OC45OTYgMTgzLjAwNiAwIDAgODIuMDA4MiAtMTgzLjAwNiAwIDAgMTYwLjAwNCAtOTQuMDAyNyAwIDAgLTE2MC4wMDQgLTE4My4wMDYgMCAwIC04Mi4wMDgyIDE4My4wMDYgMCAwIC0xNTguOTk2eiIvPg0KICAgPGdseXBoIHVuaWNvZGU9IkIiIGhvcml6LWFkdi14PSI2MTAiIGQ9Ik01Mi4wMDM3IDBsMzIwLjk5OSAwYzMyLjk5OTksMCA2Mi45OTk4LDQuOTk2MDQgODguOTk1NywxMy45OTYgMjUuOTk2LDEwLjAwMzkgNDcuOTk5OCwyMi4wMDM5IDY1Ljk5OTcsMzguMDA3NyAxNy4wMDc4LDE1Ljk5MjEgMzEuMDAzOCwzMy45OTIgNDAuMDAzOCw1NC45OTE5IDguOTk5OTYsMjAuMDA3OCAxMy45OTYsNDEuMDA3NyAxMy45OTYsNjIuOTk5OCAwLDM1Ljk5OTkgLTEyLDY4LjAwNzYgLTM0Ljk5NTksOTQuMDAzNiAtMTQuOTk5OSwxNi4wMDM5IC0zNC4wMDM4LDI4Ljk5NTkgLTU2Ljk5OTgsMzcuOTk1OSAxNC45OTk5LDguOTk5OTYgMjguMDAzOCwyMC45OTk5IDM3Ljk5NTksMzQuMDAzOCAxNy45OTk5LDIyLjk5NiAyOC4wMDM4LDUwLjk5OTggMjguMDAzOCw4Mi45OTU3IDAsMjkuOTk5OSAtOC45OTk5Niw1Ni4wMDc3IC0yNS4wMDM4LDc3LjAwNzYgLTE1Ljk5MjEsMjAuOTk5OSAtMzUuOTk5OSwzNy4wMDM4IC01OC4wMDM3LDQ3Ljk5OTggLTEwLjk5Niw1Ljk5OTk4IC0yMy45OTk5LDEwLjAwMzkgLTM4Ljk5OTgsMTMuMDAzOSAtMTMuOTk2LDIuOTk5OTkgLTI4Ljk5NTksNC45OTYwNCAtNDQuOTk5OCw1Ljk5OTk4IC0xNS45OTIxLDAuOTkyMTIyIC0zMS45OTU5LDEuOTk2MDYgLTQ3Ljk5OTgsMi45OTk5OWwtNDIuOTkyIDAgLTI0NS45OTkgMCAwIC01NjYuMDA2em0yNjcuOTkxIDMzNy4wMDNsLTE0Ny45OTIgMCAwIDEzNS45OTIgMTQ3Ljk5MiAwYzE3Ljk5OTksMCAzNC4wMDM4LC0wLjk5MjEyMiA1MC4wMDc3LC0xLjk5NjA2IDEzLjk5NiwtMS45OTYwNiAyNS45OTYsLTQuOTk2MDQgMzUuOTk5OSwtMTAuMDAzOSA4Ljk5OTk2LC00Ljk5NjA0IDE2Ljk5NiwtMTAuOTk2IDIxLjk5MiwtMTguOTkyMSA1LjAwNzg1LC04Ljk5OTk2IDguMDA3ODQsLTIwLjk5OTkgOC4wMDc4NCwtMzcuMDAzOCAwLC0yMi45OTYgLTguMDA3ODQsLTM4Ljk5OTggLTIzLjk5OTksLTQ5Ljk5NTkgLTE3LjAwNzgsLTEyIC00Ny45OTk4LC0xNy45OTk5IC05Mi4wMDc1LC0xNy45OTk5em00My4wMDM4IC0yNDQuMDAzbC0xOTAuOTk1IDAgMCAxNTEuMDAzIDE3MS45OTEgMGMxNy4wMDc4LDAgMzIuOTk5OSwtMS4wMDM5MyA0Ny45OTk4LC00LjAwMzkyIDE0LjAwNzgsLTEuOTk2MDYgMjYuOTk5OSwtNS45OTk5OCAzOC4wMDc3LC0xMiA5Ljk5MjA5LC00Ljk5NjA0IDE2Ljk5NiwtMTIgMjMuOTk5OSwtMjIuMDAzOSA0Ljk5NjA0LC03Ljk5NjAzIDcuOTk2MDMsLTE5Ljk5NiA3Ljk5NjAzLC0zMy45OTIgMCwtMjUuMDAzOCAtNy45OTYwMywtNDQuMDA3NyAtMjUuMDAzOCwtNTguMDAzNyAtMTYuOTk2LC0xMy45OTYgLTQxLjk5OTgsLTIwLjk5OTkgLTczLjk5NTgsLTIwLjk5OTl6Ii8+DQogICA8Z2x5cGggdW5pY29kZT0iQyIgaG9yaXotYWR2LXg9IjY2NyIgZD0iTTU0Mi42NjcgNDMuOTk1OWM1MC4xNjEyLDM4Ljk5OTggODEuMTY1LDk4Ljk5OTYgOTAuMTY1LDE3Mi4wMDNsMS45OTYwNiAxNy45OTk5IC0xMjIuMTYxIDAgLTEuMDAzOTMgLTE0Ljk5OTljLTEuOTk2MDYsLTIyLjAwMzkgLTcuOTk2MDMsLTQzLjk5NTkgLTE0Ljk5OTksLTU5Ljk5OTggLTcuOTk2MDMsLTE2Ljk5NiAtMTguOTkyMSwtMzEuMDAzOCAtMzIuOTk5OSwtNDMuMDAzOCAtMTMuOTk2LC0xMi45OTIxIC0zMS45OTU5LC0yMS45OTIgLTUwLjk5OTgsLTI4Ljk5NTkgLTE5Ljk5NiwtNy4wMDM5MSAtNDIuODI2NiwtMTAuOTk2IC02OC44MzQ0LC0xMC45OTYgLTM0Ljk5NTksMCAtNjUuOTk5Nyw1Ljk5OTk4IC05MC45OTE4LDE2Ljk5NiAtMjUuMDAzOCwxMC45OTYgLTQ2LjAwMzgsMjUuMDAzOCAtNjIuMDA3Niw0My4wMDM4IC0xNS45OTIxLDE4Ljk5MjEgLTI3LjgyNjcsNDAuOTk1OSAtMzQuODMwNiw2NC45OTU4IC03Ljk5NjAzLDI1Ljk5NiAtMTIsNTIuOTk1OSAtMTIsODIuMDAzNiAwLDI1Ljk5NiA0LjAwMzkyLDUxLjk5MTkgMTAuOTk2LDc1Ljk5MTggOC4wMDc4NCwyMy45OTk5IDE5Ljg0MjQsNDQuOTk5OCAzNS44MzQ1LDYyLjk5OTggMTYuMDAzOSwxOS4wMDM5IDM3LjAwMzgsMzIuOTk5OSA2Mi4wMDc2LDQ0LjAwNzcgMjMuOTk5OSwxMC45OTYgNTQuOTkxOSwxNS45OTIxIDg5Ljk5OTYsMTUuOTkyMWwxLjk5NjA2IDBjMCwwIDEuMDAzOTMsMS4wMDM5MyA0LjAwMzkyLDEuMDAzOTMgMzIuOTk5OSwwIDE0Mi44MywtMTAuOTk2IDE2OS44MywtMTQyLjk5NmwyLjk5OTk5IC0xMy4wMDM5IDEyMS4xNjkgMCAtMi45OTk5OSAxOS4wMDM5Yy0zNS45OTk5LDIyMy4wMDMgLTI2NS4wMDMsMjI5LjAwMyAtMjkwLjk5OSwyMjkuMDAzbC01LjAwNzg1IDBjLTUwLjk5OTgsMCAtOTcuOTk1NywtOC4wMDc4NCAtMTM3Ljk5OSwtMjMuMDA3OCAtMzkuODI2NiwtMTUuOTkyMSAtNzMuODMwNCwtMzYuOTkyIC0xMDAuODMsLTY0LjAwMzcgLTI2Ljk5OTksLTI2Ljk5OTkgLTQ3Ljk5OTgsLTU4Ljk5NTggLTYxLjk5NTgsLTk0Ljk5NTcgLTE0LjAwNzgsLTM1Ljk5OTkgLTIwLjk5OTksLTc0Ljk5OTcgLTIwLjk5OTksLTExNS4wMDMgMCwtNDAuOTk1OSA2Ljk5MjEsLTc4Ljk5MTggMTguOTkyMSwtMTE0IDEzLjAwMzksLTM1Ljk5OTkgMzIuOTk5OSwtNjcuOTk1OCA1OS4wMDc2LC05My45OTE4IDI2Ljk5OTksLTI2Ljk5OTkgNTkuOTk5OCwtNDcuOTk5OCA5OS44MjY0LC02Mi45OTk4IDM4Ljk5OTgsLTE0Ljk5OTkgODUuMDAzNiwtMjMuMDA3OCAxMzcuMDA3LC0yMy4wMDc4IDg1LjgzMDQsMCAxNTUuODM0LDIwLjAwNzggMjA1LjgzLDU5Ljk5OTh6Ii8+DQogIDwvZm9udD4NCiAgPHN0eWxlIHR5cGU9InRleHQvY3NzIj4NCiAgIDwhW0NEQVRBWw0KICAgIEBmb250LWZhY2UgeyBmb250LWZhbWlseToiRkxVUk8gU2VtaWJvbGQiO2ZvbnQtdmFyaWFudDpub3JtYWw7Zm9udC1zdHlsZTpub3JtYWw7Zm9udC13ZWlnaHQ6NjAwO3NyYzp1cmwoIiNGb250SUQwIikgZm9ybWF0KHN2Zyl9DQogICAgLmZpbDAge2ZpbGw6IzM3MzQzNX0NCiAgICAuZm50MSB7Zm9udC13ZWlnaHQ6NjAwO2ZvbnQtc2l6ZTo0NzYuMDVweDtmb250LWZhbWlseTonRkxVUk8gU2VtaWJvbGQnfQ0KICAgIC5mbnQwIHtmb250LXdlaWdodDo2MDA7Zm9udC1zaXplOjg0Ni42NnB4O2ZvbnQtZmFtaWx5OidGTFVSTyBTZW1pYm9sZCd9DQogICBdXT4NCiAgPC9zdHlsZT4NCiA8L2RlZnM+DQogPGcgaWQ9IkNhbWFkYV94MDAyMF8xIj4NCiAgPG1ldGFkYXRhIGlkPSJDb3JlbENvcnBJRF8wQ29yZWwtTGF5ZXIiLz4NCiAgPHRleHQgeD0iLTE4LjYzIiB5PSI2NjUuMjkiICBjbGFzcz0iZmlsMCBmbnQwIj5DPC90ZXh0Pg0KICA8ZyB0cmFuc2Zvcm09Im1hdHJpeCgwLjg1MjAyMiAwLjUyMzUwNyAtMC41MjM1MDcgMC44NTIwMjIgOTQuNzY2NyAtNTIxLjcyNSkiPg0KICAgPHRleHQgeD0iNjQzIiB5PSIzMzkuNDMiICBjbGFzcz0iZmlsMCBmbnQxIj4rPC90ZXh0Pg0KICA8L2c+DQogIDx0ZXh0IHg9Ijc5My4yMiIgeT0iNjY1LjI5IiAgY2xhc3M9ImZpbDAgZm50MCI+QjwvdGV4dD4NCiA8L2c+DQo8L3N2Zz4NCg==" alt="Carlos A. Boico." /></a>
         <p class="project-name" id="projectName">Projeto</p>
       </div>
       <div class="project-actions">
@@ -1362,7 +1448,7 @@
     </div>
   </div>
 
-  <a class="whatsapp-float" href="https://wa.me/message/DAOAAENEEHYBA1" target="_blank" rel="noopener" aria-label="Contato pelo WhatsApp">WhatsApp</a>
+  <a class="whatsapp-float" href="https://wa.me/message/DAOAAENEEHYBA1" target="_blank" rel="noopener" aria-label="Solicitar orçamento pelo WhatsApp">Orçamentos</a>
 
   <script>
     /*
@@ -1534,13 +1620,61 @@
       }
     ];
 
+
+    const systemPages = {
+      sobre: {
+        label: 'Sobre mim',
+        title: 'Sobre mim',
+        copy: [
+          'Esta página fica separada do hall para manter a entrada do site limpa, deixando somente o carrossel de projetos como primeira experiência.',
+          'Use este espaço para apresentar sua trajetória, área de atuação, estilo de trabalho, diferenciais e o tipo de projeto que deseja atrair.'
+        ],
+        cards: [
+          { number: '01', title: 'Perfil', text: 'Apresentação curta sobre você, sua linguagem visual e forma de conduzir os projetos.' },
+          { number: '02', title: 'Atuação', text: 'Arquitetura, interiores, renders, estudos, desenhos técnicos e acompanhamento visual dos projetos.' },
+          { number: '03', title: 'Identidade', text: 'Espaço preparado para textos institucionais, fotos, equipe, manifesto ou trajetória profissional.' }
+        ]
+      },
+      processo: {
+        label: 'Processo',
+        title: 'Processo',
+        copy: [
+          'A página de processo também fica fora do hall. O cliente pode acessá-la pelo menu sem descer a tela inicial.',
+          'Aqui você pode explicar as etapas de atendimento, levantamento, estudo preliminar, apresentação, executivo e entrega.'
+        ],
+        cards: [
+          { number: '01', title: 'Escolha do projeto', text: 'O cliente entra pelo hall e escolhe uma capa no carrossel principal.' },
+          { number: '02', title: 'Página interna', text: 'Cada projeto abre uma tela própria com fotos, renders, informações do terreno e desenhos.' },
+          { number: '03', title: 'Leitura técnica', text: 'Os botões Infos e Desenhos organizam dados do terreno, plantas e materiais enviados ao sistema.' }
+        ]
+      },
+      contato: {
+        label: 'Contato',
+        title: 'Contato',
+        copy: [
+          'Esta página concentra os caminhos de contato e orçamento, separada do hall de entrada.',
+          'O botão Orçamentos continua fixo na tela para abrir o WhatsApp de forma direta.'
+        ],
+        cards: [
+          { number: '01', title: 'Orçamentos', text: 'Direcione o cliente para iniciar uma conversa sobre valores, prazos e escopo.' },
+          { number: '02', title: 'Parcerias', text: 'Espaço para contatos profissionais, fornecedores, marcas e colaborações.' },
+          { number: '03', title: 'Novos projetos', text: 'Área para explicar quais informações iniciais o cliente deve enviar.' }
+        ],
+        action: true
+      }
+    };
+
     const menuButton = document.querySelector('.menu-button');
     const closeButton = document.querySelector('.close-menu');
     const menuPanel = document.querySelector('.menu-panel');
-    const menuLinks = document.querySelectorAll('.menu-links a');
+    const pageNavLinks = document.querySelectorAll('[data-system-page]');
     const homeView = document.querySelector('.home-view');
     const projectPage = document.getElementById('projectPage');
     const homeHeader = document.querySelector('.home-header');
+    const systemPage = document.getElementById('systemPage');
+    const systemLabel = document.getElementById('systemLabel');
+    const systemTitle = document.getElementById('systemTitle');
+    const systemBody = document.getElementById('systemBody');
 
     const projectTrack = document.getElementById('projectTrack');
     const prevProject = document.getElementById('prevProject');
@@ -1580,6 +1714,8 @@
     let currentProject = projects[0];
     let currentPhotoIndex = 0;
     let autoTimer = null;
+    let hallAutoTimer = null;
+    let hallWheelTimer = null;
     let isDraggingHall = false;
     let dragStartX = 0;
     let initialScrollLeft = 0;
@@ -1632,8 +1768,37 @@
       projectTrack.scrollBy({ left: direction * amount, behavior: 'smooth' });
     }
 
+    function nextHallSlide() {
+      const maxScroll = projectTrack.scrollWidth - projectTrack.clientWidth;
+      if (maxScroll <= 0) return;
+
+      const nearEnd = projectTrack.scrollLeft >= maxScroll - 12;
+      if (nearEnd) {
+        projectTrack.scrollTo({ left: 0, behavior: 'smooth' });
+        return;
+      }
+
+      moveHallCarousel(1);
+    }
+
+    function startHallAutoCarousel() {
+      stopHallAutoCarousel();
+      hallAutoTimer = window.setInterval(nextHallSlide, 3200);
+    }
+
+    function stopHallAutoCarousel() {
+      if (hallAutoTimer) window.clearInterval(hallAutoTimer);
+      hallAutoTimer = null;
+    }
+
+    function restartHallAutoCarousel() {
+      stopHallAutoCarousel();
+      hallAutoTimer = window.setTimeout(startHallAutoCarousel, 900);
+    }
+
     function setupHallDrag() {
       projectTrack.addEventListener('pointerdown', (event) => {
+        stopHallAutoCarousel();
         isDraggingHall = true;
         projectTrack.classList.add('is-dragging');
         dragStartX = event.clientX;
@@ -1652,11 +1817,13 @@
       });
 
       function stopDrag() {
+        if (!isDraggingHall) return;
         isDraggingHall = false;
         projectTrack.classList.remove('is-dragging');
         window.setTimeout(() => {
           projectTrack.querySelectorAll('.project-card').forEach(card => card.dataset.wasDragged = 'false');
         }, 80);
+        restartHallAutoCarousel();
       }
 
       projectTrack.addEventListener('pointerup', stopDrag);
@@ -1664,14 +1831,84 @@
       projectTrack.addEventListener('pointerleave', stopDrag);
 
       projectTrack.addEventListener('wheel', (event) => {
+        stopHallAutoCarousel();
         if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
           event.preventDefault();
           projectTrack.scrollLeft += event.deltaY;
         }
+        window.clearTimeout(hallWheelTimer);
+        hallWheelTimer = window.setTimeout(restartHallAutoCarousel, 900);
       }, { passive: false });
+
+      projectTrack.addEventListener('mouseenter', stopHallAutoCarousel);
+      projectTrack.addEventListener('mouseleave', restartHallAutoCarousel);
+      projectTrack.addEventListener('focusin', stopHallAutoCarousel);
+      projectTrack.addEventListener('focusout', restartHallAutoCarousel);
+    }
+
+
+    function renderSystemPage(pageId) {
+      const page = systemPages[pageId] || systemPages.sobre;
+      systemLabel.textContent = page.label;
+      systemTitle.textContent = page.title;
+
+      const copyHtml = page.copy.map(text => `<p>${text}</p>`).join('');
+      const cardsHtml = page.cards.map(card => `
+        <article class="system-card">
+          <span>${card.number}</span>
+          <h3>${card.title}</h3>
+          <p>${card.text}</p>
+        </article>
+      `).join('');
+      const actionHtml = page.action ? `
+        <div class="system-actions">
+          <a class="button primary" href="https://wa.me/message/DAOAAENEEHYBA1" target="_blank" rel="noopener">Solicitar orçamento</a>
+          <a class="button" href="#inicio" data-go-home>Voltar ao hall</a>
+        </div>
+      ` : `
+        <div class="system-actions">
+          <a class="button" href="#inicio" data-go-home>Voltar ao hall</a>
+        </div>
+      `;
+
+      systemBody.innerHTML = `
+        <div class="system-copy">${copyHtml}${actionHtml}</div>
+        <div class="system-cards">${cardsHtml}</div>
+      `;
+
+      systemBody.querySelectorAll('[data-go-home]').forEach((button) => {
+        button.addEventListener('click', (event) => {
+          event.preventDefault();
+          backHome();
+        });
+      });
+    }
+
+    function openSystemPage(pageId, replaceHash = false) {
+      const page = systemPages[pageId] ? pageId : 'sobre';
+      stopHallAutoCarousel();
+      stopAutoCarousel();
+      closeAllPanels();
+      closePhotoViewer();
+      closeDrawingViewer();
+      renderSystemPage(page);
+
+      projectPage.classList.remove('is-active');
+      homeView.classList.add('is-hidden');
+      systemPage.classList.add('is-active');
+      homeHeader.style.display = '';
+
+      if (replaceHash) {
+        history.replaceState(null, '', '#' + page);
+      } else {
+        history.pushState(null, '', '#' + page);
+      }
+
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
 
     function openProject(projectId, replaceHash = false) {
+      stopHallAutoCarousel();
       currentProject = projects.find(project => project.id === projectId) || projects[0];
       currentPhotoIndex = 0;
 
@@ -1680,6 +1917,7 @@
       startAutoCarousel();
 
       homeView.classList.add('is-hidden');
+      systemPage.classList.remove('is-active');
       homeHeader.style.display = 'none';
       projectPage.classList.add('is-active');
       closeAllPanels();
@@ -1695,7 +1933,9 @@
 
     function backHome() {
       stopAutoCarousel();
+      startHallAutoCarousel();
       projectPage.classList.remove('is-active');
+      systemPage.classList.remove('is-active');
       homeView.classList.remove('is-hidden');
       homeHeader.style.display = '';
       closeAllPanels();
@@ -1878,16 +2118,29 @@
       }
     }
 
-    menuButton.addEventListener('click', openMenu);
-    closeButton.addEventListener('click', closeMenu);
-    menuLinks.forEach(link => link.addEventListener('click', closeMenu));
+    if (menuButton) menuButton.addEventListener('click', openMenu);
+    if (closeButton) closeButton.addEventListener('click', closeMenu);
+
+    pageNavLinks.forEach((link) => {
+      link.addEventListener('click', (event) => {
+        const page = link.dataset.systemPage;
+        if (page) {
+          event.preventDefault();
+          closeMenu();
+          openSystemPage(page);
+        }
+      });
+    });
 
     prevProject.addEventListener('click', () => moveHallCarousel(-1));
     nextProject.addEventListener('click', () => moveHallCarousel(1));
 
-    document.getElementById('homeLogo').addEventListener('click', (event) => {
-      event.preventDefault();
-      backHome();
+    document.querySelectorAll('a.logo[href="#inicio"]').forEach((logoLink) => {
+      logoLink.addEventListener('click', (event) => {
+        event.preventDefault();
+        closeMenu();
+        backHome();
+      });
     });
 
     infoButton.addEventListener('click', () => {
@@ -1928,14 +2181,19 @@
     });
 
     window.addEventListener('popstate', () => {
-      const projectId = location.hash.replace('#', '');
-      const projectExists = projects.some(project => project.id === projectId);
+      const currentHash = location.hash.replace('#', '');
+      const projectExists = projects.some(project => project.id === currentHash);
+      const systemExists = Object.prototype.hasOwnProperty.call(systemPages, currentHash);
 
       if (projectExists) {
-        openProject(projectId, true);
+        openProject(currentHash, true);
+      } else if (systemExists) {
+        openSystemPage(currentHash, true);
       } else {
         stopAutoCarousel();
+        startHallAutoCarousel();
         projectPage.classList.remove('is-active');
+        systemPage.classList.remove('is-active');
         homeView.classList.remove('is-hidden');
         homeHeader.style.display = '';
         closeAllPanels();
@@ -1946,11 +2204,15 @@
 
     renderHallCarousel();
     setupHallDrag();
-    document.getElementById('year').textContent = new Date().getFullYear();
+    startHallAutoCarousel();
+    const yearElement = document.getElementById('year');
+    if (yearElement) yearElement.textContent = new Date().getFullYear();
 
-    const initialProjectId = location.hash.replace('#', '');
-    if (projects.some(project => project.id === initialProjectId)) {
-      openProject(initialProjectId, true);
+    const initialHash = location.hash.replace('#', '');
+    if (projects.some(project => project.id === initialHash)) {
+      openProject(initialHash, true);
+    } else if (Object.prototype.hasOwnProperty.call(systemPages, initialHash)) {
+      openSystemPage(initialHash, true);
     }
   </script>
 </body>
