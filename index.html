@@ -70,7 +70,12 @@
       margin: 0;
       font-family: Georgia, "Times New Roman", serif;
       color: var(--text);
-      background: var(--bg);
+      background-color: #1c34ab;
+      background-image: url("assets/cutting-mat-50x36.svg");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
       overflow-x: hidden;
     }
 
@@ -299,6 +304,7 @@
       overflow: hidden;
       background: linear-gradient(135deg, rgba(46, 16, 101, .18), rgba(255,255,255,.36));
       filter: grayscale(.78) contrast(.94) brightness(1.03);
+      transition: filter .35s ease, transform .35s ease;
       isolation: isolate;
     }
 
@@ -1673,8 +1679,14 @@
 
   
     .project-image.has-real-image {
-      filter: none;
       background: #e9e3dc;
+      filter: grayscale(1) contrast(.98) brightness(.98);
+    }
+
+    .project-card:hover .project-image.has-real-image,
+    .project-card:focus-visible .project-image.has-real-image,
+    .project-card:focus .project-image.has-real-image {
+      filter: grayscale(0) contrast(1) brightness(1);
     }
 
     .project-image.has-real-image::before {
@@ -1789,6 +1801,11 @@
       padding: 0 0 14px;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
+    }
+
+    .project-view .vertical-carousel-track.is-auto-scrolling {
+      scroll-snap-type: none !important;
+      scroll-behavior: auto !important;
     }
 
     .project-view .vertical-carousel-track::-webkit-scrollbar {
@@ -2085,6 +2102,61 @@
 
       .project-index-row strong {
         font-size: 27px;
+      }
+    }
+
+  
+
+    /* ── AJUSTE V6 / FOTOS SEM CONTORNO BRANCO ─────────────────────────
+       Nesta parte eu removo o contorno/borda das fotos da página interna
+       e deixo apenas a imagem com bordas arredondadas sobre fundo sólido.
+    */
+    .project-view,
+    .project-view .project-stage,
+    .project-view .vertical-carousel {
+      background: transparent !important;
+    }
+
+    .project-view .media-block {
+      border: 0 !important;
+      outline: 0 !important;
+      border-radius: 18px !important;
+      overflow: hidden !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .project-view .media-block::before,
+    .project-view .media-block::after {
+      border-radius: inherit !important;
+    }
+
+    .project-view .media-img {
+      border-radius: inherit !important;
+      display: block;
+    }
+
+    @media (max-width: 660px) {
+      .project-view .media-block {
+        border-radius: 14px !important;
+      }
+    }
+
+  
+
+    /* ── AJUSTE V8 / BACKGROUND COM ART ───────────────────────────────
+       A arte SVG enviada fica no fundo geral do sistema. As views principais
+       ficam transparentes para a arte aparecer no lugar do fundo branco.
+    */
+    .home-view,
+    .system-view,
+    .project-view {
+      background: transparent;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        background-attachment: scroll;
       }
     }
 
@@ -2522,6 +2594,8 @@
     let currentProject = projects[0];
     let currentPhotoIndex = 0;
     let autoTimer = null;
+    let autoScrollFrame = null;
+    let projectAutoPaused = false;
     let hallAutoTimer = null;
     let hallWheelTimer = null;
     let isDraggingHall = false;
@@ -2808,15 +2882,22 @@
       projectCategory.textContent = currentProject.category;
       projectDescription.textContent = currentProject.description;
 
-      projectPhotoTrack.innerHTML = currentProject.images.map((image, index) => `
-        <button class="media-block ${mediaClass(image)} ${image.src ? 'has-real-image' : ''}" type="button" data-photo-index="${index}" aria-label="Abrir ${image.title}" style="${image.src ? '' : mediaStyle(image)}">
-          ${image.src ? `<img class="project-cover-img media-img" src="${image.src}" alt="" loading="eager" decoding="async">` : ''}
-          <span class="media-block-label">
-            <strong>${image.title}</strong>
-            <span>${image.type}</span>
-          </span>
-        </button>
-      `).join('');
+      const carouselImages = currentProject.images.length > 1
+        ? [...currentProject.images, ...currentProject.images]
+        : currentProject.images;
+
+      projectPhotoTrack.innerHTML = carouselImages.map((image, index) => {
+        const realIndex = index % currentProject.images.length;
+        return `
+          <button class="media-block ${mediaClass(image)} ${image.src ? 'has-real-image' : ''}" type="button" data-photo-index="${realIndex}" aria-label="Abrir ${image.title}" style="${image.src ? '' : mediaStyle(image)}">
+            ${image.src ? `<img class="project-cover-img media-img" src="${image.src}" alt="" loading="eager" decoding="async">` : ''}
+            <span class="media-block-label">
+              <strong>${image.title}</strong>
+              <span>${image.type}</span>
+            </span>
+          </button>
+        `;
+      }).join('');
 
       // O clique nas fotos é tratado por delegação no final do script.
       // Isso evita falhas no desktop quando a imagem interna recebe o clique.
@@ -2860,6 +2941,7 @@
 
       const activeItem = mediaItems[currentPhotoIndex];
       if (activeItem) {
+        projectPhotoTrack.classList.remove('is-auto-scrolling');
         activeItem.scrollIntoView({ behavior: instant ? 'auto' : 'smooth', inline: 'start', block: 'nearest' });
       }
 
@@ -2874,20 +2956,40 @@
       updateVerticalCarousel();
     }
 
+    function tickProjectCarousel() {
+      if (!projectPage.classList.contains('is-active') || projectAutoPaused || currentProject.images.length <= 1) return;
+
+      const loopPoint = projectPhotoTrack.scrollWidth / 2;
+      if (loopPoint > projectPhotoTrack.clientWidth) {
+        projectPhotoTrack.classList.add('is-auto-scrolling');
+        projectPhotoTrack.scrollLeft += 0.75;
+        if (projectPhotoTrack.scrollLeft >= loopPoint) {
+          projectPhotoTrack.scrollLeft = 0;
+        }
+      }
+
+      autoScrollFrame = window.requestAnimationFrame(tickProjectCarousel);
+    }
+
     function startAutoCarousel() {
       stopAutoCarousel();
+      projectAutoPaused = false;
       if (currentProject.images.length > 1) {
-        autoTimer = window.setInterval(nextVerticalImage, 3600);
+        autoScrollFrame = window.requestAnimationFrame(tickProjectCarousel);
       }
     }
 
     function stopAutoCarousel() {
       if (autoTimer) window.clearInterval(autoTimer);
       autoTimer = null;
+      if (autoScrollFrame) window.cancelAnimationFrame(autoScrollFrame);
+      autoScrollFrame = null;
+      projectPhotoTrack.classList.remove('is-auto-scrolling');
     }
 
     function restartAutoCarousel() {
-      startAutoCarousel();
+      stopAutoCarousel();
+      window.setTimeout(startAutoCarousel, 600);
     }
 
     // ── 10. PAINÉIS DE INFOS E DESENHOS ───────────────────
@@ -3038,6 +3140,20 @@
       event.stopPropagation();
       openPhotoViewer(Number(media.dataset.photoIndex));
     });
+
+    projectPhotoTrack.addEventListener('pointerdown', () => {
+      projectAutoPaused = true;
+      stopAutoCarousel();
+    });
+
+    projectPhotoTrack.addEventListener('pointerup', restartAutoCarousel);
+    projectPhotoTrack.addEventListener('pointerleave', restartAutoCarousel);
+    projectPhotoTrack.addEventListener('wheel', () => {
+      projectAutoPaused = true;
+      stopAutoCarousel();
+      window.clearTimeout(hallWheelTimer);
+      hallWheelTimer = window.setTimeout(restartAutoCarousel, 900);
+    }, { passive: true });
 
     if (closeProjectPage) closeProjectPage.addEventListener('click', backHome);
 
