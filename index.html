@@ -70,12 +70,7 @@
       margin: 0;
       font-family: Georgia, "Times New Roman", serif;
       color: var(--text);
-      background-color: #1c34ab;
-      background-image: url("assets/cutting-mat-50x36.svg");
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      background-repeat: no-repeat;
+      background: #6f5d4b;
       overflow-x: hidden;
     }
 
@@ -244,9 +239,9 @@
 
     /* ── 03. HALL / CARROSSEL PRINCIPAL ─────────────────── */
     .project-strip {
-      padding: 0 0 28px;
+      padding: clamp(26px, 3.2vw, 46px) 0 32px;
       overflow: hidden;
-      border-bottom: 1px solid var(--line);
+      border-bottom: 1px solid rgba(244, 236, 222, .20);
     }
 
     .carousel-shell {
@@ -294,7 +289,7 @@
 
     .project-card:focus-visible,
     .project-card:hover .project-title {
-      color: var(--purple);
+      color: #fff5e6;
       outline: none;
     }
 
@@ -359,7 +354,7 @@
       margin: 12px 0 0;
       font-size: 16px;
       line-height: 1.25;
-      color: #302834;
+      color: #eadcc8;
       transition: color .2s ease;
     }
 
@@ -369,7 +364,7 @@
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: .12em;
-      color: var(--muted);
+      color: rgba(234, 220, 200, .72);
     }
 
     .carousel-controls {
@@ -1707,6 +1702,7 @@
       object-position: center;
       display: block;
       z-index: 0;
+      pointer-events: none;
     }
 
 
@@ -2601,6 +2597,9 @@
     let isDraggingHall = false;
     let dragStartX = 0;
     let initialScrollLeft = 0;
+    let pendingHallCard = null;
+    let hallPointerMoved = false;
+    let lastHallOpenAt = 0;
 
     // ── 06. MENU E NAVEGAÇÃO GERAL ────────────────────────
     function openMenu() {
@@ -2640,11 +2639,21 @@
       `).join('');
 
       projectTrack.querySelectorAll('.project-card').forEach((card) => {
-        card.addEventListener('click', () => {
-          if (card.dataset.wasDragged === 'true') return;
-          openProject(card.dataset.project);
-        });
+        card.dataset.wasDragged = 'false';
       });
+    }
+
+    function openHallProjectCard(card) {
+      if (!card || card.dataset.wasDragged === 'true') return;
+      const projectId = card.dataset.project;
+      if (!projectId) return;
+
+      const now = Date.now();
+      if (now - lastHallOpenAt < 350) return;
+      lastHallOpenAt = now;
+
+      stopHallAutoCarousel();
+      openProject(projectId);
     }
 
     function moveHallCarousel(direction) {
@@ -2691,6 +2700,8 @@
       projectTrack.addEventListener('pointerdown', (event) => {
         stopHallAutoCarousel();
         isDraggingHall = true;
+        hallPointerMoved = false;
+        pendingHallCard = event.target.closest('.project-card');
         projectTrack.classList.add('is-dragging');
         dragStartX = event.clientX;
         initialScrollLeft = projectTrack.scrollLeft;
@@ -2702,18 +2713,29 @@
         if (!isDraggingHall) return;
         const walk = (event.clientX - dragStartX) * 1.25;
         if (Math.abs(walk) > 5) {
+          hallPointerMoved = true;
           projectTrack.querySelectorAll('.project-card').forEach(card => card.dataset.wasDragged = 'true');
         }
         projectTrack.scrollLeft = initialScrollLeft - walk;
       });
 
-      function stopDrag() {
+      function stopDrag(event) {
         if (!isDraggingHall) return;
+        const shouldOpenCard = event && event.type === 'pointerup' && pendingHallCard && !hallPointerMoved;
+        const cardToOpen = pendingHallCard;
+
         isDraggingHall = false;
+        pendingHallCard = null;
         projectTrack.classList.remove('is-dragging');
         window.setTimeout(() => {
           projectTrack.querySelectorAll('.project-card').forEach(card => card.dataset.wasDragged = 'false');
         }, 80);
+
+        if (shouldOpenCard) {
+          openHallProjectCard(cardToOpen);
+          return;
+        }
+
         restartHallAutoCarousel();
       }
 
@@ -3110,6 +3132,13 @@
           openSystemPage(page);
         }
       });
+    });
+
+    projectTrack.addEventListener('click', (event) => {
+      const card = event.target.closest('.project-card');
+      if (!card) return;
+      event.preventDefault();
+      openHallProjectCard(card);
     });
 
     prevProject.addEventListener('click', () => moveHallCarousel(-1));
