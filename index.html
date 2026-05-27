@@ -2498,6 +2498,40 @@ body {
   scroll-behavior: auto !important;
 }
 
+
+
+/* ── AJUSTE V15: movimento real e visível no carrossel interno do projeto ── */
+@keyframes projectCarouselMarquee {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+.project-view .vertical-carousel {
+  overflow: hidden !important;
+}
+
+.project-view .vertical-carousel-track.is-auto-scrolling {
+  overflow-x: visible !important;
+  scroll-snap-type: none !important;
+  scroll-behavior: auto !important;
+  animation: projectCarouselMarquee 18s linear infinite !important;
+  will-change: transform;
+}
+
+.project-view .vertical-carousel-track.is-auto-scrolling:hover {
+  animation-play-state: running !important;
+}
+
+.project-view .vertical-carousel-track.is-paused {
+  animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-view .vertical-carousel-track.is-auto-scrolling {
+    animation: none !important;
+  }
+}
+
 </style>
 </head>
 
@@ -3344,28 +3378,10 @@ body {
       }
     }
 
-    function animateProjectCarousel(timestamp) {
-      if (!projectPage.classList.contains('is-active') || projectAutoPaused || currentProject.images.length <= 1) {
-        autoScrollFrame = null;
-        return;
-      }
-
-      const loopPoint = projectPhotoTrack.scrollWidth / 2;
-      if (loopPoint > projectPhotoTrack.clientWidth) {
-        if (!window.__projectLastAutoTs) window.__projectLastAutoTs = timestamp;
-        const delta = Math.min(timestamp - window.__projectLastAutoTs, 34);
-        window.__projectLastAutoTs = timestamp;
-
-        projectPhotoTrack.scrollLeft += delta * 0.045;
-
-        if (projectPhotoTrack.scrollLeft >= loopPoint) {
-          projectPhotoTrack.scrollLeft -= loopPoint;
-        }
-
-        syncProjectDotFromScroll();
-      }
-
-      autoScrollFrame = window.requestAnimationFrame(animateProjectCarousel);
+    function animateProjectCarousel() {
+      // O movimento contínuo agora é feito por CSS animation na classe is-auto-scrolling.
+      // Mantemos esta função só para compatibilidade com versões anteriores do arquivo.
+      autoScrollFrame = null;
     }
 
     function startAutoCarousel() {
@@ -3373,8 +3389,8 @@ body {
       projectAutoPaused = false;
       window.__projectLastAutoTs = 0;
       if (currentProject.images.length > 1) {
+        projectPhotoTrack.scrollLeft = 0;
         projectPhotoTrack.classList.add('is-auto-scrolling');
-        autoScrollFrame = window.requestAnimationFrame(animateProjectCarousel);
       }
     }
 
@@ -3550,11 +3566,18 @@ body {
 
     projectPhotoTrack.addEventListener('pointerdown', () => {
       projectAutoPaused = true;
+      projectPhotoTrack.classList.add('is-paused');
       stopAutoCarousel();
     });
 
-    projectPhotoTrack.addEventListener('pointerup', restartAutoCarousel);
-    projectPhotoTrack.addEventListener('pointerleave', restartAutoCarousel);
+    projectPhotoTrack.addEventListener('pointerup', () => {
+      projectPhotoTrack.classList.remove('is-paused');
+      restartAutoCarousel();
+    });
+    projectPhotoTrack.addEventListener('pointerleave', () => {
+      projectPhotoTrack.classList.remove('is-paused');
+      restartAutoCarousel();
+    });
     projectPhotoTrack.addEventListener('wheel', () => {
       projectAutoPaused = true;
       stopAutoCarousel();
