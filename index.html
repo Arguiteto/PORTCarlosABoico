@@ -2532,6 +2532,15 @@ body {
   }
 }
 
+
+
+/* ── AJUSTE V16: movimento real do carrossel interno via JavaScript ── */
+.project-view .vertical-carousel-track.is-auto-scrolling {
+  animation: none !important;
+  overflow-x: visible !important;
+  will-change: transform;
+}
+
 </style>
 </head>
 
@@ -2968,6 +2977,9 @@ body {
     let autoTimer = null;
     let autoScrollFrame = null;
     let projectAutoPaused = false;
+    let projectAutoX = 0;
+    let projectAutoLastTs = 0;
+    const projectAutoSpeed = 42; // px por segundo
     let hallAutoTimer = null;
     let hallWheelTimer = null;
     let isDraggingHall = false;
@@ -3378,19 +3390,50 @@ body {
       }
     }
 
-    function animateProjectCarousel() {
-      // O movimento contínuo agora é feito por CSS animation na classe is-auto-scrolling.
-      // Mantemos esta função só para compatibilidade com versões anteriores do arquivo.
-      autoScrollFrame = null;
+    function getProjectLoopDistance() {
+      if (currentProject.images.length <= 1) return 0;
+      return Math.max(0, projectPhotoTrack.scrollWidth / 2);
+    }
+
+    function applyProjectTrackTransform(x) {
+      // Usa !important no inline style porque versões anteriores do layout tinham
+      // transform:none!important no CSS do track. Assim o movimento fica garantido.
+      projectPhotoTrack.style.setProperty('transform', `translate3d(${-x}px, 0, 0)`, 'important');
+    }
+
+    function animateProjectCarousel(timestamp) {
+      if (!projectPhotoTrack.classList.contains('is-auto-scrolling')) {
+        autoScrollFrame = null;
+        return;
+      }
+
+      const loopDistance = getProjectLoopDistance();
+      if (!loopDistance) {
+        autoScrollFrame = window.requestAnimationFrame(animateProjectCarousel);
+        return;
+      }
+
+      if (!projectAutoLastTs) projectAutoLastTs = timestamp;
+      const delta = Math.min(64, timestamp - projectAutoLastTs);
+      projectAutoLastTs = timestamp;
+
+      projectAutoX += (delta / 1000) * projectAutoSpeed;
+      if (projectAutoX >= loopDistance) projectAutoX -= loopDistance;
+
+      applyProjectTrackTransform(projectAutoX);
+      autoScrollFrame = window.requestAnimationFrame(animateProjectCarousel);
     }
 
     function startAutoCarousel() {
       stopAutoCarousel();
       projectAutoPaused = false;
-      window.__projectLastAutoTs = 0;
       if (currentProject.images.length > 1) {
+        projectAutoX = 0;
+        projectAutoLastTs = 0;
         projectPhotoTrack.scrollLeft = 0;
         projectPhotoTrack.classList.add('is-auto-scrolling');
+        applyProjectTrackTransform(0);
+        autoScrollFrame = window.requestAnimationFrame(animateProjectCarousel);
       }
     }
 
@@ -3399,8 +3442,9 @@ body {
       autoTimer = null;
       if (autoScrollFrame) window.cancelAnimationFrame(autoScrollFrame);
       autoScrollFrame = null;
-      window.__projectLastAutoTs = 0;
+      projectAutoLastTs = 0;
       projectPhotoTrack.classList.remove('is-auto-scrolling');
+      projectPhotoTrack.style.removeProperty('transform');
     }
 
     function restartAutoCarousel() {
