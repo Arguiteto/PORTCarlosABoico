@@ -1801,7 +1801,6 @@
 
     .project-view .vertical-carousel-track.is-auto-scrolling {
       scroll-snap-type: none !important;
-      scroll-behavior: auto !important;
     }
 
     .project-view .vertical-carousel-track::-webkit-scrollbar {
@@ -3201,13 +3200,13 @@ body {
 
       renderProjectPage();
       stopAutoCarousel();
-      startAutoCarousel();
 
       homeView.classList.add('is-hidden');
       systemPage.classList.remove('is-active');
       homeHeader.style.display = 'none';
       projectPage.classList.add('is-active');
       closeAllPanels();
+      window.setTimeout(startAutoCarousel, 450);
 
       if (replaceHash) {
         history.replaceState(null, '', '#' + currentProject.id);
@@ -3313,26 +3312,42 @@ body {
       updateVerticalCarousel();
     }
 
+    function getProjectCarouselStep() {
+      const card = projectPhotoTrack.querySelector('.media-block');
+      if (!card) return 0;
+      const styles = window.getComputedStyle(projectPhotoTrack);
+      const gap = parseFloat(styles.columnGap || styles.gap) || 0;
+      return card.getBoundingClientRect().width + gap;
+    }
+
+    function updateProjectDotsOnly() {
+      projectDots.querySelectorAll('button').forEach((dot, index) => {
+        dot.classList.toggle('is-active', index === currentPhotoIndex);
+      });
+    }
+
     function tickProjectCarousel() {
       if (!projectPage.classList.contains('is-active') || projectAutoPaused || currentProject.images.length <= 1) return;
 
+      const step = getProjectCarouselStep();
       const loopPoint = projectPhotoTrack.scrollWidth / 2;
-      if (loopPoint > projectPhotoTrack.clientWidth) {
-        projectPhotoTrack.classList.add('is-auto-scrolling');
-        projectPhotoTrack.scrollLeft += 0.75;
-        if (projectPhotoTrack.scrollLeft >= loopPoint) {
-          projectPhotoTrack.scrollLeft = 0;
-        }
-      }
+      if (!step || loopPoint <= projectPhotoTrack.clientWidth) return;
 
-      autoScrollFrame = window.requestAnimationFrame(tickProjectCarousel);
+      currentPhotoIndex = (currentPhotoIndex + 1) % currentProject.images.length;
+      updateProjectDotsOnly();
+
+      if (projectPhotoTrack.scrollLeft + step >= loopPoint - 2) {
+        projectPhotoTrack.scrollTo({ left: 0, behavior: 'auto' });
+      } else {
+        projectPhotoTrack.scrollBy({ left: step, behavior: 'smooth' });
+      }
     }
 
     function startAutoCarousel() {
       stopAutoCarousel();
       projectAutoPaused = false;
       if (currentProject.images.length > 1) {
-        autoScrollFrame = window.requestAnimationFrame(tickProjectCarousel);
+        autoTimer = window.setInterval(tickProjectCarousel, 2600);
       }
     }
 
@@ -3346,7 +3361,7 @@ body {
 
     function restartAutoCarousel() {
       stopAutoCarousel();
-      window.setTimeout(startAutoCarousel, 600);
+      window.setTimeout(startAutoCarousel, 700);
     }
 
     // ── 10. PAINÉIS DE INFOS E DESENHOS ───────────────────
