@@ -2537,7 +2537,11 @@ body {
 /* ── AJUSTE V16: movimento real do carrossel interno via JavaScript ── */
 .project-view .vertical-carousel-track.is-auto-scrolling {
   animation: none !important;
+  transition: none !important;
   overflow-x: visible !important;
+  overflow-y: hidden !important;
+  scroll-snap-type: none !important;
+  scroll-behavior: auto !important;
   will-change: transform;
 }
 
@@ -2975,11 +2979,12 @@ body {
     let currentProject = projects[0];
     let currentPhotoIndex = 0;
     let autoTimer = null;
+    let projectAutoRestartTimer = null;
     let autoScrollFrame = null;
     let projectAutoPaused = false;
     let projectAutoX = 0;
     let projectAutoLastTs = 0;
-    const projectAutoSpeed = 42; // px por segundo
+    const projectAutoSpeed = 85; // px por segundo
     let hallAutoTimer = null;
     let hallWheelTimer = null;
     let isDraggingHall = false;
@@ -3440,6 +3445,8 @@ body {
     function stopAutoCarousel() {
       if (autoTimer) window.clearInterval(autoTimer);
       autoTimer = null;
+      if (projectAutoRestartTimer) window.clearTimeout(projectAutoRestartTimer);
+      projectAutoRestartTimer = null;
       if (autoScrollFrame) window.cancelAnimationFrame(autoScrollFrame);
       autoScrollFrame = null;
       projectAutoLastTs = 0;
@@ -3449,7 +3456,10 @@ body {
 
     function restartAutoCarousel() {
       stopAutoCarousel();
-      window.setTimeout(startAutoCarousel, 700);
+      projectAutoRestartTimer = window.setTimeout(() => {
+        projectAutoRestartTimer = null;
+        startAutoCarousel();
+      }, 700);
     }
 
     // ── 10. PAINÉIS DE INFOS E DESENHOS ───────────────────
@@ -3643,7 +3653,7 @@ body {
     closeDrawingFull.addEventListener('click', closeDrawingViewer);
 
     window.addEventListener('resize', () => {
-      if (projectPage.classList.contains('is-active')) updateVerticalCarousel();
+      if (projectPage.classList.contains('is-active')) restartAutoCarousel();
     });
 
     window.addEventListener('keydown', (event) => {
