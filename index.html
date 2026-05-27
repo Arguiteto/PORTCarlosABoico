@@ -1819,6 +1819,34 @@
       object-position: center;
       display: block;
       z-index: 0;
+      pointer-events: none;
+    }
+
+    .project-view .media-block,
+    .project-view .media-block * {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .project-view .media-block {
+      cursor: zoom-in;
+    }
+
+    .project-view .media-block-label {
+      pointer-events: none;
+    }
+
+    .lightbox-media.has-real-image::before,
+    .lightbox-media.has-real-image::after {
+      display: none !important;
+    }
+
+    .lightbox-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      display: block;
+      background: rgba(255,255,255,.04);
     }
 
     .project-view .media-block-label {
@@ -2790,9 +2818,8 @@
         </button>
       `).join('');
 
-      projectPhotoTrack.querySelectorAll('.media-block').forEach((media) => {
-        media.addEventListener('click', () => openPhotoViewer(Number(media.dataset.photoIndex)));
-      });
+      // O clique nas fotos é tratado por delegação no final do script.
+      // Isso evita falhas no desktop quando a imagem interna recebe o clique.
 
       projectDots.innerHTML = currentProject.images.map((_, index) => `
         <button type="button" data-dot-index="${index}" aria-label="Ir para imagem ${index + 1}"></button>
@@ -2909,7 +2936,7 @@
 
     // ── 11. VISUALIZAÇÃO AMPLA DAS FOTOS ──────────────────
     function openPhotoViewer(index) {
-      currentPhotoIndex = index;
+      currentPhotoIndex = Number(index) || 0;
       updatePhotoViewer();
       photoLightbox.classList.add('is-open');
       photoLightbox.setAttribute('aria-hidden', 'false');
@@ -2921,13 +2948,23 @@
       photoLightbox.classList.remove('is-open');
       photoLightbox.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('modal-open');
+      lightboxMedia.innerHTML = '';
       if (projectPage.classList.contains('is-active')) restartAutoCarousel();
     }
 
     function updatePhotoViewer() {
       const image = currentProject.images[currentPhotoIndex];
-      lightboxMedia.className = 'lightbox-media ' + mediaClass(image);
-      lightboxMedia.setAttribute('style', mediaStyle(image));
+
+      if (image.src) {
+        lightboxMedia.className = 'lightbox-media has-real-image';
+        lightboxMedia.removeAttribute('style');
+        lightboxMedia.innerHTML = `<img class="lightbox-img" src="${image.src}" alt="${image.title}">`;
+      } else {
+        lightboxMedia.className = 'lightbox-media ' + mediaClass(image);
+        lightboxMedia.setAttribute('style', mediaStyle(image));
+        lightboxMedia.innerHTML = '';
+      }
+
       lightboxProjectName.textContent = currentProject.title;
       lightboxCaption.textContent = image.title + ' — ' + image.type;
       lightboxCounter.textContent = `${currentPhotoIndex + 1} / ${currentProject.images.length}`;
@@ -2992,6 +3029,14 @@
     drawingsButton.addEventListener('click', () => {
       if (drawingsPanel.classList.contains('is-open')) closeDrawingsPanel();
       else openDrawingsPanel();
+    });
+
+    projectPhotoTrack.addEventListener('click', (event) => {
+      const media = event.target.closest('.media-block');
+      if (!media || !projectPhotoTrack.contains(media)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      openPhotoViewer(Number(media.dataset.photoIndex));
     });
 
     if (closeProjectPage) closeProjectPage.addEventListener('click', backHome);
