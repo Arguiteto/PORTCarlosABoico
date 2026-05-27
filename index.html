@@ -7,7 +7,7 @@
   2. HTML / ESTRUTURA: fica dentro da tag BODY, separado por comentários.
   3. CONTEÚDO EDITÁVEL: fica no começo da tag SCRIPT, principalmente em:
      - const projects     -> projetos, capas, fotos, infos e desenhos
-     - const systemPages  -> textos das páginas Sobre mim / Projeto / Contato
+     - const systemPages  -> textos das páginas Sobre mim / Projetos / Contato
 
   COMO TROCAR IMAGENS:
   - Coloque a imagem dentro da pasta assets/
@@ -1214,7 +1214,7 @@
       margin-top: 26px;
     }
 
-    .system-view[data-page="processo"] .system-cards {
+    .system-view[data-page="projetos"] .system-cards {
       margin-top: clamp(-82px, -7vw, -34px);
     }
 
@@ -1300,7 +1300,7 @@
         grid-template-columns: 1fr;
       }
 
-      .system-view[data-page="processo"] .system-cards {
+      .system-view[data-page="projetos"] .system-cards {
         margin-top: 0;
       }
     }
@@ -1520,7 +1520,7 @@
     }
 
 
-    /* Ajustes v10: aba Projeto e logo superior menor */
+    /* Ajustes v10: aba Projetos e logo superior menor */
     .site-header .logo {
       width: clamp(34px, 3vw, 48px) !important;
       height: 28px !important;
@@ -1697,6 +1697,369 @@
       z-index: 0;
     }
 
+
+
+    /*
+      ─────────────────────────────────────────────
+      10. PROJETO ABERTO — MODELO ÚNICO DESKTOP + MOBILE
+      ─────────────────────────────────────────────
+      Este bloco garante que, ao clicar em um projeto no hall,
+      o desktop abra a mesma área que aparece no mobile:
+      topo do projeto + botões Infos/Desenhos/X + carrossel de fotos logo abaixo.
+    */
+
+    .project-view.is-active {
+      display: block !important;
+    }
+
+    .project-view .project-header {
+      grid-template-columns: auto 1fr auto !important;
+      min-height: 92px;
+      align-items: center;
+    }
+
+    .project-view .project-header-left {
+      grid-column: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .project-view .project-actions {
+      grid-column: 3;
+      display: flex !important;
+      align-items: center;
+      justify-content: flex-end;
+      gap: clamp(18px, 3vw, 52px);
+    }
+
+    .project-view .project-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 20px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(251, 248, 244, .62);
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(15px, 1.25vw, 19px);
+      letter-spacing: 0;
+    }
+
+    .project-view .project-close {
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 auto;
+    }
+
+    .project-view .project-stage {
+      padding-top: clamp(20px, 2.2vw, 34px) !important;
+    }
+
+    .project-view .project-intro,
+    .project-view .project-side {
+      display: none !important;
+    }
+
+    .project-view .project-media-area {
+      display: block !important;
+    }
+
+    .project-view .vertical-carousel {
+      position: relative !important;
+      top: auto !important;
+      height: auto !important;
+      min-height: 0 !important;
+      overflow: visible !important;
+      background: transparent !important;
+      border: 0 !important;
+      box-shadow: none !important;
+    }
+
+    .project-view .vertical-carousel-track {
+      display: flex !important;
+      flex-direction: row !important;
+      gap: clamp(24px, 4.2vw, 72px);
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      transform: none !important;
+      padding: 0 0 14px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .project-view .vertical-carousel-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .project-view .media-block {
+      flex: 0 0 clamp(340px, 34vw, 650px) !important;
+      height: clamp(390px, 39vw, 560px) !important;
+      min-height: clamp(390px, 39vw, 560px) !important;
+      scroll-snap-align: start;
+      border: 1px solid var(--line) !important;
+      box-shadow: none !important;
+      background: rgba(251, 248, 244, .24);
+    }
+
+    .project-view .media-block.has-real-image::before,
+    .project-view .media-block.has-real-image::after {
+      display: none !important;
+    }
+
+    .project-view .media-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      z-index: 0;
+    }
+
+    .project-view .media-block-label {
+      z-index: 2;
+    }
+
+    @media (max-width: 660px) {
+      .project-view .project-header {
+        grid-template-columns: 1fr !important;
+        min-height: auto;
+        gap: 16px;
+        padding-block: 18px;
+      }
+
+      .project-view .project-actions {
+        grid-column: 1;
+        width: 100%;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .project-view .project-action {
+        min-height: 44px;
+        padding-inline: 22px;
+        font-size: 17px;
+      }
+
+      .project-view .media-block {
+        flex-basis: 86vw !important;
+        height: 300px !important;
+        min-height: 300px !important;
+      }
+    }
+
+
+    /* ── 11. ABA PROJETOS / LISTA COM CAPA ─────────────────
+       Esta página é aberta pelo botão "Projetos" da barra superior.
+       Ela usa as mesmas capas do carrossel do hall. */
+    .system-view[data-page="projetos"] .system-shell {
+      padding-top: clamp(34px, 5vw, 78px);
+    }
+
+    .system-view[data-page="projetos"] .system-title {
+      margin-bottom: clamp(24px, 4vw, 52px);
+    }
+
+    .system-view[data-page="projetos"] .system-grid {
+      display: block;
+    }
+
+    .project-index {
+      display: grid;
+      grid-template-columns: minmax(280px, .72fr) minmax(360px, 1.28fr);
+      gap: clamp(28px, 5vw, 88px);
+      align-items: start;
+    }
+
+    .project-index-cover {
+      position: sticky;
+      top: 94px;
+      height: min(70vh, 660px);
+      min-height: 420px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: rgba(251,248,244,.34);
+      isolation: isolate;
+    }
+
+    .project-index-cover::before,
+    .project-index-cover::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+    }
+
+    .project-index-cover::before {
+      background: var(--art, linear-gradient(135deg, rgba(46, 16, 101, .18), rgba(255,255,255,.36)));
+      background-size: cover;
+      background-position: center;
+      z-index: -2;
+    }
+
+    .project-index-cover::after {
+      background: linear-gradient(180deg, rgba(46,16,101,.02), rgba(46,16,101,.16));
+      mix-blend-mode: multiply;
+      z-index: -1;
+    }
+
+    .project-index-cover.has-real-image::before,
+    .project-index-cover.has-real-image::after {
+      display: none;
+    }
+
+    .project-index-cover img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    .project-index-cover-caption {
+      position: absolute;
+      left: 16px;
+      bottom: 16px;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 0 9px;
+      border-radius: 999px;
+      background: rgba(251, 248, 244, .78);
+      border: 1px solid rgba(23, 18, 23, .09);
+      backdrop-filter: blur(4px);
+      color: rgba(23, 18, 23, .76);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 10px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+
+    .project-index-list {
+      display: grid;
+      border-top: 1px solid var(--line);
+    }
+
+    .project-index-row {
+      width: 100%;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(120px, .55fr) auto;
+      gap: clamp(18px, 3vw, 44px);
+      align-items: center;
+      padding: clamp(16px, 2.1vw, 28px) 0;
+      text-align: left;
+      transition: opacity .18s ease;
+    }
+
+    .project-index-row:hover,
+    .project-index-row:focus-visible {
+      opacity: .58;
+      outline: none;
+    }
+
+    .project-index-row strong {
+      font-size: clamp(24px, 3vw, 44px);
+      line-height: .95;
+      letter-spacing: -0.055em;
+      font-weight: 400;
+    }
+
+    .project-index-row span {
+      color: var(--muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .project-index-row em {
+      color: var(--muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-style: normal;
+      justify-self: end;
+      white-space: nowrap;
+    }
+
+    /* Correção do logo no mobile: o SVG tinha margem interna apertada e podia parecer cortado. */
+    .site-header .logo {
+      width: clamp(54px, 5vw, 72px) !important;
+      height: 42px !important;
+      overflow: visible !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+    }
+
+    .site-header .logo img {
+      width: 100% !important;
+      height: auto !important;
+      max-height: none !important;
+      object-fit: contain !important;
+      display: block !important;
+    }
+
+    @media (max-width: 760px) {
+      .site-header .logo {
+        width: 64px !important;
+        height: 44px !important;
+      }
+
+      .top-actions {
+        gap: 16px;
+      }
+
+      .project-index {
+        grid-template-columns: 1fr;
+        gap: 22px;
+      }
+
+      .project-index-cover {
+        position: relative;
+        top: auto;
+        height: 56vh;
+        min-height: 320px;
+      }
+
+      .project-index-row {
+        grid-template-columns: 1fr auto;
+        gap: 8px 16px;
+      }
+
+      .project-index-row span {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .site-header .logo {
+        width: 58px !important;
+        height: 40px !important;
+      }
+
+      .top-link {
+        font-size: 11px !important;
+      }
+
+      .project-index-row strong {
+        font-size: 27px;
+      }
+    }
+
   </style>
 </head>
 
@@ -1706,7 +2069,7 @@
     <a class="logo" href="#inicio" aria-label="Carlos A. Boico."><img src="assets/logo.svg" alt="Carlos A. Boico." /></a>
     <nav class="top-actions" aria-label="Informações do site">
       <a class="top-link" href="#sobre" data-system-page="sobre" aria-label="Abrir Sobre mim">Sobre mim</a>
-      <a class="top-link" href="#processo" data-system-page="processo" aria-label="Abrir Projeto">Projeto</a>
+      <a class="top-link" href="#projetos" data-system-page="projetos" aria-label="Abrir Projetos">Projetos</a>
       <a class="top-link" href="#contato" data-system-page="contato" aria-label="Abrir Contato">Contato</a>
     </nav>
   </header>
@@ -1718,7 +2081,7 @@
     </div>
     <nav class="menu-links" aria-label="Menu principal">
       <a href="#sobre" data-system-page="sobre">Sobre mim</a>
-      <a href="#processo" data-system-page="processo">Projeto</a>
+      <a href="#projetos" data-system-page="projetos">Projetos</a>
       <a href="#contato" data-system-page="contato">Contato</a>
     </nav>
     <p class="menu-note">Portfólio digital de Carlos A. Boico. O hall apresenta os projetos e cada capa abre uma página interna com fotos, renders, informações do terreno e desenhos.</p>
@@ -1737,7 +2100,7 @@
     </section>
   </main>
 
-  <!-- ── PÁGINAS INTERNAS DO MENU: SOBRE MIM / PROJETO / CONTATO ── -->
+  <!-- ── PÁGINAS INTERNAS DO MENU: SOBRE MIM / PROJETOS / CONTATO ── -->
   <section class="system-view" id="systemPage" aria-label="Página do sistema">
     <div class="system-shell">
       <p class="section-label" id="systemLabel">Sobre mim</p>
@@ -2038,7 +2401,7 @@
     ];
 
 
-    // ── 03. PÁGINAS DO TOPO: SOBRE MIM / PROJETO / CONTATO ─
+    // ── 03. PÁGINAS DO TOPO: SOBRE MIM / PROJETOS / CONTATO ─
     const systemPages = {
       sobre: {
         label: 'Sobre mim',
@@ -2053,18 +2416,14 @@
           { number: '03', title: 'Identidade', text: 'Espaço preparado para textos institucionais, fotos, equipe, manifesto ou trajetória profissional.' }
         ]
       },
-      processo: {
-        label: 'Projeto',
-        title: 'Projeto',
+      projetos: {
+        label: 'Projetos',
+        title: 'Projetos',
         copy: [
-          'A página de projeto também fica fora do hall. O cliente pode acessá-la pelo menu sem descer a tela inicial.',
-          'Aqui você pode explicar as etapas de atendimento, levantamento, estudo preliminar, apresentação, executivo e entrega.'
+          'Lista geral dos projetos cadastrados no sistema.',
+          'As capas abaixo são as mesmas usadas no carrossel do hall de entrada.'
         ],
-        cards: [
-          { number: '01', title: 'Escolha do projeto', text: 'O cliente entra pelo hall e escolhe uma capa no carrossel principal.' },
-          { number: '02', title: 'Página interna', text: 'Cada projeto abre uma tela própria com fotos, renders, informações do terreno e desenhos.' },
-          { number: '03', title: 'Leitura técnica', text: 'Os botões Infos e Desenhos organizam dados do terreno, plantas e materiais enviados ao sistema.' }
-        ]
+        cards: []
       },
       contato: {
         label: 'Contato',
@@ -2276,11 +2635,61 @@
 
 
     // ── 08. PÁGINAS INTERNAS DO MENU ──────────────────────
+    function getCoverClass(project) {
+      return project.src ? 'project-index-cover has-real-image' : 'project-index-cover ' + mediaClass(project);
+    }
+
+    function getCoverImage(project) {
+      return project.src ? `<img src="${project.src}" alt="Capa de ${project.title}" loading="eager" decoding="async">` : '';
+    }
+
+    function renderProjectsIndex() {
+      const firstProject = projects[0];
+      const rowsHtml = projects.map((project) => `
+        <button class="project-index-row" type="button" data-project="${project.id}" data-cover-class="${getCoverClass(project)}" data-cover-src="${project.src || ''}" data-cover-title="${project.title}">
+          <strong>${project.title}</strong>
+          <span>${project.info?.Local || project.category || project.meta}</span>
+          <em>${project.meta}</em>
+        </button>
+      `).join('');
+
+      systemBody.innerHTML = `
+        <div class="project-index">
+          <div class="${getCoverClass(firstProject)}" id="projectIndexCover">
+            ${getCoverImage(firstProject)}
+            <span class="project-index-cover-caption">${firstProject.title}</span>
+          </div>
+          <div class="project-index-list">${rowsHtml}</div>
+        </div>
+      `;
+
+      const cover = document.getElementById('projectIndexCover');
+      const coverCaption = cover?.querySelector('.project-index-cover-caption');
+
+      function updateCoverFromRow(row) {
+        if (!cover || !row) return;
+        cover.className = row.dataset.coverClass;
+        const src = row.dataset.coverSrc;
+        cover.innerHTML = `${src ? `<img src="${src}" alt="Capa de ${row.dataset.coverTitle}" loading="eager" decoding="async">` : ''}<span class="project-index-cover-caption">${row.dataset.coverTitle}</span>`;
+      }
+
+      systemBody.querySelectorAll('.project-index-row').forEach((row) => {
+        row.addEventListener('mouseenter', () => updateCoverFromRow(row));
+        row.addEventListener('focus', () => updateCoverFromRow(row));
+        row.addEventListener('click', () => openProject(row.dataset.project));
+      });
+    }
+
     function renderSystemPage(pageId) {
       const page = systemPages[pageId] || systemPages.sobre;
       systemPage.dataset.page = pageId;
       systemLabel.textContent = page.label;
       systemTitle.textContent = page.title;
+
+      if (pageId === 'projetos') {
+        renderProjectsIndex();
+        return;
+      }
 
       const copyHtml = page.copy.map(text => `<p>${text}</p>`).join('');
       const cardsHtml = page.cards.map(card => `
@@ -2303,6 +2712,7 @@
     }
 
     function openSystemPage(pageId, replaceHash = false) {
+      if (pageId === 'processo') pageId = 'projetos';
       const page = systemPages[pageId] ? pageId : 'sobre';
       stopHallAutoCarousel();
       stopAutoCarousel();
@@ -2371,7 +2781,8 @@
       projectDescription.textContent = currentProject.description;
 
       projectPhotoTrack.innerHTML = currentProject.images.map((image, index) => `
-        <button class="media-block ${mediaClass(image)}" type="button" data-photo-index="${index}" aria-label="Abrir ${image.title}" style="${mediaStyle(image)}">
+        <button class="media-block ${mediaClass(image)} ${image.src ? 'has-real-image' : ''}" type="button" data-photo-index="${index}" aria-label="Abrir ${image.title}" style="${image.src ? '' : mediaStyle(image)}">
+          ${image.src ? `<img class="project-cover-img media-img" src="${image.src}" alt="" loading="eager" decoding="async">` : ''}
           <span class="media-block-label">
             <strong>${image.title}</strong>
             <span>${image.type}</span>
@@ -2613,7 +3024,8 @@
     });
 
     window.addEventListener('popstate', () => {
-      const currentHash = location.hash.replace('#', '');
+      let currentHash = location.hash.replace('#', '');
+      if (currentHash === 'processo') currentHash = 'projetos';
       const projectExists = projects.some(project => project.id === currentHash);
       const systemExists = Object.prototype.hasOwnProperty.call(systemPages, currentHash);
 
@@ -2644,7 +3056,8 @@
     const yearElement = document.getElementById('year');
     if (yearElement) yearElement.textContent = new Date().getFullYear();
 
-    const initialHash = location.hash.replace('#', '');
+    let initialHash = location.hash.replace('#', '');
+    if (initialHash === 'processo') initialHash = 'projetos';
     if (projects.some(project => project.id === initialHash)) {
       openProject(initialHash, true);
     } else if (Object.prototype.hasOwnProperty.call(systemPages, initialHash)) {
