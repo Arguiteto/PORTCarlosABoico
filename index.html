@@ -1170,6 +1170,11 @@
       margin-top: 26px;
     }
 
+    .system-view[data-page="processo"] .system-cards {
+      margin-top: clamp(-82px, -7vw, -34px);
+    }
+
+
     .whatsapp-float {
       position: fixed;
       right: 18px;
@@ -1248,6 +1253,10 @@
 
       .system-grid {
         grid-template-columns: 1fr;
+      }
+
+      .system-view[data-page="processo"] .system-cards {
+        margin-top: 0;
       }
     }
 
@@ -1959,7 +1968,7 @@
         title: 'Contato',
         copy: [
           'Esta página concentra os caminhos de contato e orçamento, separada do hall de entrada.',
-          'O botão Orçamentos continua fixo na tela para abrir o WhatsApp de forma direta.'
+          'Use esta página para orientar o cliente sobre orçamento, parcerias e o envio de novas demandas.'
         ],
         cards: [
           { number: '01', title: 'Orçamentos', text: 'Direcione o cliente para iniciar uma conversa sobre valores, prazos e escopo.' },
