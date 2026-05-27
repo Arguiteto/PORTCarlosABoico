@@ -2050,7 +2050,7 @@
 
     function mediaStyle(item) {
       if (item.src) {
-        return 'background-image: url("' + item.src + '");';
+        return '--art: url("' + item.src + '") center / cover no-repeat; background-image: url("' + item.src + '"); background-size: cover; background-position: center;';
       }
       return '';
     }
