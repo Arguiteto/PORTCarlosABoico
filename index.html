@@ -3741,12 +3741,13 @@ body {
     renderHallCarousel();
     setupHallDrag();
 
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // prefers-reduced-motion mantido como referência, mas não bloqueia os carrosséis
+    const prefersReducedMotion = false;
 
-    window.requestAnimationFrame(() => {
+    window.setTimeout(() => {
       projectTrack.scrollLeft = 1;
-      if (!prefersReducedMotion) startHallAutoCarousel();
-    });
+      startHallAutoCarousel();
+    }, 120);
     const yearElement = document.getElementById('year');
     if (yearElement) yearElement.textContent = new Date().getFullYear();
 
