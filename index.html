@@ -26,6 +26,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Carlos A. Boico. — Portfólio</title>
   <meta name="description" content="Portfólio digital de Carlos A. Boico com hall de projetos, páginas internas, fotos, renders, informações e desenhos técnicos." />
+  <meta name="theme-color" content="#f4efe8" />
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="assets/logo.svg" />
 
   <style>
     /*
@@ -46,16 +49,14 @@
 
     /* ── 01. VARIÁVEIS GERAIS ───────────────────────────── */
     :root {
-      --bg: #f7f2ec;
-      --paper: #fbf8f4;
+      --bg: #f4efe8;
+      --paper: #f4efe8;
       --text: #171217;
       --muted: #6e6372;
       --purple: #6d28d9;
       --purple-dark: #2e1065;
-      --purple-soft: #ddd6fe;
       --purple-pale: #f1eaff;
       --line: rgba(46, 16, 101, .16);
-      --glass: rgba(251, 248, 244, .82);
       --shadow: 0 18px 55px rgba(46, 16, 101, .10);
       --radius: 26px;
       --content-width: 1360px;
@@ -1220,34 +1221,7 @@
     }
 
 
-    .whatsapp-float {
-      position: fixed;
-      right: 18px;
-      bottom: 18px;
-      z-index: 30;
-      min-height: 46px;
-      padding: 0 16px;
-      border-radius: 999px;
-      background: rgba(251, 248, 244, .96);
-      color: var(--text);
-      border: 1px solid var(--line);
-      box-shadow: var(--shadow);
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 13px;
-      letter-spacing: .01em;
-    }
-
-    .whatsapp-float::before {
-      content: "";
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--text);
-      box-shadow: 0 0 0 6px rgba(23, 18, 23, .08);
-    }
+    /* .whatsapp-float removido — elemento não utilizado nesta versão */
 
     footer {
       padding-block: 24px 88px;
@@ -1635,9 +1609,7 @@
       background: rgba(255,255,255,.5);
     }
 
-    .whatsapp-float {
-      display: none !important;
-    }
+    /* whatsapp-float: removido */
 
     @media (max-width: 980px) {
       .project-intro {
@@ -2157,10 +2129,7 @@
 
   
 /* ── AJUSTES V10: hall sem rolagem vertical, fundo limpo e fotos sem moldura ── */
-:root {
-  --bg: #f4efe8;
-  --paper: #f4efe8;
-}
+/* Variáveis --bg e --paper já atualizadas no :root principal acima. */
 
 html,
 body {
@@ -2751,6 +2720,11 @@ body {
     </div>
   </div>
 
+  <footer>
+    <span>© <span id="year"></span> Carlos A. Boico</span>
+    <span>Arquitetura &amp; Design</span>
+  </footer>
+
   <!-- ── JAVASCRIPT: CONTEÚDO E FUNCIONAMENTO DO SISTEMA ── -->
   <script>
     /*
@@ -2955,15 +2929,8 @@ body {
       sobre: {
         label: 'Sobre mim',
         title: 'Sobre mim',
-        copy: [
-          'Esta página fica separada do hall para manter a entrada do site limpa, deixando somente o carrossel de projetos como primeira experiência.',
-          'Use este espaço para apresentar sua trajetória, área de atuação, estilo de trabalho, diferenciais e o tipo de projeto que deseja atrair.'
-        ],
-        cards: [
-          { number: '01', title: 'Perfil', text: 'Apresentação curta sobre você, sua linguagem visual e forma de conduzir os projetos.' },
-          { number: '02', title: 'Atuação', text: 'Arquitetura, interiores, renders, estudos, desenhos técnicos e acompanhamento visual dos projetos.' },
-          { number: '03', title: 'Identidade', text: 'Espaço preparado para textos institucionais, fotos, equipe, manifesto ou trajetória profissional.' }
-        ]
+        copy: [],
+        cards: []
       },
       projetos: {
         label: 'Projetos',
@@ -2977,15 +2944,8 @@ body {
       contato: {
         label: 'Contato',
         title: 'Contato',
-        copy: [
-          'Esta página concentra os caminhos de contato e orçamento, separada do hall de entrada.',
-          'Use esta página para orientar o cliente sobre orçamento, parcerias e o envio de novas demandas.'
-        ],
-        cards: [
-          { number: '01', title: 'Orçamentos', text: 'Direcione o cliente para iniciar uma conversa sobre valores, prazos e escopo.' },
-          { number: '02', title: 'Parcerias', text: 'Espaço para contatos profissionais, fornecedores, marcas e colaborações.' },
-          { number: '03', title: 'Novos projetos', text: 'Área para explicar quais informações iniciais o cliente deve enviar.' }
-        ],
+        copy: [],
+        cards: [],
         action: true
       }
     };
@@ -3042,7 +3002,7 @@ body {
     // ── 05. ESTADO ATUAL DO SISTEMA ───────────────────────
     let currentProject = projects[0];
     let currentPhotoIndex = 0;
-    let autoTimer = null;
+    /* autoTimer removido — o carrossel de projeto usa requestAnimationFrame, não setInterval */
     let projectAutoRestartTimer = null;
     let autoScrollFrame = null;
     let projectAutoPaused = false;
@@ -3051,6 +3011,7 @@ body {
     const projectAutoSpeed = 85; // px por segundo
     let hallAutoTimer = null;
     let hallWheelTimer = null;
+    let projectWheelTimer = null; // timer separado para o wheel do carrossel interno
     let isDraggingHall = false;
     let dragStartX = 0;
     let initialScrollLeft = 0;
@@ -3090,7 +3051,7 @@ body {
           <div class="project-image ${mediaClass(project)} ${project.src ? 'has-real-image' : ''}" role="img" aria-label="Capa de ${project.title}" style="${project.src ? '' : mediaStyle(project)}">
             ${project.src ? `<img class="project-cover-img" src="${project.src}" alt="" loading="eager" decoding="async">` : ''}
           </div>
-          <h2 class="project-title">${project.title}</h2>
+          <p class="project-title">${project.title}</p>
           <p class="project-meta">${project.meta}</p>
         </button>
       `).join('');
@@ -3141,7 +3102,10 @@ body {
 
     function stopHallAutoCarousel() {
       projectTrack.classList.remove('is-auto-scrolling');
-      if (hallAutoTimer) window.clearInterval(hallAutoTimer);
+      if (hallAutoTimer) {
+        window.clearInterval(hallAutoTimer);
+        window.clearTimeout(hallAutoTimer); // cobre o caso de setTimeout armazenado por restartHallAutoCarousel
+      }
       hallAutoTimer = null;
     }
 
@@ -3245,7 +3209,6 @@ body {
       `;
 
       const cover = document.getElementById('projectIndexCover');
-      const coverCaption = cover?.querySelector('.project-index-cover-caption');
 
       function updateCoverFromRow(row) {
         if (!cover || !row) return;
@@ -3283,6 +3246,7 @@ body {
       const actionHtml = page.action ? `
         <div class="system-actions">
           <a class="button primary" href="https://wa.me/message/DAOAAENEEHYBA1" target="_blank" rel="noopener">Solicitar orçamento</a>
+          <a class="button" href="mailto:seuemail@email.com">Email</a>
         </div>
       ` : '';
 
@@ -3329,7 +3293,7 @@ body {
       homeHeader.style.display = 'none';
       projectPage.classList.add('is-active');
       closeAllPanels();
-      window.setTimeout(startAutoCarousel, 450);
+      if (!prefersReducedMotion) window.setTimeout(startAutoCarousel, 450);
 
       if (replaceHash) {
         history.replaceState(null, '', '#' + currentProject.id);
@@ -3429,11 +3393,7 @@ body {
       });
     }
 
-    function nextVerticalImage() {
-      if (currentProject.images.length <= 1) return;
-      currentPhotoIndex = (currentPhotoIndex + 1) % currentProject.images.length;
-      updateVerticalCarousel();
-    }
+    /* nextVerticalImage removida — não utilizada no fluxo atual */
 
     function getProjectCarouselStep() {
       const card = projectPhotoTrack.querySelector('.media-block');
@@ -3529,8 +3489,6 @@ body {
     }
 
     function stopAutoCarousel() {
-      if (autoTimer) window.clearInterval(autoTimer);
-      autoTimer = null;
       if (projectAutoRestartTimer) window.clearTimeout(projectAutoRestartTimer);
       projectAutoRestartTimer = null;
       if (autoScrollFrame) window.cancelAnimationFrame(autoScrollFrame);
@@ -3721,8 +3679,8 @@ body {
     projectPhotoTrack.addEventListener('wheel', () => {
       projectAutoPaused = true;
       stopAutoCarousel();
-      window.clearTimeout(hallWheelTimer);
-      hallWheelTimer = window.setTimeout(restartAutoCarousel, 900);
+      window.clearTimeout(projectWheelTimer);
+      projectWheelTimer = window.setTimeout(restartAutoCarousel, 900);
     }, { passive: true });
 
     projectPhotoTrack.addEventListener('scroll', syncProjectDotFromScroll, { passive: true });
@@ -3783,16 +3741,11 @@ body {
     renderHallCarousel();
     setupHallDrag();
 
-    projectTrack.addEventListener('click', (event) => {
-      const card = event.target.closest('.project-card');
-      if (!card) return;
-      if (card.dataset.wasDragged === 'true') return;
-      event.preventDefault();
-      openProject(card.dataset.project);
-    }, true);
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     window.requestAnimationFrame(() => {
       projectTrack.scrollLeft = 1;
-      startHallAutoCarousel();
+      if (!prefersReducedMotion) startHallAutoCarousel();
     });
     const yearElement = document.getElementById('year');
     if (yearElement) yearElement.textContent = new Date().getFullYear();
