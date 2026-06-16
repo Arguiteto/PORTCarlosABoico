@@ -3368,7 +3368,7 @@ body {
       const actionHtml = page.action ? `
         <div class="system-actions">
           <a class="button primary" href="https://wa.me/message/DAOAAENEEHYBA1" target="_blank" rel="noopener">Solicitar orçamento</a>
-          <a class="button" href="mailto:seuemail@email.com">Email</a>
+          <a class="button" href="mailto:carlos.arquitetocg@hotmail.com">carlos.arquitetocg@hotmail.com</a>
         </div>
       ` : '';
 
@@ -3391,7 +3391,7 @@ body {
       projectPage.classList.remove('is-active');
       homeView.classList.add('is-hidden');
       systemPage.classList.add('is-active');
-      homeHeader.style.display = '';
+      homeHeader.style.removeProperty('display');
 
       document.body.classList.remove('page-home','page-projetos','page-sobre','page-contato');
       document.body.classList.add('page-' + page);
@@ -3415,7 +3415,7 @@ body {
 
       homeView.classList.add('is-hidden');
       systemPage.classList.remove('is-active');
-      homeHeader.style.display = 'none';
+      homeHeader.style.setProperty('display', 'none', 'important');
       projectPage.classList.add('is-active');
       closeAllPanels();
       if (!prefersReducedMotion) window.setTimeout(startAutoCarousel, 450);
@@ -3435,7 +3435,7 @@ body {
       projectPage.classList.remove('is-active');
       systemPage.classList.remove('is-active');
       homeView.classList.remove('is-hidden');
-      homeHeader.style.display = '';
+      homeHeader.style.removeProperty('display');
       closeAllPanels();
       closePhotoViewer();
       closeDrawingViewer();
@@ -3857,7 +3857,7 @@ body {
         projectPage.classList.remove('is-active');
         systemPage.classList.remove('is-active');
         homeView.classList.remove('is-hidden');
-        homeHeader.style.display = '';
+        homeHeader.style.removeProperty('display');
         closeAllPanels();
         closePhotoViewer();
         closeDrawingViewer();
