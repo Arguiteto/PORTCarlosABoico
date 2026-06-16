@@ -2699,25 +2699,28 @@ body {
 
 /* ── SOBRE MIM: título + foto direita + bio largura total ───── */
 .system-view[data-page="sobre"] {
-  height: calc(100vh - 112px);
-  min-height: 0;
-  overflow: hidden;
+  min-height: calc(100vh - 112px);
+  overflow: visible;
 }
 
 .system-view[data-page="sobre"] .system-shell {
   padding: 0 !important;
-  height: 100%;
   display: flex;
   flex-direction: column;
   max-width: 100%;
+}
+
+/* sobre ocupa a largura inteira: anula o grid de 2 colunas herdado */
+.system-view[data-page="sobre"] .system-grid {
+  display: block;
 }
 
 .sobre-layout {
   position: relative;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow: hidden;
+  min-height: calc(100vh - 112px);
+  overflow: visible;
   padding: clamp(36px, 5vw, 64px) clamp(28px, 4vw, 52px) clamp(28px, 4vw, 48px);
 }
 
@@ -2748,10 +2751,12 @@ body {
 .sobre-heading {
   margin: 0;
   font-size: clamp(64px, 11vw, 136px);
-  line-height: .86;
+  line-height: .95;
   letter-spacing: -0.075em;
   font-weight: 400;
-  flex-shrink: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: break-word;
 }
 
 .sobre-foto-wrap {
@@ -2781,8 +2786,8 @@ body {
 }
 
 .sobre-bio {
-  flex: 1;
-  overflow: hidden;
+  flex: 1 0 auto;
+  overflow: visible;
   display: grid;
   align-content: start;
   gap: clamp(10px, 1.4vw, 18px);
