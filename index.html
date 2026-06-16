@@ -2696,6 +2696,125 @@ body {
   }
 }
 
+
+/* ── SOBRE MIM: título + foto direita + bio largura total ───── */
+.system-view[data-page="sobre"] {
+  height: calc(100vh - 112px);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.system-view[data-page="sobre"] .system-shell {
+  padding: 0 !important;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+}
+
+.sobre-layout {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  padding: clamp(36px, 5vw, 64px) clamp(28px, 4vw, 52px) clamp(28px, 4vw, 48px);
+}
+
+/* ── Decorativos arquitetônicos: proporção áurea ── */
+.sobre-deco {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.sobre-top, .sobre-heading, .sobre-foto-wrap,
+.sobre-divider, .sobre-bio {
+  position: relative;
+  z-index: 1;
+}
+
+.sobre-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: clamp(20px, 3vw, 40px);
+  margin-bottom: clamp(20px, 3vw, 36px);
+}
+
+.sobre-heading {
+  margin: 0;
+  font-size: clamp(64px, 11vw, 136px);
+  line-height: .86;
+  letter-spacing: -0.075em;
+  font-weight: 400;
+  flex-shrink: 0;
+}
+
+.sobre-foto-wrap {
+  flex-shrink: 0;
+  width: clamp(160px, 17vw, 230px);
+  aspect-ratio: 1 / 1.08;
+  position: relative;
+  overflow: hidden;
+  background: #e5ddd4;
+}
+
+.sobre-foto-wrap img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+.sobre-divider {
+  border: 0;
+  border-top: 1px solid rgba(46, 16, 101, .12);
+  margin: 0 0 clamp(18px, 2.5vw, 30px);
+  flex-shrink: 0;
+}
+
+.sobre-bio {
+  flex: 1;
+  overflow: hidden;
+  display: grid;
+  align-content: start;
+  gap: clamp(10px, 1.4vw, 18px);
+}
+
+.sobre-bio p {
+  margin: 0;
+  color: var(--muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(13px, 1.05vw, 15.5px);
+  line-height: 1.75;
+}
+
+@media (max-width: 760px) {
+  .system-view[data-page="sobre"] {
+    height: auto;
+    overflow: visible;
+  }
+  .sobre-layout {
+    padding: 28px 22px 48px;
+  }
+  .sobre-top {
+    gap: 16px;
+  }
+  .sobre-heading {
+    font-size: clamp(52px, 13vw, 82px);
+  }
+  .sobre-foto-wrap {
+    width: clamp(100px, 22vw, 140px);
+  }
+}
+
 </style>
 </head>
 
@@ -3049,9 +3168,13 @@ body {
     // ── 03. PÁGINAS DO TOPO: SOBRE MIM / PROJETOS / CONTATO ─
     const systemPages = {
       sobre: {
-        label: 'Sobre mim',
+        label: '',
         title: 'Sobre mim',
-        copy: [],
+        copy: [
+          'Tenho 22 anos e curso Arquitetura e Urbanismo, mas minha formação começa muito antes do curso — sou ilustrador profissional há mais de 12 anos, com passagem pelo design gráfico, comunicação visual e detalhamento técnico de projetos. Esse percurso não é periférico: é o que define meu olhar sobre o projeto.',
+          'Entendo arquitetura como linguagem. O traço não é apenas representação — é argumento. A linha carrega tanto rigor construtivo quanto intenção estética, e foi ilustrando que aprendi isso antes de qualquer teoria.',
+          'Minha produção se alinha a referências que transitam entre o vernacular e o erudito: a poética brutalista dos anos 70–80, a gramática gráfica do pen-plot, a lógica do paisagismo funcional como sistema, e a arte gráfica de autores que compreendem o espaço como elemento narrativo. Estou montando minha carga intelectual de curso com a mesma atenção que dedico a uma prancha — camada por camada, com rigor e intenção.'
+        ],
         cards: []
       },
       projetos: {
@@ -3350,10 +3473,61 @@ body {
       const page = systemPages[pageId] || systemPages.sobre;
       systemPage.dataset.page = pageId;
       systemLabel.textContent = page.label;
+      systemLabel.style.display = page.label ? '' : 'none';
       systemTitle.textContent = page.title;
+      systemTitle.style.display = '';
 
       if (pageId === 'projetos') {
         renderProjectsIndex();
+        return;
+      }
+
+      if (pageId === 'sobre') {
+        systemTitle.style.display = 'none';
+        const copyHtml = page.copy.map(text => `<p>${text}</p>`).join('');
+        const photoSrc = 'assets/foto-sobre.jpg';
+        systemBody.innerHTML = `
+          <div class="sobre-layout">
+            <svg class="sobre-deco" viewBox="0 0 1000 600" preserveAspectRatio="xMaxYMid meet" aria-hidden="true">
+              <!-- Espiral áurea (φ = 1,618) -->
+              <path d="M 603.5,310.0 L 603.6,309.8 L 603.6,309.5 L 603.6,309.2 L 603.7,309.0 L 603.7,308.7 L 603.6,308.4 L 603.6,308.1 L 603.5,307.9 L 603.5,307.6 L 603.4,307.3 L 603.2,307.0 L 603.1,306.7 L 602.9,306.4 L 602.7,306.2 L 602.5,305.9 L 602.3,305.7 L 602.0,305.4 L 601.7,305.2 L 601.4,305.0 L 601.1,304.8 L 600.8,304.6 L 600.4,304.5 L 600.0,304.3 L 599.6,304.2 L 599.2,304.2 L 598.8,304.1 L 598.4,304.1 L 597.9,304.1 L 597.5,304.1 L 597.0,304.2 L 596.6,304.3 L 596.1,304.4 L 595.6,304.6 L 595.2,304.8 L 594.7,305.0 L 594.3,305.3 L 593.9,305.6 L 593.4,305.9 L 593.0,306.3 L 592.6,306.7 L 592.3,307.2 L 591.9,307.7 L 591.6,308.2 L 591.3,308.7 L 591.1,309.3 L 590.9,309.9 L 590.7,310.5 L 590.6,311.2 L 590.5,311.9 L 590.4,312.6 L 590.4,313.3 L 590.5,314.0 L 590.6,314.7 L 590.7,315.5 L 590.9,316.2 L 591.2,317.0 L 591.5,317.7 L 591.9,318.5 L 592.3,319.2 L 592.8,319.9 L 593.4,320.6 L 594.0,321.2 L 594.6,321.9 L 595.4,322.5 L 596.1,323.0 L 597.0,323.5 L 597.9,324.0 L 598.8,324.4 L 599.8,324.8 L 600.8,325.0 L 601.8,325.3 L 602.9,325.4 L 604.1,325.5 L 605.2,325.5 L 606.4,325.4 L 607.6,325.3 L 608.8,325.1 L 610.0,324.7 L 611.2,324.3 L 612.4,323.8 L 613.6,323.2 L 614.8,322.5 L 615.9,321.7 L 617.0,320.8 L 618.1,319.8 L 619.1,318.8 L 620.1,317.6 L 621.0,316.3 L 621.8,315.0 L 622.6,313.6 L 623.3,312.1 L 623.8,310.5 L 624.3,308.9 L 624.7,307.1 L 624.9,305.4 L 625.1,303.6 L 625.1,301.7 L 625.0,299.8 L 624.8,297.9 L 624.4,295.9 L 623.9,294.0 L 623.2,292.0 L 622.4,290.1 L 621.4,288.1 L 620.3,286.2 L 619.0,284.4 L 617.6,282.6 L 616.0,280.8 L 614.3,279.2 L 612.4,277.6 L 610.4,276.1 L 608.3,274.8 L 606.0,273.6 L 603.5,272.5 L 601.0,271.5 L 598.4,270.7 L 595.6,270.1 L 592.7,269.7 L 589.8,269.4 L 586.8,269.4 L 583.7,269.5 L 580.6,269.9 L 577.5,270.5 L 574.3,271.3 L 571.1,272.4 L 568.0,273.7 L 564.8,275.2 L 561.8,277.0 L 558.8,279.0 L 555.8,281.3 L 553.0,283.9 L 550.3,286.6 L 547.8,289.6 L 545.4,292.9 L 543.2,296.4 L 541.2,300.1 L 539.4,303.9 L 537.8,308.0 L 536.5,312.3 L 535.5,316.8 L 534.8,321.4 L 534.3,326.1 L 534.2,331.0 L 534.5,336.0 L 535.0,341.0 L 536.0,346.1 L 537.3,351.2 L 539.0,356.3 L 541.0,361.4 L 543.5,366.5 L 546.4,371.5 L 549.6,376.3 L 553.3,381.1 L 557.4,385.7 L 561.8,390.0 L 566.7,394.2 L 571.9,398.1 L 577.5,401.7 L 583.4,404.9 L 589.7,407.9 L 596.3,410.4 L 603.2,412.6 L 610.4,414.2 L 617.8,415.5 L 625.5,416.2 L 633.4,416.4 L 641.4,416.1 L 649.5,415.2 L 657.7,413.7 L 666.0,411.7 L 674.3,409.0 L 682.6,405.7 L 690.8,401.7 L 698.8,397.1 L 706.7,391.9 L 714.4,386.0 L 721.9,379.5 L 729.0,372.3 L 735.7,364.6 L 742.0,356.1 L 747.9,347.1 L 753.2,337.6 L 758.0,327.4 L 762.2,316.8 L 765.7,305.7 L 768.5,294.1 L 770.5,282.1 L 771.8,269.7 L 772.2,257.0 L 771.7,244.1 L 770.4,230.9 L 768.1,217.6 L 764.8,204.2 L 760.5,190.8 L 755.3,177.4 L 749.0,164.1 L 741.6,151.1 L 733.2,138.3 L 723.8,125.8 L 713.3,113.7 L 701.8,102.2 L 689.3,91.2 L 675.7,81.0 L 661.3,71.4 L 645.8,62.7 L 629.5,54.9 L 612.4,48.1 L 594.4,42.3 L 575.7,37.7 L 556.3,34.3 L 536.4,32.2 L 515.9,31.4 L 495.0,32.0 L 473.7,34.1 L 452.2,37.7 L 430.5,42.9 L 408.8,49.7 L 387.1,58.1 L 365.6,68.1 L 344.4,79.9 L 323.7,93.3 L 303.5,108.5 L 283.9,125.3 L 265.2,143.8 L 247.4,163.9 L 230.6,185.7 L 215.1,209.0 L 200.9,233.9 L 188.1,260.2 L 177.0,287.8 L 167.5,316.8 L 159.9,347.0 L 154.2,378.2 L 150.6,410.4 L 149.2,443.5 L 150.0,477.3 L 153.2,511.7 L 158.9,546.5 L 167.1,581.6 L 177.8,616.7"
+                    fill="none" stroke="#6d28d9" stroke-width="1.8" opacity="0.18"/>
+              <!-- Retângulos de ouro aninhados -->
+              <rect x="149" y="31" width="623" height="586" fill="none" stroke="#6d28d9" stroke-width="1.1" opacity="0.13"/>
+              <!-- Cotas arquitetônicas -->
+              <g opacity="0.28" stroke="#E8442A" stroke-width="1" fill="none">
+                <line x1="52" y1="555" x2="670" y2="555"/>
+                <line x1="52" y1="548" x2="52"  y2="562"/>
+                <line x1="670" y1="548" x2="670" y2="562"/>
+                <line x1="52" y1="540" x2="432" y2="540"/>
+                <line x1="52" y1="534" x2="52"  y2="546"/>
+                <line x1="432" y1="534" x2="432" y2="546"/>
+              </g>
+              <!-- φ label -->
+              <text x="682" y="559" font-family="Georgia,serif" font-size="13" fill="#6d28d9" opacity="0.55">φ = 1,618</text>
+              <!-- Ponto de centro da espiral -->
+              <circle cx="600" cy="310" r="3" fill="none" stroke="#6d28d9" stroke-width="1" opacity="0.35"/>
+              <line x1="592" y1="310" x2="608" y2="310" stroke="#6d28d9" stroke-width="0.8" opacity="0.35"/>
+              <line x1="600" y1="302" x2="600" y2="318" stroke="#6d28d9" stroke-width="0.8" opacity="0.35"/>
+              <!-- Marca de registro (canto sup dir) -->
+              <g opacity="0.4" stroke="#E8442A" stroke-width="1.2" fill="none">
+                <circle cx="938" cy="52" r="10"/>
+                <line x1="920" y1="52" x2="930" y2="52"/>
+                <line x1="946" y1="52" x2="956" y2="52"/>
+                <line x1="938" y1="34" x2="938" y2="44"/>
+                <line x1="938" y1="60" x2="938" y2="70"/>
+              </g>
+            </svg>
+            <div class="sobre-top">
+              <h1 class="sobre-heading">Sobre mim</h1>
+              <div class="sobre-foto-wrap">
+                <img src="${photoSrc}" alt="Carlos A. Boico" onerror="this.style.display='none'">
+              </div>
+            </div>
+            <hr class="sobre-divider">
+            <div class="sobre-bio">${copyHtml}</div>
+          </div>
+        `;
         return;
       }
 
