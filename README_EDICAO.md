@@ -145,6 +145,7 @@ modelo3dPosicao: 'lado',
 Tudo fica no bloco `CONFIG`, no começo do script:
 
 - `modelo`: caminho do arquivo `.glb`.
+- `convite`: frase curta que aparece acima dos botões até o visitante clicar em um deles (por exemplo `'Toque em Planta para abrir o salão'`). Junto com ela, o botão da próxima cena pulsa, uma cor a cada pulso. No computador, "Toque" vira "Clique" sozinho. Com `''`, não tem frase nem pulso.
 - `area`: a área do projeto, que aparece no canto de baixo do modelo, à esquerda (por exemplo `'27,94 m²'`). Use o mesmo valor da linha `'Área'` do projeto no `index.html`. Com `''`, não aparece.
 - `cenas`: cada cena vira um botão. Tem a câmera e as peças que mudam (`mover`, `escala`, `opacidade`). Clicar de novo no botão da cena atual recentra a vista.
 - `comodos`: nome e posição dos botões que aparecem na cena "Planta" (`area`, em m², é opcional).
