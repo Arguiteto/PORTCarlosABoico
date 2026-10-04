@@ -122,6 +122,74 @@ Eles controlam o funcionamento do carrossel, das páginas internas, dos botões 
 - Arquivo: `assets/foto-sobre.jpg`, recortado na mesma proporção do quadro do site (1 : 1,08).
 - Para trocar, salve a nova foto com esse mesmo nome dentro de `assets/`.
 
+## Google e pré-visualização do link
+
+O que o Google, o WhatsApp e os outros leitores automáticos enxergam está escrito no próprio `index.html`. Nada disso muda o que aparece na tela.
+
+### Título e descrição
+
+Ficam no começo do `index.html`. São o que aparece no resultado do Google e na aba do navegador:
+
+```html
+<title>Carlos A. Boico — Portfólio de Arquitetura e Urbanismo</title>
+<meta name="description" content="Portfólio de Carlos A. Boico, estudante de..." />
+```
+
+- Título com até uns 60 caracteres; descrição com até uns 160.
+- Se mudar, repita o texto nas linhas `og:title` e `og:description` (logo abaixo) e em `const identidade` (`titulo` e `resumo`).
+
+### Pré-visualização do link (WhatsApp, LinkedIn, Instagram...)
+
+- As linhas `og:`, no começo do `index.html`, dão o título, a frase e a imagem que aparecem quando o link é colado numa conversa.
+- A imagem é `assets/compartilhar.jpg`, com 1200 × 630 px. Para trocar, salve outra imagem com esse mesmo nome e esse mesmo tamanho.
+- **Quando o endereço do site mudar** (domínio próprio ou outro nome no GitHub), troque o começo da linha `og:image`. É a única linha do arquivo que depende do endereço:
+
+```html
+<meta property="og:image" content="https://arguiteto.github.io/PORTCarlosABoico/assets/compartilhar.jpg" />
+```
+
+- Os aplicativos guardam a pré-visualização por um tempo. Depois de trocar a imagem ou o texto, um link já enviado pode continuar mostrando a versão antiga.
+
+### Identidade (`const identidade`)
+
+Fica no começo do script, no bloco "03B. IDENTIDADE DO SITE": nome, resumo, cidade, áreas, perfis, WhatsApp e e-mail.
+
+- `perfis`: links do Instagram, LinkedIn, Behance etc. Hoje tem o Instagram. Para acrescentar outro, coloque o link entre aspas, separado por vírgula:
+
+```js
+perfis: ['https://www.instagram.com/boicostar_/', 'https://www.linkedin.com/in/seu-perfil'],
+```
+
+- `whatsapp` e `email` são os mesmos dos botões da aba Contato: mudando aqui, muda lá.
+- Com esses dados o site monta sozinho os "dados estruturados" que o Google lê (de quem é o portfólio, cidade, áreas e lista de projetos). Eles usam o endereço em que o site estiver aberto, então não precisam de ajuste na troca de domínio.
+
+### Descrição das imagens (`alt`)
+
+Cada imagem pode ter uma linha `alt`, com uma frase dizendo o que aparece nela. É o que o Google Imagens e os leitores de tela leem:
+
+```js
+{ title: 'Fachada', type: 'Foto', src: 'assets/fachada.jpg',
+  alt: 'Fachada da casa com porta em arco e painel de ripas' }
+```
+
+Sem a linha `alt`, o site usa o título da imagem e o nome do projeto ("Fachada (foto) — Nome do projeto").
+
+### Versão em texto do portfólio
+
+- No começo do `<body>` existe o bloco "VERSÃO EM TEXTO DO PORTFÓLIO": o resumo, o "Sobre mim", os projetos (descrição, infos e imagens) e o contato, escritos direto no HTML.
+- Com o site funcionando normalmente, o bloco fica escondido. Ele só aparece para quem abre a página com o JavaScript desligado.
+- É uma **cópia** dos textos de `const identidade`, `const systemPages` e `const projects`. Ao abrir, o site refaz o bloco com os textos atuais; a cópia escrita no arquivo vale para quem lê o arquivo sem rodar o JavaScript.
+- Depois de mudar um texto no script (descrição de projeto, "Sobre mim", infos, projeto novo), atualize a cópia:
+  1. Abra o site, aperte F12 e entre na aba "Console".
+  2. Digite `copy(montarVersaoTexto())` e aperte Enter. O bloco atualizado vai para a área de transferência.
+  3. No `index.html`, apague o que está entre a linha `<section class="versao-texto" id="versaoTexto" ...>` e a linha `</section>` logo abaixo dela, e cole no lugar.
+- Se a cópia ficar desatualizada, o site continua funcionando igual. O Console mostra o aviso "A versão em texto escrita no index.html está diferente dos textos atuais".
+- O visual do bloco está no CSS "07A. VERSÃO EM TEXTO DO PORTFÓLIO". O que monta o bloco, os textos alternativos e os dados para o Google está no JavaScript "12C. TEXTO PARA O GOOGLE".
+
+### Para quando o domínio próprio existir
+
+Ficaram de fora de propósito, porque dependem do endereço definitivo: o arquivo `CNAME`, o `sitemap.xml`, o `robots.txt`, a linha `canonical` e o cadastro no Google Search Console.
+
 ## Modelo 3D
 
 - `viewer3d-vitalina.html` (na raiz, ao lado do `index.html`) é o visualizador 3D do Salão Vitalina. Cada projeto com modelo tem o seu: `viewer3d-nome.html` na raiz e `nome-modelo.glb` em `assets`. Ele aparece num quadro dentro da página do projeto, assim que o visitante entra. O botão no canto do quadro amplia o modelo para a tela inteira; o X volta ao tamanho normal.
