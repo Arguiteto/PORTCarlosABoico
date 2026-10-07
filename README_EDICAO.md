@@ -110,7 +110,7 @@ title: 'Salão Vitalina de Beleza',
 apelido: 'vitalina',
 ```
 
-- Com isso o link do projeto fica `.../#vitalina`. Os apelidos de hoje: `vitalina`, `reforma`, `dopamine`, `paisagismo` e `moveis`.
+- Com isso o link do projeto fica `.../#vitalina`. Os apelidos de hoje: `vitalina`, `quarto`, `reforma`, `dopamine`, `paisagismo` e `moveis`.
 - O endereço comprido, gerado a partir do título (`#salao-vitalina-de-beleza`), continua abrindo o projeto. Links já enviados não quebram.
 - Use só letras minúsculas, sem acento e sem espaço. Não repita apelido entre projetos e não use `inicio`, `sobre`, `projetos`, `contato` nem `processo`. Se repetir, o projeto fica com o endereço comprido e o Console (F12) mostra um aviso.
 - Projeto sem a linha `apelido` usa o endereço comprido.
@@ -124,12 +124,78 @@ Eles controlam o funcionamento do carrossel, das páginas internas, dos botões 
 
 - `andamento: true` dentro do projeto coloca as fitas vermelhas "EM ANDAMENTO" na capa (hall, aba Projetos e página do projeto) e mostra, ao lado da capa, o cartão com a descrição.
 - Quando o projeto terminar: apague a linha `andamento: true`, troque o `src` pela capa nova e preencha `images` e `drawings`.
+- Os quatro projetos em andamento já têm a **revista preparada e bloqueada** (veja "Revista do projeto → Projetos em andamento"). Ela aparece sozinha quando a linha `andamento: true` sair e as fotos entrarem.
 - `capa: true` numa imagem faz a capa ilustrada aparecer inteira, na proporção dela, dentro da página do projeto.
 - As capas ilustradas ficam em `assets/`:
   - `capa-reforma-unifamiliar.svg`
   - `capa-interiores.svg`
   - `capa-paisagismo.svg`
   - `capa-moveis-planejados.svg`
+
+## Revista do projeto
+
+Seção que aparece abaixo das fotos, com as imagens do projeto diagramadas como páginas de revista de arquitetura.
+
+- **No computador** é um caderno aberto que vira a folha, com o mesmo efeito do leitor da BibliChaos: clique na página, arraste a folha (ela acompanha o cursor e a sombra segue a dobra), use as setas ← → do teclado, as setas da seção ou o canto dobrado. Clicar na capa abre a revista.
+- **No celular e no tablet** as páginas ficam lado a lado e passam com o dedo.
+- Clicar (ou tocar) em uma foto abre a ampliação, igual às fotos do carrossel.
+- Com a revista, o botão "Revista" aparece no topo do projeto e leva até ela.
+
+### Onde fica
+
+- Dentro do projeto, em `const projects`, no bloco `revista`. Hoje aparece em "Quarto Maria".
+- Para tirar a revista de um projeto, apague o bloco `revista` inteiro. Para pôr em outro, copie o bloco do Quarto Maria e troque as páginas.
+- Os números em `foto` e `fotos` são a **posição da imagem na lista `images`** do projeto: `0` é a primeira, `1` a segunda. Se mudar a ordem de `images`, confira os números da revista.
+- O nome que aparece junto de cada foto é o `title` dela na lista `images`.
+
+```js
+revista: {
+  titulo: 'Quarto Maria, página a página',   // título da seção
+  edicao: 'Nº 02 · 2026',                    // aparece no alto da capa
+  paginas: [
+    { tipo: 'capa', foto: 0, chamada: 'Reforma, interiores e paisagismo externo' },
+    { tipo: 'colagem', fotos: [1, 5, 4, 2] },
+    { tipo: 'texto', kicker: 'O projeto', titulo: 'Título', olho: 'Frase de abertura.',
+      texto: ['Primeiro parágrafo.', 'Segundo parágrafo.'], ficha: ['Área', 'Tipologia'] },
+    { tipo: 'dupla', foto: 6, kicker: 'Paisagismo externo', texto: 'Texto curto.' },
+    { tipo: 'foto-texto', foto: 3, kicker: 'À noite', titulo: 'Título', texto: ['Parágrafo.'] },
+    { tipo: 'pranchas', fotos: [8, 7], kicker: 'Vistas ortogonais', fundo: '#F4F7FE' },
+    { tipo: 'contracapa' }
+  ]
+}
+```
+
+### Tipos de página
+
+- `capa`: foto, nome da revista ("Caderno de Projetos") e título do projeto. `titulo` e `kicker` são opcionais; sem eles, entram o nome e a categoria do projeto.
+- `colagem`: uma foto larga em cima e três embaixo (duas empilhadas à esquerda, uma em pé à direita). A ordem em `fotos` é: larga, esquerda de cima, esquerda de baixo, em pé. Aceita de 1 a 4 fotos. A legenda com os nomes é montada sozinha.
+- `texto`: `kicker` (linha pequena), `titulo`, `olho` (frase de abertura em itálico), `texto` (parágrafos) e `ficha`. Sem a linha `texto`, entra a descrição do projeto. Em `ficha`, liste as linhas de `info` que entram (`['Área', 'Tipologia']`) ou use `true` para todas.
+- `dupla`: uma foto atravessando as duas páginas, com um quadro de texto (`kicker` e `texto`). Precisa cair em **página par** (a da esquerda); fora disso vira página de foto inteira. No celular aparece como uma página só.
+- `foto-texto`: foto em cima, de ponta a ponta, e texto embaixo.
+- `pranchas`: até 3 imagens inteiras, sem corte, com o nome embaixo de cada uma. Em `fundo`, ponha a cor de fundo das imagens, para a página ficar da mesma cor (sem `fundo`, vale o `bg` da primeira imagem).
+- `foto`: uma foto ocupando a página inteira.
+- `contracapa`: logo, nome, cidade, uma frase e o Instagram (vêm de `const identidade`). Para trocar a frase: `texto: 'Sua frase.'`.
+
+### Projetos em andamento: revista preparada e bloqueada
+
+- Reforma Unifamiliar, Interiores Dopamine, Paisagismo Residencial e Móveis Planejados já têm o bloco `revista` montado, com um modelo de 8 páginas: capa, colagem, texto, página dupla, foto inteira, desenhos e contracapa.
+- Enquanto o projeto tiver a linha `andamento: true`, a revista e o botão "Revista" **não aparecem**. A página continua só com a capa, a fita e o cartão "Em andamento".
+- Para liberar, quando o projeto terminar:
+  1. Apague a linha `andamento: true` e preencha `images` com as fotos finais (plantas e cortes também entram em `images`, como no Salão Vitalina).
+  2. Confira os números de `foto` e `fotos` do bloco `revista`. Página que aponta para uma foto que não existe é pulada. Com menos de 3 fotos nas páginas, a revista não aparece.
+  3. Na página de texto, sem a linha `texto` entra a descrição do projeto. Para escrever outro: `texto: ['Primeiro parágrafo.', 'Segundo parágrafo.']`.
+- O modelo usa as posições 0 a 8 da lista `images`. Com menos fotos, as páginas que sobram são puladas e a numeração se ajeita.
+
+### Outros ajustes
+
+- **Capitular** (a letra grande que abre o texto): tem duas linhas de altura e é calculada sozinha a partir do tamanho da letra do texto. Texto que começa com número ou aspas fica sem capitular.
+- **Texto que não cabe**: no computador a página tem tamanho fixo. Se o texto passar do pé da página, o site diminui um pouco a letra só daquela página. Se nem assim couber, o Console (F12) mostra o aviso "o texto da página N passou do pé da página": encurte o texto ou tire linhas da ficha.
+- A contagem de páginas é feita sozinha. Se o total der ímpar, entra uma página em branco no fim.
+- Corte da foto: quando a foto é cortada para caber no quadro, a linha `foco` na imagem (na lista `images`) escolhe o ponto que fica à mostra. `foco: '74% 50%'` quer dizer 74% da largura e 50% da altura.
+- Nome da revista: `nome: 'Outro nome'` dentro de `revista` troca o "Caderno de Projetos".
+- Duração da virada da folha: `REVISTA_VIRADA_MS`, no JavaScript "12D. REVISTA DO PROJETO" (600 = 0,6 segundo, igual ao leitor da BibliChaos).
+- O visual fica no CSS "07C. REVISTA DO PROJETO" e a montagem no JavaScript "12D. REVISTA DO PROJETO".
+- Em navegador muito antigo (sem as medidas `cqw`), a seção e o botão não aparecem; o resto do site funciona igual.
 
 ## Foto da página Sobre mim
 
@@ -206,7 +272,7 @@ Ficaram de fora de propósito, porque dependem do endereço definitivo: o arquiv
 
 ## Modelo 3D
 
-- `viewer3d-vitalina.html` (na raiz, ao lado do `index.html`) é o visualizador 3D do Salão Vitalina. Cada projeto com modelo tem o seu: `viewer3d-nome.html` na raiz e `nome-modelo.glb` em `assets`. Ele aparece num quadro dentro da página do projeto, assim que o visitante entra. O botão no canto do quadro amplia o modelo para a tela inteira; o X volta ao tamanho normal.
+- `viewer3d-vitalina.html` (na raiz, ao lado do `index.html`) é o visualizador 3D do Salão Vitalina; `viewer3d-quarto-maria.html` é o do Quarto Maria. Cada projeto com modelo tem o seu: `viewer3d-nome.html` na raiz e `nome-modelo.glb` em `assets`. Ele aparece num quadro dentro da página do projeto, assim que o visitante entra. O botão no canto do quadro amplia o modelo para a tela inteira; o X volta ao tamanho normal.
 - O quadro só aparece nos projetos que têm estas linhas dentro do bloco, em `const projects`:
 
 ```js
@@ -218,9 +284,19 @@ modelo3dPosicao: 'lado',
   - `'lado'`: quadro fixo no canto esquerdo, do tamanho de uma foto do carrossel; o carrossel passa ao lado, com a mesma folga que existe entre as fotos. Em tela estreita (menos de 1100 px de largura) e no celular, o quadro vai para baixo do carrossel. Em monitores com mais de 1920 px de largura, o conjunto fica centralizado.
   - `'abaixo'`: quadro abaixo do carrossel de fotos.
   - `'acima'`: quadro acima do carrossel de fotos.
-- Hoje as linhas estão no projeto "Salão Vitalina de Beleza". Para tirar o quadro, apague as duas linhas. Para usar em outro projeto, mova as duas linhas para o bloco dele.
+- Hoje as linhas estão nos projetos "Salão Vitalina de Beleza" e "Quarto Maria". Para tirar o quadro, apague as duas linhas. Para usar em outro projeto, mova as duas linhas para o bloco dele.
 - O tamanho do quadro fica no CSS do `index.html`, no bloco "07B. MODELO 3D". Na posição `'lado'`, ele repete as medidas das fotos do carrossel; se mudar o tamanho das fotos, repita as medidas ali. Nas posições `'abaixo'` e `'acima'`, o tamanho está em `.modelo3d-box` (`width` e `height`).
 - O modelo do Salão Vitalina fica em `assets/vitalina-modelo.glb` (já aliviado para a web). O caminho está na linha `modelo` do `CONFIG`. Se esse arquivo faltar, o visualizador mostra uma casa de teste e o aviso "Modelo de teste".
+
+### Modelo do Quarto Maria
+
+- Visualizador: `viewer3d-quarto-maria.html`. Modelo: `assets/quarto-maria-modelo.glb`.
+- Cenas: "Fachada" (casa fechada, vista do jardim), "Planta" (telhado e forro sobem e somem; vista de cima) e "Interior" (o quarto aberto, em perspectiva).
+- O arquivo saiu do SketchUp com 107 MB, acima do que o GitHub aceita, e foi aliviado para 12,8 MB: menos triângulos nos seixos, nas plantas, nas telhas e nos objetos miúdos, e texturas menores. Saíram as peças soltas longe da casa (um piso de tijolo a 18 m dela e os objetos de luz do Enscape).
+- As peças foram reunidas em grupos com nome, que são os que as cenas usam: `Telhado` (telhas, toldo da janela e empenas), `Forro`, `Paredes`, `Pisos`, `Esquadrias`, `Mobiliario`, `Paisagismo` e `Muro`.
+- O muro do jardim só aparece visto de dentro, para não tampar a fachada.
+- A origem do modelo ficou no canto externo da casa, na fachada da janela: a casa vai de x 0 a 3,70 e de z −3,10 a 0; o jardim, de z 0 a 2,00.
+- O projeto ainda não tem planta baixa em `drawings`, então a cena "Planta" não tem os botões dos cômodos. O comentário `comodos`, no `CONFIG`, mostra como ligar.
 
 ### O que editar no viewer3d-vitalina.html
 

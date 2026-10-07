@@ -20,7 +20,7 @@
   A não ser que você queira mudar o funcionamento do sistema.
 -->
 
-<!-- BUILD: andamento-v10 -->
+<!-- BUILD: revista-v1 -->
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
@@ -1491,6 +1491,731 @@
       .modelo3d-close { width: 40px; height: 40px; }
     }
 
+
+    /* ── 07C. REVISTA DO PROJETO ───────────────────────────
+       Seção abaixo das fotos, com as imagens do projeto diagramadas como páginas de
+       revista de arquitetura. Só aparece nos projetos que têm o bloco "revista" em
+       const projects e que NÃO estão com "andamento: true" (as páginas são montadas
+       no JavaScript, bloco 12D).
+       No computador é um caderno aberto, com duas páginas, que vira a folha: clique,
+       arraste da folha ou setas do teclado (o mesmo efeito do leitor da BibliChaos).
+       No celular e no tablet as páginas ficam lado a lado e passam com o dedo.
+       As medidas de dentro das páginas usam "cqw" (1cqw = 1% da largura da página):
+       assim a página inteira cresce e encolhe junta, como uma folha impressa. */
+    .revista {
+      width: min(100%, 1920px);
+      margin-inline: auto;
+      padding: 0 var(--edge) clamp(34px, 5vw, 72px);
+    }
+
+    .revista[hidden] { display: none; }
+
+    .revista-topo {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 18px 28px;
+      padding: clamp(22px, 3vw, 40px) 0 clamp(16px, 2vw, 26px);
+      border-top: 1px solid var(--line);
+    }
+
+    .revista-eyebrow {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font: 11px/1 Arial, Helvetica, sans-serif;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    .revista-titulo {
+      margin: 0;
+      font-size: clamp(30px, 4.2vw, 62px);
+      line-height: .98;
+      letter-spacing: -.04em;
+      font-weight: 400;
+    }
+
+    .revista-nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .revista-seta {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(251, 248, 244, .62);
+      color: var(--purple-dark);
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      transition: background .2s ease, opacity .2s ease;
+    }
+
+    .revista-seta:hover:not([aria-disabled="true"]) { background: var(--purple-pale); }
+    .revista-seta[aria-disabled="true"] { opacity: .32; cursor: default; }
+    .revista-seta:focus-visible { outline: 3px solid var(--purple); outline-offset: 2px; }
+
+    .revista-contador {
+      min-width: 132px;
+      text-align: center;
+      color: var(--muted);
+      font: 12px/1.2 Arial, Helvetica, sans-serif;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    /* A "mesa" onde a revista fica aberta. A folga em cima e embaixo é o espaço que a folha
+       usa enquanto vira (ela "levanta" um pouco da mesa). */
+    .revista-mesa {
+      padding: clamp(30px, 4.4vw, 70px) clamp(12px, 3vw, 58px);
+      border-radius: 24px;
+      background: radial-gradient(120% 90% at 50% 0%, #efe8de 0%, #e3dacd 100%);
+    }
+
+    .revista-dica {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font: 12px/1.4 Arial, Helvetica, sans-serif;
+      text-align: center;
+    }
+
+    /* O caderno: duas páginas de 3 × 4 lado a lado. Fechado na capa ou na contracapa,
+       ele fica meia página para o lado, para a capa aparecer no centro da mesa. */
+    .revista-livro {
+      position: relative;
+      width: min(100%, 1180px, calc((100vh - 150px) * 1.5));
+      min-width: min(100%, 900px);
+      aspect-ratio: 3 / 2;
+      margin-inline: auto;
+      perspective: 4800px;
+      touch-action: pan-y pinch-zoom;
+    }
+
+    .revista-livro.na-capa { transform: translateX(-25%); }
+    .revista-livro.no-fim { transform: translateX(25%); }
+
+    /* Cada folha tem frente (página da direita) e verso (página da esquerda).
+       Virar a folha é girar em torno da lombada: 0° deitada à direita, -180° à esquerda.
+       Durante a virada, o ângulo é posto pelo JavaScript (bloco 12D). */
+    .revista-folha {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 50%;
+      height: 100%;
+      transform-origin: left center;
+      transform-style: preserve-3d;
+      transform: rotateY(0deg);
+    }
+
+    .revista-folha.virada { transform: rotateY(-180deg); }
+
+    .revista-pagina {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #fbf8f4;
+      color: var(--text);
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      container-type: inline-size;
+      box-shadow: 0 22px 34px -18px rgba(23, 18, 23, .42), 0 3px 10px rgba(23, 18, 23, .08);
+      cursor: grab;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .revista-pagina.verso { transform: rotateY(180deg); }
+    .revista-livro.arrastando .revista-pagina,
+    .revista-livro.arrastando .revista-pagina * { cursor: grabbing; }
+
+    /* Sombra da lombada: à esquerda nas páginas da direita, à direita nas da esquerda. */
+    .revista-pagina::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+      background: linear-gradient(90deg, rgba(23, 18, 23, .2), rgba(23, 18, 23, .05) 4%, rgba(23, 18, 23, 0) 11%);
+    }
+
+    .revista-pagina.verso::after {
+      background: linear-gradient(270deg, rgba(23, 18, 23, .2), rgba(23, 18, 23, .05) 4%, rgba(23, 18, 23, 0) 11%);
+    }
+
+    /* Sombra da dobra: só aparece enquanto a folha vira, mais forte no meio da virada
+       (escura junto à lombada, clareando até um leve brilho na borda). */
+    .revista-sombra {
+      position: absolute;
+      inset: 0;
+      z-index: 7;
+      pointer-events: none;
+      opacity: 0;
+      background: linear-gradient(90deg, rgba(0, 0, 0, .46), rgba(0, 0, 0, .08) 52%, rgba(255, 255, 255, .06) 100%);
+    }
+
+    .revista-pagina.verso .revista-sombra {
+      background: linear-gradient(270deg, rgba(0, 0, 0, .46), rgba(0, 0, 0, .08) 52%, rgba(255, 255, 255, .06) 100%);
+    }
+
+    /* Enquanto a folha vira, a sombra fica numa camada só dela (a virada sai mais leve). */
+    .revista-folha.virando .revista-sombra { will-change: opacity; }
+
+    /* ── Dentro das páginas ── */
+    .rv {
+      position: absolute;
+      inset: 0;
+    }
+
+    :where(.rv) :where(p, h3, figure, dl, dd) { margin: 0; }
+
+    /* Texto que só o leitor de tela lê (a palavra inteira que começa com a capitular). */
+    .rv-so-leitor {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      border: 0;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    /* Foto clicável (abre a ampliação, igual às fotos do carrossel). */
+    .rv-foto {
+      position: relative;
+      display: block;
+      min-width: 0;
+      min-height: 0;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      overflow: hidden;
+      background: #e9e1d6;
+      cursor: zoom-in;
+    }
+
+    .rv-foto img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      display: block;
+      object-fit: cover;
+      -webkit-user-drag: none;
+      transition: transform .7s ease;
+    }
+
+    .rv-foto:hover img { transform: scale(1.025); }
+    .rv-foto:focus-visible { outline: 3px solid var(--purple); outline-offset: -3px; }
+
+    .rv-kicker {
+      color: var(--purple);
+      font: 1.9cqw/1.2 Arial, Helvetica, sans-serif;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    /* Rodapé da página: número e nome. */
+    .rv-folio {
+      position: absolute;
+      left: 6cqw;
+      right: 6cqw;
+      bottom: 4.4cqw;
+      z-index: 3;
+      display: flex;
+      justify-content: flex-start;
+      gap: 2.4cqw;
+      color: var(--muted);
+      font: 1.85cqw/1 Arial, Helvetica, sans-serif;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .rv-folio b { color: var(--text); font-weight: 400; }
+    .revista-pagina.frente .rv-folio { flex-direction: row-reverse; }
+
+    /* CAPA */
+    .rv-capa-topo {
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 15cqw;
+      display: flex;
+      align-items: center;
+      gap: 3cqw;
+      padding: 0 6cqw;
+    }
+
+    .rv-capa-logo { height: 5.2cqw; width: auto; display: block; }
+    .rv-capa-nome { font-size: 4.2cqw; line-height: 1; letter-spacing: -.02em; }
+
+    .rv-capa-edicao {
+      margin-left: auto;
+      color: var(--muted);
+      font: 1.85cqw/1 Arial, Helvetica, sans-serif;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* No computador, clicar na capa abre a revista (a foto da capa não amplia). */
+    .rv-capa .rv-foto { position: absolute; inset: 15cqw 6cqw 6cqw; cursor: pointer; }
+
+    .rv-capa-chamada {
+      position: absolute;
+      left: 0;
+      bottom: 13cqw;
+      z-index: 2;
+      max-width: 82%;
+      padding: 4.4cqw 6cqw 4.8cqw;
+      background: #fbf8f4;
+      pointer-events: none;
+    }
+
+    .rv-capa-chamada h3 {
+      margin: 1.8cqw 0 2cqw;
+      font-size: 10.5cqw;
+      line-height: .92;
+      letter-spacing: -.045em;
+      font-weight: 400;
+    }
+
+    .rv-capa-sub { color: var(--muted); font: 2.6cqw/1.4 Arial, Helvetica, sans-serif; }
+
+    /* COLAGEM: uma foto larga em cima; embaixo, duas empilhadas e uma em pé.
+       A legenda fica logo abaixo e pode ter mais de uma linha: as fotos cedem o espaço. */
+    .rv-colagem {
+      display: flex;
+      flex-direction: column;
+      padding: 6cqw 6cqw 8.6cqw;
+    }
+
+    .rv-grade {
+      flex: 1 1 0;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 44fr 28fr 28fr;
+      gap: 2cqw;
+    }
+
+    .rv-grade .rv-foto:nth-child(1) { grid-column: 1 / 3; grid-row: 1; }
+    .rv-grade .rv-foto:nth-child(2) { grid-column: 1; grid-row: 2; }
+    .rv-grade .rv-foto:nth-child(3) { grid-column: 1; grid-row: 3; }
+    .rv-grade .rv-foto:nth-child(4) { grid-column: 2; grid-row: 2 / 4; }
+    /* Com menos de quatro fotos, a grade se ajeita. */
+    .rv-grade.tem-3 .rv-foto:nth-child(2) { grid-row: 2 / 4; }
+    .rv-grade.tem-3 .rv-foto:nth-child(3) { grid-column: 2; grid-row: 2 / 4; }
+    .rv-grade.tem-2 { grid-template-rows: 1fr 1fr; }
+    .rv-grade.tem-2 .rv-foto:nth-child(2) { grid-column: 1 / 3; grid-row: 2; }
+    .rv-grade.tem-1 { grid-template-rows: 1fr; }
+
+    .rv-legenda {
+      flex: 0 0 auto;
+      margin-top: 2.2cqw;
+      color: var(--muted);
+      font: 1.95cqw/1.5 Arial, Helvetica, sans-serif;
+    }
+
+    .rv-legenda b { color: var(--text); font-weight: 400; }
+
+    /* TEXTO */
+    .rv-texto {
+      display: flex;
+      flex-direction: column;
+      padding: 10.5cqw 9cqw 13cqw;
+    }
+
+    .rv-texto h3,
+    .rv-bloco h3 {
+      margin-top: 2.8cqw;
+      font-size: 7.8cqw;
+      line-height: .98;
+      letter-spacing: -.04em;
+      font-weight: 400;
+    }
+
+    .rv-olho {
+      margin-top: 3.8cqw;
+      font-size: 3.5cqw;
+      line-height: 1.34;
+      font-style: italic;
+    }
+
+    /* --rv-entrelinha é a entrelinha do texto. A capitular (abaixo) faz as contas com ela. */
+    .rv-corpo {
+      --rv-entrelinha: 1.6;
+      margin-top: 3.6cqw;
+      padding-bottom: 4cqw;
+    }
+
+    .rv-corpo p {
+      color: #3d3440;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 2.6cqw;
+      line-height: var(--rv-entrelinha);
+    }
+
+    .rv-corpo p + p { margin-top: 2.2cqw; }
+
+    /* CAPITULAR: a letra grande que abre o texto. Tem exatamente DUAS linhas de altura: o topo
+       dela alinha com o topo das letras da primeira linha e a base, com a base da segunda.
+       A terceira linha já corre na largura inteira. As medidas estão em "em" da letra do
+       parágrafo, então a capitular acompanha sozinha qualquer mudança de tamanho do texto.
+       (.716 e .692 são a altura das maiúsculas da Arial e da Georgia.) */
+    .rv-capitular {
+      float: left;
+      height: calc((2 * var(--rv-entrelinha) - .17) * 1em);
+      margin-right: .2em;
+      padding-top: .13em;
+      line-height: calc((2 * var(--rv-entrelinha) - .3) * 1em);
+    }
+
+    .rv-capitular-letra {
+      display: block;
+      color: var(--purple-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 400;
+      font-size: calc((var(--rv-entrelinha) + .716) / .692 * 1em);
+    }
+
+    .rv-ficha {
+      margin-top: auto;
+      border-top: 1px solid var(--text);
+    }
+
+    .rv-ficha div {
+      display: grid;
+      grid-template-columns: 27% 1fr;
+      gap: 2.4cqw;
+      padding: 1.4cqw 0;
+      border-bottom: 1px solid var(--line);
+      font: 2.2cqw/1.4 Arial, Helvetica, sans-serif;
+    }
+
+    .rv-ficha dt {
+      padding-top: .35cqw;
+      color: var(--muted);
+      font-size: 1.7cqw;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    /* FOTO + TEXTO: foto em cima, de ponta a ponta; texto embaixo. */
+    .rv-fototexto .rv-foto { width: 100%; height: 84cqw; }
+    .rv-bloco { padding: 6.4cqw 9cqw 13cqw; }
+    .rv-bloco h3 { font-size: 7cqw; }
+
+    /* Texto comprido: quando o texto passa do pé da página, o site aperta um pouco a letra
+       só daquela página (a classe "rv-justa" é posta pelo JavaScript, no computador). */
+    .rv-justa.rv-texto { padding-top: 8.5cqw; }
+    .rv-justa.rv-texto h3 { font-size: 6.8cqw; }
+    .rv-justa .rv-olho { margin-top: 3cqw; font-size: 3.1cqw; }
+    .rv-justa .rv-corpo { --rv-entrelinha: 1.5; margin-top: 2.8cqw; padding-bottom: 3cqw; }
+    .rv-justa .rv-corpo p { font-size: 2.3cqw; }
+    .rv-justa .rv-corpo p + p { margin-top: 1.7cqw; }
+    .rv-justa .rv-ficha div { padding: 1.05cqw 0; font-size: 2cqw; }
+    .rv-justa.rv-fototexto .rv-foto { height: 74cqw; }
+    .rv-justa .rv-bloco { padding-top: 5cqw; }
+    .rv-justa .rv-bloco h3 { font-size: 6cqw; }
+
+    /* Etiqueta com o nome da foto, sobre a imagem. */
+    .rv-tarja {
+      position: absolute;
+      left: 6cqw;
+      bottom: 4cqw;
+      z-index: 3;
+      max-width: 86%;
+      padding: .9cqw 1.7cqw;
+      border-radius: 99cqw;
+      background: rgba(251, 248, 244, .86);
+      color: rgba(23, 18, 23, .8);
+      font: 1.7cqw/1.2 Arial, Helvetica, sans-serif;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+
+    .rv-fototexto .rv-foto .rv-tarja { bottom: 3cqw; }
+
+    /* FOTO INTEIRA e PÁGINA DUPLA (a mesma foto atravessa as duas páginas). */
+    .rv-fotocheia .rv-foto,
+    .rv-dupla .rv-foto { position: absolute; inset: 0; }
+
+    .rv-dupla .rv-foto img { width: 200%; }
+    .rv-dupla.lado-b .rv-foto img { left: -100%; }
+    .rv-dupla .rv-foto:hover img { transform: none; }
+    .rv-dupla.lado-a .rv-nota { display: none; }
+
+    .rv-nota {
+      position: absolute;
+      right: 0;
+      bottom: 9cqw;
+      z-index: 3;
+      width: 66%;
+      padding: 4.4cqw 6cqw 4.8cqw 5cqw;
+      background: #fbf8f4;
+      pointer-events: none;
+    }
+
+    .rv-nota p + p {
+      margin-top: 1.8cqw;
+      color: #3d3440;
+      font: 2.45cqw/1.55 Arial, Helvetica, sans-serif;
+    }
+
+    /* PRANCHAS: vistas e desenhos inteiros, sem corte, sobre o fundo da própria imagem. */
+    .rv-pranchas-topo {
+      position: absolute;
+      left: 9cqw;
+      right: 9cqw;
+      top: 8cqw;
+    }
+
+    .rv-pranchas-grade {
+      position: absolute;
+      inset: 14cqw 5cqw 12cqw;
+      display: grid;
+      grid-auto-rows: 1fr;
+      gap: 3cqw;
+    }
+
+    .rv-pranchas-grade figure {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .rv-pranchas-grade .rv-foto { flex: 1 1 auto; background: transparent; }
+    .rv-pranchas-grade .rv-foto img { object-fit: contain; }
+    .rv-pranchas-grade .rv-foto:hover img { transform: none; }
+
+    .rv-pranchas-grade figcaption {
+      padding: 1.4cqw 4cqw 0;
+      color: var(--muted);
+      font: 1.75cqw/1.3 Arial, Helvetica, sans-serif;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    /* CONTRACAPA */
+    .rv-contracapa {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2.6cqw;
+      padding: 12cqw;
+      text-align: center;
+    }
+
+    .rv-contracapa::before {
+      content: "";
+      position: absolute;
+      inset: 5cqw;
+      border: 1px solid var(--line);
+      pointer-events: none;
+    }
+
+    .rv-cc-logo { width: 24cqw; height: auto; display: block; }
+    .rv-cc-nome { margin-top: 2cqw; font-size: 5.6cqw; line-height: 1; letter-spacing: -.03em; }
+
+    .rv-cc-linha {
+      color: var(--muted);
+      font: 1.85cqw/1.5 Arial, Helvetica, sans-serif;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .rv-cc-fio { width: 9cqw; height: 1px; margin: 2.4cqw 0; background: var(--text); }
+    .rv-cc-nota { max-width: 56cqw; color: #3d3440; font: 2.5cqw/1.6 Arial, Helvetica, sans-serif; }
+    .rv-cc-contato { color: var(--purple-dark); font-size: 3cqw; }
+
+    /* Canto dobrado, embaixo de cada página: clicar nele vira a folha. */
+    .revista-canto {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      z-index: 6;
+      width: 8.5cqw;
+      height: 8.5cqw;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: linear-gradient(315deg, #f4efe8 0 49%, rgba(23, 18, 23, .22) 49% 52%, rgba(23, 18, 23, 0) 52%);
+      cursor: pointer;
+      opacity: .92;
+      transition: width .25s ease, height .25s ease, opacity .25s ease;
+    }
+
+    .revista-pagina.verso .revista-canto {
+      right: auto;
+      left: 0;
+      background: linear-gradient(45deg, #f4efe8 0 49%, rgba(23, 18, 23, .22) 49% 52%, rgba(23, 18, 23, 0) 52%);
+    }
+
+    .revista-pagina:hover .revista-canto,
+    .revista-canto:focus-visible { width: 11cqw; height: 11cqw; opacity: 1; }
+
+    .revista-canto:focus-visible { outline: 3px solid var(--purple); outline-offset: -3px; }
+    .revista-livro.arrastando .revista-canto { opacity: 0; }
+
+    /* Etiqueta das fotos do carrossel: nome muito comprido termina em reticências, sem vazar do quadro. */
+    .project-view .media-block-label strong {
+      max-width: 100%;
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 18px;
+    }
+
+    /* Botão "Revista" no topo do projeto: com ele, os botões ficam mais justos no celular. */
+    @media (max-width: 660px) {
+      .project-view .project-actions.tem-revista { gap: 8px; }
+      .project-view .project-actions.tem-revista .project-action { padding-inline: 15px; font-size: 16px; }
+    }
+
+    /* ── Revista no celular e no tablet: páginas lado a lado, passando com o dedo.
+          As páginas de texto crescem para a letra ficar legível; as outras acompanham a altura. ── */
+    @media (max-width: 980px) {
+      .revista-mesa {
+        margin-inline: calc(var(--edge) * -1);
+        padding: 22px 0 24px;
+        border-radius: 0;
+      }
+
+      .revista-livro,
+      .revista-livro.na-capa,
+      .revista-livro.no-fim {
+        width: 100%;
+        min-width: 0;
+        aspect-ratio: auto;
+        display: flex;
+        align-items: stretch;
+        gap: 14px;
+        padding: 4px var(--edge) 22px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-padding-inline: var(--edge);
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        perspective: none;
+        transform: none !important;
+        touch-action: auto;
+      }
+
+      .revista-livro::-webkit-scrollbar { display: none; }
+
+      .revista-folha,
+      .revista-folha.virada { display: contents; }
+
+      .revista-pagina,
+      .revista-pagina.verso {
+        position: relative;
+        inset: auto;
+        flex: 0 0 min(86vw, 440px);
+        min-height: calc(min(86vw, 440px) * 4 / 3);
+        transform: none;
+        -webkit-backface-visibility: visible;
+        backface-visibility: visible;
+        display: flex;
+        flex-direction: column;
+        scroll-snap-align: center;
+        box-shadow: 0 16px 26px -14px rgba(23, 18, 23, .4), 0 2px 8px rgba(23, 18, 23, .07);
+        cursor: default;
+        -webkit-user-select: auto;
+        user-select: auto;
+      }
+
+      .revista-pagina.so-computador { display: none; }
+      .revista-pagina::after { display: none; }
+      .revista-sombra { display: none; }
+      .revista-canto { display: none; }
+      .rv-capa .rv-foto { cursor: zoom-in; }
+
+      /* Páginas de texto: o conteúdo corre normalmente e a página cresce com ele. */
+      .rv.rv-fluxo { position: relative; inset: auto; flex: 1 0 auto; }
+
+      .rv-kicker { font-size: 2.5cqw; }
+      .rv-folio { font-size: 2.4cqw; bottom: 5cqw; }
+      .rv-colagem { padding: 6cqw 6cqw 11.4cqw; }
+      .rv-legenda { margin-top: 2.6cqw; font-size: 2.5cqw; }
+      .rv-tarja { font-size: 2.2cqw; padding: 1.2cqw 2.4cqw; }
+
+      .rv-capa-topo { height: 17cqw; }
+      .rv-capa .rv-foto { inset: 17cqw 6cqw 6cqw; }
+      .rv-capa-edicao { font-size: 2.3cqw; }
+      .rv-capa-sub { font-size: 3.4cqw; }
+      .rv-capa-chamada { bottom: 14cqw; max-width: 88%; }
+
+      .rv-texto { padding: 11cqw 8cqw 17cqw; }
+      .rv-texto h3 { font-size: 9cqw; }
+      .rv-olho { font-size: 4.2cqw; }
+      .rv-corpo { --rv-entrelinha: 1.58; padding-bottom: 6cqw; }
+      .rv-corpo p { font-size: 3.6cqw; }
+      .rv-corpo p + p { margin-top: 3cqw; }
+      .rv-ficha div { grid-template-columns: 31% 1fr; padding: 2.1cqw 0; font-size: 3.1cqw; }
+      .rv-ficha dt { font-size: 2.3cqw; }
+
+      .rv-bloco { padding: 7cqw 8cqw 17cqw; }
+      .rv-bloco h3 { font-size: 8cqw; }
+      .rv-fototexto .rv-foto { height: 78cqw; }
+
+      .rv-dupla.lado-a .rv-foto img { width: 100%; }
+      .rv-dupla.lado-a .rv-nota { display: block; }
+      .rv-nota { width: 84%; bottom: 11cqw; }
+      .rv-nota p + p { font-size: 3.5cqw; }
+
+      .rv-pranchas-topo { left: 8cqw; right: 8cqw; }
+      .rv-pranchas-grade { inset: 16cqw 4cqw 15cqw; }
+      .rv-pranchas-grade figcaption { font-size: 2.3cqw; }
+
+      .rv-cc-linha { font-size: 2.4cqw; }
+      .rv-cc-nota { max-width: 70cqw; font-size: 3.5cqw; }
+      .rv-cc-contato { font-size: 4.2cqw; }
+    }
+
+    /* Tablet (página com 400 px ou mais): a letra não precisa crescer tanto. */
+    @media (max-width: 980px) {
+      @container (min-width: 400px) {
+        .rv-texto h3 { font-size: 8.2cqw; }
+        .rv-olho { font-size: 3.7cqw; }
+        .rv-corpo p { font-size: 3cqw; }
+        .rv-ficha div { font-size: 2.6cqw; padding: 1.8cqw 0; }
+        .rv-ficha dt { font-size: 1.95cqw; }
+        .rv-bloco h3 { font-size: 7.2cqw; }
+        .rv-nota p + p { font-size: 3cqw; }
+        .rv-kicker { font-size: 2.1cqw; }
+        .rv-folio { font-size: 2cqw; }
+        .rv-colagem { padding-bottom: 10cqw; }
+        .rv-legenda { font-size: 2.1cqw; }
+        .rv-tarja { font-size: 1.9cqw; }
+        .rv-capa-sub { font-size: 3cqw; }
+        .rv-capa-edicao, .rv-pranchas-grade figcaption, .rv-cc-linha { font-size: 2cqw; }
+        .rv-cc-nota { font-size: 3cqw; }
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .rv-foto img, .revista-canto { transition: none; }
+    }
+
+    /* Navegador antigo, sem as medidas "cqw": a revista não aparece (o resto do site não muda). */
+    @supports not (width: 1cqw) {
+      .revista { display: none !important; }
+    }
 
     /* ── 04. PÁGINAS DO MENU: SOBRE / PROJETO / CONTATO ─── */
     .system-view {
@@ -3493,6 +4218,30 @@ body {
       </ul>
     </article>
     <article>
+      <h3>Quarto Maria</h3>
+      <p>Reforma · Interiores e paisagismo · Quarto e jardim externo</p>
+      <p>Reforma de um quarto de 9,50 m² com paisagismo no recuo externo. Dentro, cada parede tem um papel: a roxa recebe a bancada suspensa de maquiagem e estudo, os espelhos orgânicos e a arara aparente; a azul-marinho marca a cabeceira. A janela de madeira em arco enquadra o jardim criado junto ao muro, com deck em módulos sobre seixos claros e vasos de concreto em um banco contínuo.</p>
+      <dl>
+        <dt>Área</dt><dd>9,50 m²</dd>
+        <dt>Dimensões</dt><dd>Quarto de 3,40 × 2,80 m; jardim de 3,70 × 2,00 m</dd>
+        <dt>Tipologia</dt><dd>Reforma de quarto com paisagismo externo</dd>
+        <dt>Interiores</dt><dd>Parede roxa com bancada suspensa, espelhos orgânicos e arara; cabeceira em azul-marinho</dd>
+        <dt>Paisagismo</dt><dd>Deck em módulos sobre seixos, banco de concreto com vasos e beiral de telha sobre a janela</dd>
+        <dt>Programas</dt><dd>SketchUp e Enscape</dd>
+      </dl>
+      <ul>
+        <li><a href="assets/quarto-maria-paisagismo-externo-1.jpg">Vista ortogonal da fachada do Quarto Maria: parede de tijolo aparente, janela de madeira em arco sob beiral de telha cerâmica e cinco vasos de concreto sobre um banco</a></li>
+        <li><a href="assets/quarto-maria-vista-interna-1.jpg">Render do Quarto Maria: parede roxa com bancada suspensa de madeira, dois espelhos orgânicos, arara com roupas e janela de madeira em arco</a></li>
+        <li><a href="assets/quarto-maria-vista-interna-2.jpg">Render noturno do Quarto Maria: arandela acesa sobre a cabeceira azul-marinho, almofadas estampadas e a janela de madeira voltada para o jardim</a></li>
+        <li><a href="assets/quarto-maria-vista-interna-3.jpg">Render noturno do Quarto Maria: cama com almofadas azuis e brancas diante da parede azul-marinho, ao lado da porta de madeira</a></li>
+        <li><a href="assets/quarto-maria-vista-interna-4.jpg">Render noturno do Quarto Maria: bancada de maquiagem com espelhos orgânicos que refletem a cama, poltrona clara e baú</a></li>
+        <li><a href="assets/quarto-maria-vista-interna-5.jpg">Render do Quarto Maria: janela de madeira em arco vista de dentro, com o muro de tijolo e as plantas do jardim ao fundo</a></li>
+        <li><a href="assets/quarto-maria-paisagismo-externo-2.jpg">Vista ortogonal do jardim do Quarto Maria: módulos de deck de madeira sobre seixos brancos e vasos de concreto com folhagens sobre um banco</a></li>
+        <li><a href="assets/quarto-maria-paisagismo-externo-3.jpg">Vista ortogonal em perspectiva do Quarto Maria: volume de tijolo aparente com telhado cerâmico, beiral sobre a janela e jardim com vasos</a></li>
+        <li><a href="assets/quarto-maria-vista-ortogonal-reforma.jpg">Vista ortogonal em corte do Quarto Maria: interior com janela em arco, pendente de rattan, cama, bancada e arara</a></li>
+      </ul>
+    </article>
+    <article>
       <h3>Reforma Unifamiliar</h3>
       <p>Arquitetura · Em andamento · Reforma residencial</p>
       <p>Reforma de residência unifamiliar em Campo Grande/MS para uma família de quatro pessoas e seus pets. O projeto parte da arquitetura dos anos 70, com a cozinha em linguagem modernista e muita textura nos acabamentos. A cliente gosta de Art Déco, e o estilo entrou no projeto em arcos, geometrias e detalhes.</p>
@@ -3583,6 +4332,8 @@ body {
         <p class="project-name" id="projectName"></p>
       </div>
       <div class="project-actions">
+        <!-- O botão "Revista" só aparece nos projetos que têm o bloco "revista" (rola até a seção). -->
+        <button class="project-action" type="button" id="revistaButton" style="display:none">Revista</button>
         <button class="project-action" type="button" id="infoButton">Infos</button>
         <button class="project-action" type="button" id="drawingsButton">Desenhos</button>
         <button class="project-close" type="button" id="closeProjectPage" aria-label="Fechar projeto">×</button>
@@ -3626,6 +4377,27 @@ body {
         </button>
       </div>
     </div>
+
+    <!-- ── REVISTA DO PROJETO ───────────────────────────── -->
+    <!-- Fica abaixo das fotos e só aparece nos projetos que têm o bloco "revista" em
+         const projects. As páginas são montadas pelo JavaScript (bloco 12D). -->
+    <section class="revista" id="revista" aria-labelledby="revistaTitulo" hidden>
+      <div class="revista-topo">
+        <div>
+          <p class="revista-eyebrow">Revista do projeto</p>
+          <h2 class="revista-titulo" id="revistaTitulo"></h2>
+        </div>
+        <div class="revista-nav">
+          <button class="revista-seta" type="button" id="revistaAnterior" aria-label="Página anterior">←</button>
+          <span class="revista-contador" id="revistaContador" aria-live="polite"></span>
+          <button class="revista-seta" type="button" id="revistaProxima" aria-label="Próxima página">→</button>
+        </div>
+      </div>
+      <div class="revista-mesa">
+        <div class="revista-livro" id="revistaLivro"></div>
+      </div>
+      <p class="revista-dica" id="revistaDica"></p>
+    </section>
   </section>
 
   <!-- ── PAINÉIS LATERAIS: INFOS E DESENHOS ───────────── -->
@@ -3731,6 +4503,14 @@ body {
          é uma cópia dos textos de const identidade, const systemPages e const projects.
          Depois de mudar um texto aqui no script, atualize a cópia de lá
          (o passo a passo está no comentário do próprio bloco e no README_EDICAO.md).
+
+      10. Revista do projeto (seção abaixo das fotos, com páginas de revista):
+          dentro do projeto, o bloco "revista" lista as páginas. Os números em
+          "foto" e "fotos" são a posição da imagem na lista images (0 = a primeira).
+          Projeto sem o bloco "revista" não mostra a seção. Projeto com
+          "andamento: true" também não: a revista dele fica preparada e bloqueada
+          até essa linha sair. Tipos de página e exemplos: README_EDICAO.md,
+          em "Revista do projeto".
     */
 
     // ── 01. IMAGENS PRINCIPAIS DO SISTEMA ─────────────────
@@ -3797,7 +4577,94 @@ body {
           { title: 'Planta baixa', src: project01PlantaBaixa, bg: project01PlantaFundo }
         ]
       },
-      // PROJETO 02 — Reforma Unifamiliar (em andamento)
+      // PROJETO 02 — Quarto Maria (reforma de quarto + paisagismo externo)
+      {
+        id: 'quarto-maria',
+        title: 'Quarto Maria',
+        apelido: 'quarto',
+        meta: 'Reforma · Interiores e paisagismo',
+        category: 'Quarto e jardim externo',
+        coverClass: 'art-3',
+        // CAPA: a "Vista Ortogonal da reforma Paisagismo externo". No hall ela aparece
+        // cortada em pé, pelo centro (janela, beiral e vasos).
+        src: 'assets/quarto-maria-paisagismo-externo-1.jpg',
+        // MODELO 3D: visualizador próprio do projeto (cenas Fachada, Planta e Interior).
+        // O modelo fica em assets/quarto-maria-modelo.glb, já aliviado para a web.
+        modelo3d: 'viewer3d-quarto-maria.html',
+        modelo3dPosicao: 'lado',
+        description: 'Reforma de um quarto de 9,50 m² com paisagismo no recuo externo. Dentro, cada parede tem um papel: a roxa recebe a bancada suspensa de maquiagem e estudo, os espelhos orgânicos e a arara aparente; a azul-marinho marca a cabeceira. A janela de madeira em arco enquadra o jardim criado junto ao muro, com deck em módulos sobre seixos claros e vasos de concreto em um banco contínuo.',
+        info: {
+          'Área': '9,50 m²',
+          'Dimensões': 'Quarto de 3,40 × 2,80 m; jardim de 3,70 × 2,00 m',
+          'Tipologia': 'Reforma de quarto com paisagismo externo',
+          'Interiores': 'Parede roxa com bancada suspensa, espelhos orgânicos e arara; cabeceira em azul-marinho',
+          'Paisagismo': 'Deck em módulos sobre seixos, banco de concreto com vasos e beiral de telha sobre a janela',
+          'Programas': 'SketchUp e Enscape'
+        },
+        // A ordem desta lista é a ordem do carrossel. A revista (logo abaixo) usa a POSIÇÃO
+        // de cada imagem aqui: 0 = a primeira, 1 = a segunda... Mudou a ordem, confira a revista.
+        // "foco" (opcional) diz qual ponto da foto fica à mostra quando ela é cortada na revista.
+        images: [
+          /* 0 */ { title: 'Vista Ortogonal da reforma Paisagismo externo', type: 'Render', src: 'assets/quarto-maria-paisagismo-externo-1.jpg',
+            alt: 'Vista ortogonal da fachada do Quarto Maria: parede de tijolo aparente, janela de madeira em arco sob beiral de telha cerâmica e cinco vasos de concreto sobre um banco' },
+          /* 1 */ { title: 'Vista interna 1', type: 'Render', src: 'assets/quarto-maria-vista-interna-1.jpg',
+            alt: 'Render do Quarto Maria: parede roxa com bancada suspensa de madeira, dois espelhos orgânicos, arara com roupas e janela de madeira em arco' },
+          /* 2 */ { title: 'Vista interna 2', type: 'Render', src: 'assets/quarto-maria-vista-interna-2.jpg', foco: '74% 50%',
+            alt: 'Render noturno do Quarto Maria: arandela acesa sobre a cabeceira azul-marinho, almofadas estampadas e a janela de madeira voltada para o jardim' },
+          /* 3 */ { title: 'Vista interna 3', type: 'Render', src: 'assets/quarto-maria-vista-interna-3.jpg', foco: '34% 60%',
+            alt: 'Render noturno do Quarto Maria: cama com almofadas azuis e brancas diante da parede azul-marinho, ao lado da porta de madeira' },
+          /* 4 */ { title: 'Vista interna 4', type: 'Render', src: 'assets/quarto-maria-vista-interna-4.jpg', foco: '62% 50%',
+            alt: 'Render noturno do Quarto Maria: bancada de maquiagem com espelhos orgânicos que refletem a cama, poltrona clara e baú' },
+          /* 5 */ { title: 'Vista interna 5', type: 'Render', src: 'assets/quarto-maria-vista-interna-5.jpg', foco: '56% 50%',
+            alt: 'Render do Quarto Maria: janela de madeira em arco vista de dentro, com o muro de tijolo e as plantas do jardim ao fundo' },
+          /* 6 */ { title: 'Vista Ortogonal da reforma Paisagismo externo 2', type: 'Render', src: 'assets/quarto-maria-paisagismo-externo-2.jpg',
+            alt: 'Vista ortogonal do jardim do Quarto Maria: módulos de deck de madeira sobre seixos brancos e vasos de concreto com folhagens sobre um banco' },
+          /* 7 */ { title: 'Vista Ortogonal da reforma Paisagismo externo 3', type: 'Render', src: 'assets/quarto-maria-paisagismo-externo-3.jpg',
+            alt: 'Vista ortogonal em perspectiva do Quarto Maria: volume de tijolo aparente com telhado cerâmico, beiral sobre a janela e jardim com vasos' },
+          /* 8 */ { title: 'Vista Ortogonal da Reforma', type: 'Render', src: 'assets/quarto-maria-vista-ortogonal-reforma.jpg',
+            alt: 'Vista ortogonal em corte do Quarto Maria: interior com janela em arco, pendente de rattan, cama, bancada e arara' }
+        ],
+        drawings: [],
+        // REVISTA: seção abaixo das fotos, com as imagens diagramadas como páginas de revista.
+        // Cada item de "paginas" é uma página, na ordem. Tipos:
+        //   'capa'       foto + nome da revista + título     -> foto, chamada (titulo e kicker opcionais)
+        //   'colagem'    1 foto larga em cima e 3 embaixo    -> fotos: [larga, esquerda de cima, esquerda de baixo, em pé]
+        //   'texto'      título, texto e ficha técnica       -> kicker, titulo, olho, texto: [...], ficha: [linhas de "info"]
+        //   'dupla'      1 foto atravessando as duas páginas -> foto, kicker, texto (precisa cair em página PAR)
+        //   'foto-texto' foto em cima e texto embaixo        -> foto, kicker, titulo, texto: [...]
+        //   'pranchas'   vistas inteiras, sem corte          -> fotos: [...], kicker, fundo (cor de fundo da imagem)
+        //   'foto'       1 foto na página inteira            -> foto
+        //   'contracapa' assinatura                          -> texto
+        // Página que aponta para foto que não existe é pulada. Projeto com "andamento: true" não mostra a revista.
+        // Para tirar a revista deste projeto, apague o bloco "revista" inteiro.
+        revista: {
+          titulo: 'Quarto Maria, página a página',
+          edicao: 'Nº 02 · 2026',
+          paginas: [
+            /* pág. 1 */ { tipo: 'capa', foto: 0, chamada: 'Reforma, interiores e paisagismo externo' },
+            /* pág. 2 */ { tipo: 'colagem', fotos: [1, 5, 4, 2] },
+            /* pág. 3 */ { tipo: 'texto',
+              kicker: 'O projeto',
+              titulo: 'Um quarto que conversa com o jardim',
+              olho: 'Reforma de 9,50 m² em que cada parede ganhou um papel e a janela passou a enquadrar o verde.',
+              texto: [
+                'A parede roxa concentra a rotina: bancada suspensa de maquiagem e estudo, dois espelhos orgânicos e a arara aparente. Do outro lado, o azul-marinho recolhe a cabeceira e a arandela de leitura.',
+                'Madeira, linho e rattan aquecem o conjunto. A janela em arco, também de madeira, abre para o jardim criado junto ao muro de tijolo.'
+              ],
+              ficha: ['Área', 'Dimensões', 'Tipologia', 'Paisagismo', 'Programas'] },   // linhas de "info" que entram na ficha (true = todas)
+            /* págs. 4 e 5 */ { tipo: 'dupla', foto: 6,
+              kicker: 'Paisagismo externo',
+              texto: 'No recuo, três módulos de deck pousam sobre seixos claros. Um banco de concreto corre junto ao muro e recebe cinco vasos de folhagem.' },
+            /* pág. 6 */ { tipo: 'foto-texto', foto: 3,
+              kicker: 'À noite',
+              titulo: 'Luz baixa, cor profunda',
+              texto: ['Com a arandela acesa, o azul-marinho fecha o quarto em torno da cama. As almofadas estampadas e a manta roxa retomam as cores das paredes.'] },
+            /* pág. 7 */ { tipo: 'pranchas', fotos: [8, 7], kicker: 'Vistas ortogonais', fundo: '#F4F7FE' },
+            /* pág. 8 */ { tipo: 'contracapa' }   // sem "texto", entra a frase padrão; para trocar: texto: 'Sua frase.'
+          ]
+        }
+      },
+      // PROJETO 03 — Reforma Unifamiliar (em andamento)
       // andamento: true coloca a fita vermelha "EM ANDAMENTO" na capa.
       // Quando o projeto terminar, apague essa linha e troque a capa.
       {
@@ -3829,9 +4696,34 @@ body {
           { title: 'Capa ilustrada', type: 'Ilustração', src: 'assets/capa-reforma-unifamiliar.svg', capa: true, bg: '#D6A44E',
             alt: 'Capa ilustrada do projeto Reforma Unifamiliar: fachada de casa com porta em arco, janela redonda e painel de ripas' }
         ],
-        drawings: []
+        drawings: [],
+        // REVISTA — já preparada, mas BLOQUEADA: enquanto existir a linha "andamento: true"
+        // (lá em cima), a seção e o botão "Revista" não aparecem e a página continua como está.
+        // Para liberar quando o projeto terminar:
+        //   1. apague a linha andamento: true e preencha "images" com as fotos finais
+        //      (plantas e cortes também entram em "images", como no Salão Vitalina);
+        //   2. confira os números de "foto" e "fotos": são a posição de cada imagem na lista
+        //      "images" (0 = a primeira). Página que aponta para foto que não existe é pulada;
+        //      com menos de 3 fotos nas páginas, a revista não aparece;
+        //   3. na página de texto, sem a linha "texto" entra a descrição do projeto. Para
+        //      escrever outro: texto: ['Primeiro parágrafo.', 'Segundo parágrafo.'].
+        // Os tipos de página estão explicados no projeto "Quarto Maria" e no README_EDICAO.md.
+        revista: {
+          titulo: 'Reforma Unifamiliar, página a página',
+          edicao: 'Nº 03 · 2026',
+          paginas: [
+            /* pág. 1 */ { tipo: 'capa', foto: 0 },
+            /* pág. 2 */ { tipo: 'colagem', fotos: [1, 2, 3, 4] },
+            /* pág. 3 */ { tipo: 'texto', kicker: 'O projeto', titulo: 'Anos 70 com detalhes Art Déco',
+              ficha: ['Área', 'Localização', 'Tipologia', 'Programa', 'Referência', 'Ano'] },
+            /* págs. 4 e 5 */ { tipo: 'dupla', foto: 5 },
+            /* pág. 6 */ { tipo: 'foto', foto: 6 },
+            /* pág. 7 */ { tipo: 'pranchas', fotos: [7, 8], kicker: 'Desenhos' },
+            /* pág. 8 */ { tipo: 'contracapa' }
+          ]
+        }
       },
-      // PROJETO 03 — Interiores (em andamento)
+      // PROJETO 04 — Interiores (em andamento)
       {
         id: 'interiores-dopamine',
         title: 'Interiores Dopamine',
@@ -3855,9 +4747,25 @@ body {
           { title: 'Capa ilustrada', type: 'Ilustração', src: 'assets/capa-interiores.svg', capa: true, bg: '#F59AB5',
             alt: 'Capa ilustrada do projeto Interiores Dopamine: sala cor-de-rosa com janela, sofá azul, tapete amarelo e porta verde em arco' }
         ],
-        drawings: []
+        drawings: [],
+        // REVISTA — já preparada, mas BLOQUEADA enquanto existir a linha "andamento: true".
+        // Para liberar, siga o passo a passo que está no projeto "Reforma Unifamiliar".
+        revista: {
+          titulo: 'Interiores Dopamine, página a página',
+          edicao: 'Nº 04 · 2026',
+          paginas: [
+            /* pág. 1 */ { tipo: 'capa', foto: 0 },
+            /* pág. 2 */ { tipo: 'colagem', fotos: [1, 2, 3, 4] },
+            /* pág. 3 */ { tipo: 'texto', kicker: 'O projeto', titulo: 'Cor viva, espaço livre e luz natural',
+              ficha: ['Área', 'Localização', 'Tipologia', 'Conceito', 'Diretrizes', 'Ano'] },
+            /* págs. 4 e 5 */ { tipo: 'dupla', foto: 5 },
+            /* pág. 6 */ { tipo: 'foto', foto: 6 },
+            /* pág. 7 */ { tipo: 'pranchas', fotos: [7, 8], kicker: 'Desenhos' },
+            /* pág. 8 */ { tipo: 'contracapa' }
+          ]
+        }
       },
-      // PROJETO 04 — Paisagismo (em andamento)
+      // PROJETO 05 — Paisagismo (em andamento)
       {
         id: 'paisagismo-residencial',
         title: 'Paisagismo Residencial',
@@ -3886,9 +4794,25 @@ body {
           { title: 'Capa ilustrada', type: 'Ilustração', src: 'assets/capa-paisagismo.svg', capa: true, bg: '#A9C08F',
             alt: 'Capa ilustrada do projeto Paisagismo Residencial: árvore existente, canteiro com flores e treliça com trepadeira' }
         ],
-        drawings: []
+        drawings: [],
+        // REVISTA — já preparada, mas BLOQUEADA enquanto existir a linha "andamento: true".
+        // Para liberar, siga o passo a passo que está no projeto "Reforma Unifamiliar".
+        revista: {
+          titulo: 'Paisagismo Residencial, página a página',
+          edicao: 'Nº 05 · 2026',
+          paginas: [
+            /* pág. 1 */ { tipo: 'capa', foto: 0 },
+            /* pág. 2 */ { tipo: 'colagem', fotos: [1, 2, 3, 4] },
+            /* pág. 3 */ { tipo: 'texto', kicker: 'O projeto', titulo: 'Somar ao que o lugar já tem',
+              ficha: ['Área', 'Localização', 'Tipologia', 'Conceito', 'Intervenções', 'Ano'] },
+            /* págs. 4 e 5 */ { tipo: 'dupla', foto: 5 },
+            /* pág. 6 */ { tipo: 'foto', foto: 6 },
+            /* pág. 7 */ { tipo: 'pranchas', fotos: [7, 8], kicker: 'Desenhos' },
+            /* pág. 8 */ { tipo: 'contracapa' }
+          ]
+        }
       },
-      // PROJETO 05 — Móveis planejados (em andamento)
+      // PROJETO 06 — Móveis planejados (em andamento)
       {
         id: 'moveis-planejados-studio-3d',
         title: 'Móveis Planejados',
@@ -3910,7 +4834,23 @@ body {
           { title: 'Capa ilustrada', type: 'Ilustração', src: 'assets/capa-moveis-planejados.svg', capa: true, bg: '#3D4F9E',
             alt: 'Capa ilustrada do projeto Móveis Planejados: estante de nichos com gaveteiro e bancada com impressora 3D' }
         ],
-        drawings: []
+        drawings: [],
+        // REVISTA — já preparada, mas BLOQUEADA enquanto existir a linha "andamento: true".
+        // Para liberar, siga o passo a passo que está no projeto "Reforma Unifamiliar".
+        revista: {
+          titulo: 'Móveis Planejados, página a página',
+          edicao: 'Nº 06 · 2026',
+          paginas: [
+            /* pág. 1 */ { tipo: 'capa', foto: 0 },
+            /* pág. 2 */ { tipo: 'colagem', fotos: [1, 2, 3, 4] },
+            /* pág. 3 */ { tipo: 'texto', kicker: 'O projeto', titulo: 'Marcenaria para produzir e expor',
+              ficha: ['Tipologia', 'Cliente', 'Escopo', 'Ano'] },
+            /* págs. 4 e 5 */ { tipo: 'dupla', foto: 5 },
+            /* pág. 6 */ { tipo: 'foto', foto: 6 },
+            /* pág. 7 */ { tipo: 'pranchas', fotos: [7, 8], kicker: 'Desenhos' },
+            /* pág. 8 */ { tipo: 'contracapa' }
+          ]
+        }
       }
     ];
 
@@ -4058,6 +4998,16 @@ body {
     const closeModelo3dButton = document.getElementById('closeModelo3d');
     const projectStage = projectPage.querySelector('.project-stage');
     const projectMediaArea = projectPage.querySelector('.project-media-area');
+
+    const projectActions = projectPage.querySelector('.project-actions');
+    const revistaButton = document.getElementById('revistaButton');
+    const revistaSecao = document.getElementById('revista');
+    const revistaTitulo = document.getElementById('revistaTitulo');
+    const revistaLivro = document.getElementById('revistaLivro');
+    const revistaContador = document.getElementById('revistaContador');
+    const revistaAnterior = document.getElementById('revistaAnterior');
+    const revistaProxima = document.getElementById('revistaProxima');
+    const revistaDica = document.getElementById('revistaDica');
 
     // ── 05. ESTADO ATUAL DO SISTEMA ───────────────────────
     let currentProject = projects[0];
@@ -4526,6 +5476,9 @@ body {
       // O quadro do Modelo 3D só aparece nos projetos que têm a linha modelo3d.
       montarModelo3d();
 
+      // A revista só aparece nos projetos que têm o bloco revista.
+      montarRevista();
+
       // O painel mostra os desenhos e, em seguida, as fotos do projeto,
       // para dar a opcao de escolher qualquer imagem por miniatura.
       const painelItens = [
@@ -4565,7 +5518,12 @@ body {
       const activeItem = mediaItems[currentPhotoIndex];
       if (activeItem) {
         projectPhotoTrack.classList.remove('is-auto-scrolling');
-        activeItem.scrollIntoView({ behavior: instant ? 'auto' : 'smooth', inline: 'start', block: 'nearest' });
+        // Só alinha o carrossel quando ele está inteiro na tela. Com a página rolada (por
+        // exemplo, ao ampliar uma foto a partir da revista), alinhar faria a página subir
+        // sozinha por trás da foto ampliada.
+        const quadro = activeItem.getBoundingClientRect();
+        const carrosselNaTela = quadro.top >= 0 && quadro.bottom <= window.innerHeight;
+        if (carrosselNaTela) activeItem.scrollIntoView({ behavior: instant ? 'auto' : 'smooth', inline: 'start', block: 'nearest' });
       }
 
       projectDots.querySelectorAll('button').forEach((dot, index) => {
@@ -4657,6 +5615,9 @@ body {
 
     function startAutoCarousel() {
       stopAutoCarousel();
+      // Com uma foto ampliada, o carrossel fica parado. Andando por trás, ele mudava a foto de
+      // referência e as setas da ampliação voltavam para o começo. Ao fechar a foto, ele recomeça.
+      if (photoLightbox.classList.contains('is-open')) return;
       projectAutoPaused = false;
       if (currentProject.images.length > 1) {
         projectAutoX = 0;
@@ -4888,6 +5849,528 @@ body {
       }
     }
 
+    // ── 12D. REVISTA DO PROJETO ───────────────────────────
+    // Monta a seção "Revista" (abaixo das fotos) a partir do bloco "revista" do projeto,
+    // em const projects. Cada item de revista.paginas vira uma página (ou duas, na 'dupla').
+    // Os números em "foto" e "fotos" são a posição da imagem na lista "images" do projeto
+    // (0 = a primeira). O nome que aparece junto da foto é o "title" dela.
+    // No computador as folhas viram (clique, arraste da folha ou setas do teclado, como no
+    // leitor da BibliChaos); no celular e no tablet as páginas passam com o dedo.
+    // BLOQUEIO: projeto com "andamento: true" não mostra a revista (nem o botão), mesmo com o
+    // bloco "revista" já preparado. Ela aparece quando a linha andamento sair e as páginas
+    // tiverem pelo menos 3 fotos. Página que aponta para foto que não existe é pulada.
+    const REVISTA_MINIMO_DE_FOTOS = 3;
+    const REVISTA_VIRADA_MS = 600;   // duração da virada da folha (a mesma do leitor da BibliChaos)
+    const revistaSuportada = !!(window.CSS && CSS.supports && CSS.supports('width', '1cqw'));
+    const revistaTela = window.matchMedia('(max-width: 980px)');
+    const revistaSemMovimento = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let revistaFolhas = [];
+    let revistaViradas = 0;          // quantas folhas já foram viradas (0 = fechada na capa)
+    let revistaTotal = 0;            // número de páginas
+    let revistaTemContracapa = false;
+    let revistaGeracao = 0;          // muda a cada montagem: uma virada antiga não mexe na revista nova
+    let revistaOcupada = false;      // tem uma folha virando
+    let revistaVirando = -1;         // qual folha está virando (-1 = nenhuma)
+    let revistaArrasto = null;       // arraste da folha em andamento (computador)
+    let revistaFimDoArrasto = 0;     // hora em que o último arraste terminou
+    const revistaAvisos = new Set(); // avisos de texto que não coube (um por página)
+
+    function rvImagem(project, indice) {
+      return (project.images || [])[Number(indice)] || null;
+    }
+
+    // Botão com a foto: clicar abre a ampliação, como nas fotos do carrossel.
+    // "foco" na imagem (ex.: foco: '72% 50%') escolhe o ponto que fica à mostra quando a foto é cortada.
+    function rvFoto(project, indice, opcoes = {}) {
+      const imagem = rvImagem(project, indice);
+      if (!imagem || !imagem.src) return '';
+      const foco = imagem.foco ? ` style="object-position:${escTexto(imagem.foco)}"` : '';
+      const alt = opcoes.semAlt ? '' : escTexto(textoAlt(imagem, project));
+      return `<button class="rv-foto" type="button" data-rv-foto="${Number(indice)}" data-rv-nome="${escTexto(imagem.title)}" aria-label="Ampliar ${escTexto(imagem.title)}">` +
+        `<img src="${escTexto(imagem.src)}" alt="${alt}" loading="eager" decoding="async" draggable="false"${foco}>` +
+        (opcoes.tarja ? `<span class="rv-tarja">${escTexto(imagem.title)}</span>` : '') +
+        '</button>';
+    }
+
+    function rvFolio(project, numero, nomeRevista) {
+      const texto = numero % 2 ? nomeRevista : project.title;
+      return `<p class="rv-folio"><b>${String(numero).padStart(2, '0')}</b><span>${escTexto(texto)}</span></p>`;
+    }
+
+    // Parágrafos do texto. Com "capitular", a primeira letra do primeiro parágrafo vira a letra
+    // grande, com duas linhas de altura (o tamanho e o alinhamento estão no CSS, em "CAPITULAR").
+    // Quem usa leitor de tela ouve a palavra inteira, sem a letra separada.
+    function rvParagrafos(texto, capitular) {
+      return [].concat(texto || []).map((trecho, i) => {
+        const frase = String(trecho).trim();
+        const primeira = Array.from(frase)[0] || '';
+        const ehLetra = primeira.toLowerCase() !== primeira.toUpperCase();
+        if (!capitular || i > 0 || !ehLetra) return `<p>${escTexto(frase)}</p>`;
+        const palavra = frase.split(/\s/)[0];
+        const restoDaPalavra = palavra.slice(primeira.length);
+        const restoDoTexto = frase.slice(palavra.length);
+        return '<p>' +
+          `<span aria-hidden="true"><span class="rv-capitular"><span class="rv-capitular-letra">${escTexto(primeira.toUpperCase())}</span></span>${escTexto(restoDaPalavra)}</span>` +
+          `<span class="rv-so-leitor">${escTexto(palavra)}</span>${escTexto(restoDoTexto)}</p>`;
+      }).join('');
+    }
+
+    // Legenda da colagem, dizendo onde está cada foto.
+    function rvLegendaColagem(project, fotos) {
+      const nomes = fotos.map((indice) => { const im = rvImagem(project, indice); return im ? escTexto(im.title) : ''; });
+      if (nomes.length >= 4) return `<b>Acima:</b> ${nomes[0]}. <b>Abaixo, à esquerda:</b> ${nomes[1]} e ${nomes[2]}; <b>à direita:</b> ${nomes[3]}.`;
+      if (nomes.length === 3) return `<b>Acima:</b> ${nomes[0]}. <b>Abaixo:</b> ${nomes[1]} (esquerda) e ${nomes[2]} (direita).`;
+      if (nomes.length === 2) return `<b>Acima:</b> ${nomes[0]}. <b>Abaixo:</b> ${nomes[1]}.`;
+      return nomes[0] || '';
+    }
+
+    // Transforma revista.paginas na lista final de páginas (HTML de cada uma).
+    function paginasDaRevista(project) {
+      const revista = project.revista || {};
+      const nomeRevista = revista.nome || 'Caderno de Projetos';
+      const saida = [];
+      const usadas = new Set();   // fotos diferentes que entraram nas páginas
+      const add = (html, extra) => saida.push(Object.assign({ html }, extra || {}));
+      const existe = (indice) => { const imagem = rvImagem(project, indice); return Boolean(imagem && imagem.src); };
+      const usar = (indices) => [].concat(indices).forEach((indice) => usadas.add(Number(indice)));
+
+      (revista.paginas || []).forEach((pagina) => {
+        const numero = saida.length + 1;
+        const kicker = pagina.kicker ? `<p class="rv-kicker">${escTexto(pagina.kicker)}</p>` : '';
+        const titulo = pagina.titulo ? `<h3>${escTexto(pagina.titulo)}</h3>` : '';
+
+        if (pagina.tipo === 'capa') {
+          if (!existe(pagina.foto)) return;   // sem a foto, a página é pulada
+          usar(pagina.foto);
+          add(`<div class="rv rv-capa">
+            <div class="rv-capa-topo">
+              <img class="rv-capa-logo" src="assets/logo.svg" alt="" draggable="false">
+              <span class="rv-capa-nome">${escTexto(nomeRevista)}</span>
+              ${revista.edicao ? `<span class="rv-capa-edicao">${escTexto(revista.edicao)}</span>` : ''}
+            </div>
+            ${rvFoto(project, pagina.foto)}
+            <div class="rv-capa-chamada">
+              <p class="rv-kicker">${escTexto(pagina.kicker || project.category || '')}</p>
+              <h3>${escTexto(pagina.titulo || project.title)}</h3>
+              ${pagina.chamada ? `<p class="rv-capa-sub">${escTexto(pagina.chamada)}</p>` : ''}
+            </div>
+          </div>`, { tipo: 'capa' });
+          return;
+        }
+
+        if (pagina.tipo === 'colagem') {
+          const fotos = [].concat(pagina.fotos || []).filter(existe).slice(0, 4);
+          if (!fotos.length) return;
+          usar(fotos);
+          add(`<div class="rv rv-colagem">
+            <div class="rv-grade tem-${fotos.length}">${fotos.map((indice) => rvFoto(project, indice)).join('')}</div>
+            <p class="rv-legenda">${rvLegendaColagem(project, fotos)}</p>
+            ${rvFolio(project, numero, nomeRevista)}
+          </div>`);
+          return;
+        }
+
+        if (pagina.tipo === 'texto') {
+          const chaves = pagina.ficha === true ? Object.keys(project.info || {}) : [].concat(pagina.ficha || []);
+          const ficha = chaves.filter((chave) => (project.info || {})[chave])
+            .map((chave) => `<div><dt>${escTexto(chave)}</dt><dd>${escTexto(project.info[chave])}</dd></div>`).join('');
+          add(`<div class="rv rv-fluxo rv-texto">
+            ${kicker}${titulo}
+            ${pagina.olho ? `<p class="rv-olho">${escTexto(pagina.olho)}</p>` : ''}
+            <div class="rv-corpo">${rvParagrafos(pagina.texto || project.description, true)}</div>
+            ${ficha ? `<dl class="rv-ficha">${ficha}</dl>` : ''}
+            ${rvFolio(project, numero, nomeRevista)}
+          </div>`);
+          return;
+        }
+
+        if (pagina.tipo === 'foto-texto') {
+          if (!existe(pagina.foto)) return;
+          usar(pagina.foto);
+          add(`<div class="rv rv-fluxo rv-fototexto">
+            ${rvFoto(project, pagina.foto, { tarja: true })}
+            <div class="rv-bloco">${kicker}${titulo}<div class="rv-corpo">${rvParagrafos(pagina.texto, false)}</div></div>
+            ${rvFolio(project, numero, nomeRevista)}
+          </div>`);
+          return;
+        }
+
+        if (pagina.tipo === 'pranchas') {
+          const fotos = [].concat(pagina.fotos || []).filter(existe).slice(0, 3);
+          if (!fotos.length) return;
+          usar(fotos);
+          // Sem "fundo", a página usa a cor de fundo ("bg") da primeira imagem, se ela tiver.
+          const fundo = pagina.fundo || rvImagem(project, fotos[0]).bg || '';
+          add(`<div class="rv rv-pranchas">
+            ${pagina.kicker ? `<p class="rv-kicker rv-pranchas-topo">${escTexto(pagina.kicker)}</p>` : ''}
+            <div class="rv-pranchas-grade">${fotos.map((indice) => `<figure>${rvFoto(project, indice)}<figcaption>${escTexto(rvImagem(project, indice).title)}</figcaption></figure>`).join('')}</div>
+            ${rvFolio(project, numero, nomeRevista)}
+          </div>`, { fundo });
+          return;
+        }
+
+        if (pagina.tipo === 'contracapa') {
+          const frase = pagina.texto ? [].concat(pagina.texto).join(' ')
+            : (project.modelo3d ? 'O modelo 3D e as fotos em tamanho grande estão no topo desta página.' : 'As fotos em tamanho grande estão no topo desta página.');
+          add(`<div class="rv rv-contracapa">
+            <img class="rv-cc-logo" src="assets/logo.svg" alt="" draggable="false">
+            <p class="rv-cc-nome">${escTexto(identidade.nome)}</p>
+            <p class="rv-cc-linha">Arquitetura &amp; Design · ${escTexto(identidade.cidade)}/${escTexto(identidade.estado)}</p>
+            <span class="rv-cc-fio"></span>
+            <p class="rv-cc-nota">${escTexto(frase)}</p>
+            ${arrobaInstagram ? `<p class="rv-cc-contato">${escTexto(arrobaInstagram)}</p>` : ''}
+          </div>`, { tipo: 'contracapa' });
+          return;
+        }
+
+        // 'dupla': a mesma foto atravessa as duas páginas. Só funciona começando em página
+        // par (a da esquerda); fora disso, vira uma página de foto inteira.
+        if (!existe(pagina.foto)) return;
+        usar(pagina.foto);
+        const nota = (pagina.kicker || pagina.texto)
+          ? `<div class="rv-nota">${kicker}${pagina.texto ? `<p>${escTexto([].concat(pagina.texto).join(' '))}</p>` : ''}</div>` : '';
+        if (pagina.tipo === 'dupla' && numero % 2 === 0) {
+          add(`<div class="rv rv-dupla lado-a">${rvFoto(project, pagina.foto, { tarja: true })}${nota}</div>`);
+          add(`<div class="rv rv-dupla lado-b">${rvFoto(project, pagina.foto, { semAlt: true })}${nota}</div>`, { soComputador: true });
+          return;
+        }
+
+        // 'foto' (ou tipo desconhecido): a foto ocupa a página inteira.
+        add(`<div class="rv rv-fotocheia">${rvFoto(project, pagina.foto, { tarja: true })}${nota}</div>`);
+      });
+
+      if (saida.length % 2) add('<div class="rv"></div>');   // completa a última folha
+      return { paginas: saida, fotos: usadas.size };
+    }
+
+    function montarRevista() {
+      const revista = currentProject.revista;
+      let paginas = [];
+      // Projeto em andamento: a revista fica guardada (bloqueada) até a linha "andamento" sair.
+      if (revistaSuportada && revista && Array.isArray(revista.paginas) && !currentProject.andamento) {
+        const montagem = paginasDaRevista(currentProject);
+        if (montagem.fotos >= REVISTA_MINIMO_DE_FOTOS) paginas = montagem.paginas;
+      }
+      const tem = paginas.length > 0;
+      revistaGeracao += 1;
+      revistaOcupada = false;
+      revistaVirando = -1;
+      revistaArrasto = null;
+      revistaSecao.hidden = !tem;
+      revistaButton.style.display = tem ? '' : 'none';
+      projectActions.classList.toggle('tem-revista', tem);
+      revistaLivro.innerHTML = '';
+      revistaLivro.style.transform = '';
+      revistaLivro.classList.remove('arrastando');
+      revistaFolhas = [];
+      revistaViradas = 0;
+      revistaTotal = 0;
+      if (!tem) return;
+
+      revistaTitulo.textContent = revista.titulo || currentProject.title;
+      revistaTotal = paginas.length;
+      revistaTemContracapa = paginas[paginas.length - 1].tipo === 'contracapa';
+      const totalFolhas = paginas.length / 2;
+
+      for (let f = 0; f < totalFolhas; f++) {
+        const folha = document.createElement('div');
+        folha.className = 'revista-folha';
+        [paginas[f * 2], paginas[f * 2 + 1]].forEach((pagina, lado) => {
+          const el = document.createElement('div');
+          el.className = 'revista-pagina ' + (lado === 0 ? 'frente' : 'verso') + (pagina.soComputador ? ' so-computador' : '');
+          if (pagina.fundo) el.style.background = pagina.fundo;
+          el.innerHTML = pagina.html +
+            '<div class="revista-sombra" aria-hidden="true"></div>' +
+            `<button class="revista-canto" type="button" aria-label="${lado === 0 ? 'Virar para a próxima página' : 'Voltar para a página anterior'}"></button>`;
+          folha.appendChild(el);
+        });
+        revistaLivro.appendChild(folha);
+        revistaFolhas.push(folha);
+      }
+
+      revistaLivro.scrollLeft = 0;
+      atualizarRevista();
+      conferirRevista();
+    }
+
+    // Páginas que existem no celular (a segunda metade da página dupla só existe no computador).
+    function paginasRevistaCelular() {
+      return Array.from(revistaLivro.querySelectorAll('.revista-pagina:not(.so-computador)'));
+    }
+
+    // No celular: a página mais perto do centro da faixa.
+    function paginaRevistaNoCentro(paginas) {
+      const meio = revistaLivro.scrollLeft + revistaLivro.clientWidth / 2;
+      let melhor = 0;
+      let distancia = Infinity;
+      paginas.forEach((el, i) => {
+        const d = Math.abs(el.offsetLeft + el.offsetWidth / 2 - meio);
+        if (d < distancia) { distancia = d; melhor = i; }
+      });
+      return melhor;
+    }
+
+    // Ordem das folhas na pilha: das que ainda não viraram, a primeira fica por cima;
+    // das que já viraram, a última.
+    function zDaFolha(i) {
+      return String(i < revistaViradas ? i + 1 : revistaFolhas.length - i);
+    }
+
+    // Põe a revista no estado em que ela está (folhas viradas, contador, botões e dica).
+    function atualizarRevista() {
+      const total = revistaFolhas.length;
+      if (!total) return;
+      const celular = revistaTela.matches;
+
+      revistaFolhas.forEach((folha, i) => {
+        folha.classList.toggle('virada', i < revistaViradas);
+        if (i !== revistaVirando) folha.style.zIndex = zDaFolha(i);
+        // Só as páginas que estão à mostra recebem clique, foco do teclado e leitura.
+        const frente = folha.querySelector('.revista-pagina.frente');
+        const verso = folha.querySelector('.revista-pagina.verso');
+        if (frente) frente.toggleAttribute('inert', !(celular || i === revistaViradas));
+        if (verso) verso.toggleAttribute('inert', !(celular || i === revistaViradas - 1));
+      });
+      revistaLivro.classList.toggle('na-capa', revistaViradas === 0);
+      revistaLivro.classList.toggle('no-fim', revistaViradas === total);
+
+      // No computador, clicar na capa abre a revista; no celular, a foto da capa amplia.
+      const fotoDaCapa = revistaLivro.querySelector('.rv-capa .rv-foto');
+      if (fotoDaCapa) fotoDaCapa.setAttribute('aria-label', celular ? 'Ampliar ' + fotoDaCapa.dataset.rvNome : 'Abrir a revista');
+
+      if (celular) {
+        const paginas = paginasRevistaCelular();
+        const atual = paginaRevistaNoCentro(paginas);
+        apagarSetaDaRevista(revistaAnterior, atual === 0);
+        apagarSetaDaRevista(revistaProxima, atual === paginas.length - 1);
+        revistaContador.textContent = (atual + 1) + ' / ' + paginas.length;
+        revistaDica.textContent = 'Arraste para o lado para folhear. Toque em uma foto para ampliar.';
+      } else {
+        apagarSetaDaRevista(revistaAnterior, revistaViradas === 0);
+        apagarSetaDaRevista(revistaProxima, revistaViradas === total);
+        revistaContador.textContent = revistaViradas === 0 ? 'Capa'
+          : (revistaViradas === total ? (revistaTemContracapa ? 'Contracapa' : 'Página ' + revistaTotal)
+          : 'Páginas ' + (revistaViradas * 2) + '–' + (revistaViradas * 2 + 1) + ' de ' + revistaTotal);
+        revistaDica.textContent = revistaViradas === 0
+          ? 'Clique na capa ou arraste a folha para abrir. As setas ← → do teclado também folheiam.'
+          : 'Clique na página, arraste a folha ou use as setas ← → do teclado. Clique em uma foto para ampliar.';
+      }
+    }
+
+    // Seta sem mais páginas para aquele lado: fica apagada, mas continua recebendo o foco do
+    // teclado (se ela "sumisse" do teclado, quem navega por ele perderia o lugar na página).
+    function apagarSetaDaRevista(seta, apagada) {
+      seta.setAttribute('aria-disabled', apagada ? 'true' : 'false');
+    }
+
+    // Confere se o texto coube nas páginas (só no computador; no celular a página cresce com o
+    // texto). Se o texto passar do pé da página, a letra daquela página diminui um pouco; se nem
+    // assim couber, fica um aviso no Console (F12) dizendo qual página encurtar.
+    function conferirRevista() {
+      if (!revistaFolhas.length) return;
+      Array.from(revistaLivro.querySelectorAll('.revista-pagina')).forEach((pagina, i) => {
+        const rv = pagina.querySelector('.rv-fluxo');
+        if (!rv) return;
+        rv.classList.remove('rv-justa');
+        if (revistaTela.matches || !rv.offsetHeight) return;
+        const folio = rv.querySelector('.rv-folio');
+        const ficha = rv.querySelector('.rv-ficha');
+        const corpo = rv.querySelector('.rv-corpo');
+        if (!folio || !(ficha || corpo)) return;
+        const fim = () => (ficha ? ficha.offsetTop + ficha.offsetHeight
+          : corpo.offsetTop + corpo.offsetHeight - parseFloat(getComputedStyle(corpo).paddingBottom || 0));
+        const passou = () => fim() > folio.offsetTop - 3;
+        if (!passou()) return;
+        rv.classList.add('rv-justa');
+        const chave = currentProject.id + '/' + (i + 1);
+        if (passou() && !revistaAvisos.has(chave)) {
+          revistaAvisos.add(chave);
+          console.warn('[portfólio] Revista de "' + currentProject.title + '": o texto da página ' + (i + 1) + ' passou do pé da página. Encurte o texto ou tire linhas da ficha.');
+        }
+      });
+    }
+
+    // ── Virada da folha (computador) ──
+    // Ângulo de uma folha: 0 = deitada à direita, -180 = virada para a esquerda. Junto vai a
+    // sombra da dobra, mais forte no meio da virada. A primeira e a última folha também levam
+    // o caderno para o lado, para a capa e a contracapa ficarem no centro da mesa.
+    function poseDaFolha(indice, angulo) {
+      const folha = revistaFolhas[indice];
+      if (!folha) return;
+      const t = Math.min(1, Math.abs(angulo) / 180);
+      folha.style.transform = 'rotateY(' + angulo.toFixed(2) + 'deg)';
+      const sombra = Math.sin(t * Math.PI).toFixed(3);   // 0 nas pontas, 1 no meio
+      folha.querySelectorAll('.revista-sombra').forEach((el) => { el.style.opacity = sombra; });
+      let desvio = 0;                                    // em % da largura do caderno
+      if (indice === 0) desvio -= 25 * (1 - t);
+      if (indice === revistaFolhas.length - 1) desvio += 25 * t;
+      revistaLivro.style.transform = 'translateX(' + desvio.toFixed(3) + '%)';
+    }
+
+    // Devolve a folha ao controle do CSS (o estado final vem das classes).
+    function soltarPose(indice) {
+      const folha = revistaFolhas[indice];
+      if (folha) {
+        folha.style.transform = '';
+        folha.querySelectorAll('.revista-sombra').forEach((el) => { el.style.opacity = ''; });
+      }
+      revistaLivro.style.transform = '';
+    }
+
+    // Anima a folha de um ângulo a outro, quadro a quadro (sai rápido e chega devagar).
+    function animarFolha(indice, de, para, ms, geracao) {
+      return new Promise((resolve) => {
+        if (ms <= 0 || de === para) { resolve(); return; }
+        const inicio = performance.now();
+        const suavizar = (x) => 1 - Math.pow(1 - x, 3);
+        function quadro(agora) {
+          if (geracao !== revistaGeracao) { resolve(); return; }
+          const k = Math.min(1, Math.max(0, (agora - inicio) / ms));
+          poseDaFolha(indice, de + (para - de) * suavizar(k));
+          if (k < 1) requestAnimationFrame(quadro); else resolve();
+        }
+        requestAnimationFrame(quadro);
+      });
+    }
+
+    // Depois de virar pelo teclado, o foco vai para o canto da página que ficou à mostra.
+    function focarCantoDaRevista(direcao) {
+      const direita = revistaFolhas[revistaViradas] && revistaFolhas[revistaViradas].querySelector('.revista-pagina.frente .revista-canto');
+      const esquerda = revistaViradas > 0 && revistaFolhas[revistaViradas - 1].querySelector('.revista-pagina.verso .revista-canto');
+      const alvo = direcao > 0 ? (direita || esquerda) : (esquerda || direita);
+      if (alvo) alvo.focus({ preventScroll: true });
+    }
+
+    // Termina a virada da folha "indice" a partir do ângulo em que ela está: completa (vai até
+    // o outro lado) ou desiste (volta para onde estava).
+    function concluirVirada(indice, direcao, angulo, completar, foco) {
+      const geracao = revistaGeracao;
+      const folha = revistaFolhas[indice];
+      if (!folha) return Promise.resolve();
+      const alvo = completar ? (direcao > 0 ? -180 : 0) : (direcao > 0 ? 0 : -180);
+      const resto = Math.abs(alvo - angulo) / 180;
+      const ms = revistaSemMovimento.matches ? 0 : Math.max(130, Math.round(REVISTA_VIRADA_MS * resto));
+      revistaOcupada = true;
+      revistaVirando = indice;
+      folha.classList.add('virando');
+      folha.style.zIndex = String(revistaFolhas.length + 5);   // a folha que vira passa por cima das outras
+      return animarFolha(indice, angulo, alvo, ms, geracao).then(() => {
+        if (geracao !== revistaGeracao) return;                // a revista foi remontada no meio do caminho
+        if (completar) revistaViradas += direcao;
+        revistaVirando = -1;
+        folha.classList.remove('virando');
+        atualizarRevista();                                    // classes e ordem das folhas no estado final
+        soltarPose(indice);
+        revistaOcupada = false;
+        if (foco) focarCantoDaRevista(direcao);
+      });
+    }
+
+    // direcao: 1 = próxima página, -1 = página anterior.
+    function folhearRevista(direcao) {
+      if (!revistaFolhas.length) return;
+
+      if (revistaTela.matches) {
+        const paginas = paginasRevistaCelular();
+        const alvo = paginas[Math.max(0, Math.min(paginas.length - 1, paginaRevistaNoCentro(paginas) + direcao))];
+        if (alvo) revistaLivro.scrollTo({ left: alvo.offsetLeft - (revistaLivro.clientWidth - alvo.offsetWidth) / 2, behavior: 'smooth' });
+        return;
+      }
+
+      if (revistaOcupada) return;
+      const destino = revistaViradas + direcao;
+      if (destino < 0 || destino > revistaFolhas.length) return;
+      const indice = direcao > 0 ? revistaViradas : destino;
+      const foco = revistaLivro.contains(document.activeElement);
+      concluirVirada(indice, direcao, direcao > 0 ? 0 : -180, true, foco);
+    }
+
+    // ── Arrastar a folha para virar (computador) ──
+    // A folha acompanha o cursor. Soltou antes da metade, ela volta; passou da metade (ou
+    // soltou num movimento rápido), ela completa a virada. Sem arrastar, vale como clique.
+    function iniciarArrastoDaRevista(event) {
+      revistaArrasto = null;
+      if (revistaTela.matches || revistaOcupada || !revistaFolhas.length) return;
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      if (event.target.closest('.revista-canto')) return;   // o canto é um botão: clique simples
+      const caixa = revistaLivro.getBoundingClientRect();
+      const lombada = caixa.left + caixa.width / 2;
+      const direcao = event.clientX < lombada ? -1 : 1;
+      const destino = revistaViradas + direcao;
+      if (destino < 0 || destino > revistaFolhas.length) return;
+      const indice = direcao > 0 ? revistaViradas : destino;
+      const pagina = caixa.width / 2;
+      const pega = Math.abs(event.clientX - lombada);        // distância entre o ponto pego e a lombada
+      const ponta = indice === 0 || indice === revistaFolhas.length - 1;
+      // Curso: quanto o cursor anda para a folha virar inteira.
+      const curso = Math.max(pagina * 0.6, Math.min(2 * pega, pagina * (ponta ? 1.5 : 2)));
+      revistaArrasto = { id: event.pointerId, direcao, indice, curso, x0: event.clientX, y0: event.clientY,
+        x: event.clientX, hora: performance.now(), velocidade: 0, moveu: false, angulo: direcao > 0 ? 0 : -180 };
+    }
+
+    function moverArrastoDaRevista(event) {
+      const a = revistaArrasto;
+      if (!a || event.pointerId !== a.id) return;
+      const dx = event.clientX - a.x0;
+      if (!a.moveu) {
+        if (Math.abs(dx) < 6) return;                        // ainda pode ser um clique
+        if (revistaOcupada || (event.pointerType !== 'mouse' && Math.abs(event.clientY - a.y0) > Math.abs(dx))) {
+          revistaArrasto = null;                             // no toque, movimento na vertical é rolagem da página
+          return;
+        }
+        a.moveu = true;
+        revistaOcupada = true;
+        revistaVirando = a.indice;
+        revistaFolhas[a.indice].style.zIndex = String(revistaFolhas.length + 5);
+        revistaFolhas[a.indice].classList.add('virando');
+        revistaLivro.classList.add('arrastando');
+        try { revistaLivro.setPointerCapture(a.id); } catch (erro) { /* segue sem a captura */ }
+      }
+      event.preventDefault();
+      const agora = performance.now();
+      a.velocidade = (event.clientX - a.x) / ((agora - a.hora) || 16);
+      a.x = event.clientX;
+      a.hora = agora;
+      const avanco = Math.max(0, Math.min(1, (a.direcao > 0 ? -dx : dx) / a.curso));   // 0 = começo, 1 = virou
+      a.angulo = a.direcao > 0 ? -180 * avanco : -180 * (1 - avanco);
+      poseDaFolha(a.indice, a.angulo);
+    }
+
+    function soltarArrastoDaRevista(event) {
+      const a = revistaArrasto;
+      if (!a || event.pointerId !== a.id) return;
+      revistaArrasto = null;
+      if (!a.moveu) return;                                  // foi um clique: o "click" cuida
+      try { revistaLivro.releasePointerCapture(a.id); } catch (erro) { /* já estava solta */ }
+      revistaLivro.classList.remove('arrastando');
+      revistaFimDoArrasto = performance.now();
+      const avanco = a.direcao > 0 ? Math.abs(a.angulo) / 180 : 1 - Math.abs(a.angulo) / 180;
+      const completar = event.type !== 'pointercancel' &&
+        (avanco > 0.5 || (a.direcao > 0 && a.velocidade < -0.35) || (a.direcao < 0 && a.velocidade > 0.35));
+      concluirVirada(a.indice, a.direcao, a.angulo, completar, false);
+    }
+
+    // As setas ← → do teclado viram a página quando a revista está na tela.
+    function revistaNaTela() {
+      if (revistaSecao.hidden || !revistaFolhas.length || !projectPage.classList.contains('is-active')) return false;
+      const caixa = revistaLivro.getBoundingClientRect();
+      const visivel = Math.min(caixa.bottom, window.innerHeight) - Math.max(caixa.top, 0);
+      return visivel > caixa.height / 3;   // pelo menos um terço do caderno à vista
+    }
+
+    function teclaDaRevista(event) {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+      // Com foto, desenho, painel, menu ou modelo 3D aberto por cima, as setas são deles.
+      const corpo = document.body.classList;
+      if (corpo.contains('modal-open') || corpo.contains('panel-open') || corpo.contains('menu-open') || corpo.contains('modelo3d-open')) return;
+      if (photoLightbox.classList.contains('is-open') || drawingFull.classList.contains('is-open')) return;
+      if (event.target && /^(INPUT|TEXTAREA|SELECT)$/.test(event.target.tagName || '')) return;
+      if (!revistaNaTela()) return;
+      event.preventDefault();
+      folhearRevista(event.key === 'ArrowRight' ? 1 : -1);
+    }
+
     // ── 12C. TEXTO PARA O GOOGLE ──────────────────────────
     // Texto alternativo das imagens, versão em texto do portfólio e dados estruturados.
     // Nada aqui muda o que aparece na tela.
@@ -5111,6 +6594,50 @@ body {
     new MutationObserver(() => {
       if (!projectPage.classList.contains('is-active')) desmontarModelo3d();
     }).observe(projectPage, { attributes: true, attributeFilter: ['class'] });
+
+    // Revista do projeto: botão do topo, setas, clique, arraste da folha e teclado.
+    revistaButton.addEventListener('click', () => {
+      closeAllPanels();
+      // Leva até a revista. No computador, se o título e o caderno não cabem juntos na tela,
+      // a página para com o caderno inteiro à vista (a mesa fica no meio da tela).
+      const secao = revistaSecao.getBoundingClientRect();
+      const mesa = revistaLivro.parentElement.getBoundingClientRect();
+      const caderno = revistaLivro.getBoundingClientRect();
+      let topo = secao.top - 12;
+      if (!revistaTela.matches && caderno.bottom - topo > window.innerHeight - 12) {
+        topo = mesa.height <= window.innerHeight ? mesa.top - (window.innerHeight - mesa.height) / 2 : mesa.top - 8;
+      }
+      window.scrollTo({ top: window.scrollY + topo, behavior: 'smooth' });
+    });
+    revistaAnterior.addEventListener('click', () => folhearRevista(-1));
+    revistaProxima.addEventListener('click', () => folhearRevista(1));
+    revistaLivro.addEventListener('click', (event) => {
+      if (performance.now() - revistaFimDoArrasto < 350) return;   // clique que vem junto com o fim de um arraste
+      const celular = revistaTela.matches;
+      const foto = event.target.closest('[data-rv-foto]');
+      // No computador, clicar na capa abre a revista (a foto da capa não amplia).
+      const abreRevista = foto && !celular && foto.closest('.rv-capa');
+      if (foto && !abreRevista) {
+        openPhotoViewer(Number(foto.dataset.rvFoto));
+        return;
+      }
+      if (celular) return;   // no celular a página passa com o dedo
+      const pagina = event.target.closest('.revista-pagina');
+      if (pagina) folhearRevista(pagina.classList.contains('verso') ? -1 : 1);
+    });
+    revistaLivro.addEventListener('pointerdown', iniciarArrastoDaRevista);
+    revistaLivro.addEventListener('pointermove', moverArrastoDaRevista);
+    revistaLivro.addEventListener('pointerup', soltarArrastoDaRevista);
+    revistaLivro.addEventListener('pointercancel', soltarArrastoDaRevista);
+    revistaLivro.addEventListener('dragstart', (event) => event.preventDefault());   // não arrasta a "sombra" da imagem
+    revistaLivro.addEventListener('scroll', () => {
+      if (revistaTela.matches) atualizarRevista();
+    }, { passive: true });
+    window.addEventListener('keydown', teclaDaRevista);
+    const aoMudarTelaDaRevista = () => { atualizarRevista(); conferirRevista(); };
+    if (revistaTela.addEventListener) revistaTela.addEventListener('change', aoMudarTelaDaRevista);
+    else if (revistaTela.addListener) revistaTela.addListener(aoMudarTelaDaRevista);
+    if (window.ResizeObserver) new ResizeObserver(conferirRevista).observe(revistaLivro);
 
     window.addEventListener('resize', () => {
       if (projectPage.classList.contains('is-active')) restartAutoCarousel();
