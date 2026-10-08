@@ -20,7 +20,7 @@
   A não ser que você queira mudar o funcionamento do sistema.
 -->
 
-<!-- BUILD: revista-v1 -->
+<!-- BUILD: revista-v2 -->
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
@@ -1574,9 +1574,51 @@
     /* A "mesa" onde a revista fica aberta. A folga em cima e embaixo é o espaço que a folha
        usa enquanto vira (ela "levanta" um pouco da mesa). */
     .revista-mesa {
+      position: relative;
       padding: clamp(30px, 4.4vw, 70px) clamp(12px, 3vw, 58px);
       border-radius: 24px;
       background: radial-gradient(120% 90% at 50% 0%, #efe8de 0%, #e3dacd 100%);
+    }
+
+    /* Aviso "use as setas do teclado": fica no canto de cima da mesa, na faixa livre acima
+       do caderno (a altura dele é a mesma folga de cima da mesa, por isso nunca encosta nas
+       páginas). Só aparece em tela larga com mouse, ou seja, no computador: no celular e no
+       tablet, onde se folheia com o dedo, ele fica escondido. Para trocar a frase, procure
+       por "revista-teclado" no HTML. */
+    .revista-teclado {
+      position: absolute;
+      top: 0;
+      right: clamp(16px, 2vw, 30px);
+      height: clamp(30px, 4.4vw, 70px);
+      display: none;
+      align-items: center;
+      gap: 6px;
+      margin: 0;
+      color: #4f4753;
+      font: 13px/1 Arial, Helvetica, sans-serif;
+      letter-spacing: .04em;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .revista-teclado kbd {
+      min-width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      padding: 0 5px;
+      border: 1px solid rgba(23, 18, 23, .24);
+      border-bottom-width: 2px;
+      border-radius: 6px;
+      background: #fbf8f4;
+      color: var(--purple-dark);
+      font: 13px/1 Arial, Helvetica, sans-serif;
+    }
+
+    .revista-teclado span { margin-left: 4px; }
+
+    @media (min-width: 981px) and (hover: hover) and (pointer: fine) {
+      .revista-teclado { display: flex; }
     }
 
     .revista-dica {
@@ -1775,7 +1817,7 @@
     .rv-capa-chamada {
       position: absolute;
       left: 0;
-      bottom: 13cqw;
+      bottom: 9cqw;
       z-index: 2;
       max-width: 82%;
       padding: 4.4cqw 6cqw 4.8cqw;
@@ -2042,6 +2084,20 @@
     .rv-cc-fio { width: 9cqw; height: 1px; margin: 2.4cqw 0; background: var(--text); }
     .rv-cc-nota { max-width: 56cqw; color: #3d3440; font: 2.5cqw/1.6 Arial, Helvetica, sans-serif; }
     .rv-cc-contato { color: var(--purple-dark); font-size: 3cqw; }
+
+    /* O @ da contracapa abre o Instagram (o mesmo link do botão da aba Contato). */
+    .rv-cc-contato a {
+      display: inline-block;
+      padding: 1.2cqw 3cqw;
+      border: 1px solid var(--line);
+      border-radius: 99cqw;
+      color: inherit;
+      cursor: pointer;
+      transition: background .2s ease;
+    }
+
+    .rv-cc-contato a:hover { background: var(--purple-pale); }
+    .rv-cc-contato a:focus-visible { outline: 3px solid var(--purple); outline-offset: 2px; }
 
     /* Canto dobrado, embaixo de cada página: clicar nele vira a folha. */
     .revista-canto {
@@ -4233,7 +4289,7 @@ body {
         <li><a href="assets/quarto-maria-paisagismo-externo-1.jpg">Vista ortogonal da fachada do Quarto Maria: parede de tijolo aparente, janela de madeira em arco sob beiral de telha cerâmica e cinco vasos de concreto sobre um banco</a></li>
         <li><a href="assets/quarto-maria-vista-interna-1.jpg">Render do Quarto Maria: parede roxa com bancada suspensa de madeira, dois espelhos orgânicos, arara com roupas e janela de madeira em arco</a></li>
         <li><a href="assets/quarto-maria-vista-interna-2.jpg">Render noturno do Quarto Maria: arandela acesa sobre a cabeceira azul-marinho, almofadas estampadas e a janela de madeira voltada para o jardim</a></li>
-        <li><a href="assets/quarto-maria-vista-interna-3.jpg">Render noturno do Quarto Maria: cama com almofadas azuis e brancas diante da parede azul-marinho, ao lado da porta de madeira</a></li>
+        <li><a href="assets/quarto-maria-vista-interna-3.jpg">Render noturno do Quarto Maria: arandela acesa na cabeceira azul-marinho, cama com almofadas azuis e brancas e a porta de madeira</a></li>
         <li><a href="assets/quarto-maria-vista-interna-4.jpg">Render noturno do Quarto Maria: bancada de maquiagem com espelhos orgânicos que refletem a cama, poltrona clara e baú</a></li>
         <li><a href="assets/quarto-maria-vista-interna-5.jpg">Render do Quarto Maria: janela de madeira em arco vista de dentro, com o muro de tijolo e as plantas do jardim ao fundo</a></li>
         <li><a href="assets/quarto-maria-paisagismo-externo-2.jpg">Vista ortogonal do jardim do Quarto Maria: módulos de deck de madeira sobre seixos brancos e vasos de concreto com folhagens sobre um banco</a></li>
@@ -4394,6 +4450,8 @@ body {
         </div>
       </div>
       <div class="revista-mesa">
+        <!-- Aviso das setas do teclado: só aparece no computador (o CSS 07C esconde no celular e no tablet). -->
+        <p class="revista-teclado"><kbd>←</kbd><kbd>→</kbd><span>Use as setas do teclado para folhear</span></p>
         <div class="revista-livro" id="revistaLivro"></div>
       </div>
       <p class="revista-dica" id="revistaDica"></p>
@@ -4585,10 +4643,11 @@ body {
         meta: 'Reforma · Interiores e paisagismo',
         category: 'Quarto e jardim externo',
         coverClass: 'art-3',
-        // CAPA: a "Vista Ortogonal da reforma Paisagismo externo". No hall ela aparece
-        // cortada em pé, pelo centro (janela, beiral e vasos).
-        src: 'assets/quarto-maria-paisagismo-externo-1.jpg',
-        // MODELO 3D: visualizador próprio do projeto (cenas Fachada, Planta e Interior).
+        // CAPA: a casinha em perspectiva ("Vista Ortogonal da reforma Paisagismo externo 3"),
+        // montada em pé sobre o fundo claro dela, com respiro em volta, para o projeto ser
+        // reconhecido de longe. Aparece no hall, na aba Projetos e na capa da revista.
+        src: 'assets/quarto-maria-capa.jpg',
+        // MODELO 3D: visualizador próprio do projeto (cenas Fachada e Planta).
         // O modelo fica em assets/quarto-maria-modelo.glb, já aliviado para a web.
         modelo3d: 'viewer3d-quarto-maria.html',
         modelo3dPosicao: 'lado',
@@ -4611,8 +4670,8 @@ body {
             alt: 'Render do Quarto Maria: parede roxa com bancada suspensa de madeira, dois espelhos orgânicos, arara com roupas e janela de madeira em arco' },
           /* 2 */ { title: 'Vista interna 2', type: 'Render', src: 'assets/quarto-maria-vista-interna-2.jpg', foco: '74% 50%',
             alt: 'Render noturno do Quarto Maria: arandela acesa sobre a cabeceira azul-marinho, almofadas estampadas e a janela de madeira voltada para o jardim' },
-          /* 3 */ { title: 'Vista interna 3', type: 'Render', src: 'assets/quarto-maria-vista-interna-3.jpg', foco: '34% 60%',
-            alt: 'Render noturno do Quarto Maria: cama com almofadas azuis e brancas diante da parede azul-marinho, ao lado da porta de madeira' },
+          /* 3 */ { title: 'Vista interna 3', type: 'Render', src: 'assets/quarto-maria-vista-interna-3.jpg', foco: '0% 50%',   // encostada à esquerda: a arandela da cabeceira aparece
+            alt: 'Render noturno do Quarto Maria: arandela acesa na cabeceira azul-marinho, cama com almofadas azuis e brancas e a porta de madeira' },
           /* 4 */ { title: 'Vista interna 4', type: 'Render', src: 'assets/quarto-maria-vista-interna-4.jpg', foco: '62% 50%',
             alt: 'Render noturno do Quarto Maria: bancada de maquiagem com espelhos orgânicos que refletem a cama, poltrona clara e baú' },
           /* 5 */ { title: 'Vista interna 5', type: 'Render', src: 'assets/quarto-maria-vista-interna-5.jpg', foco: '56% 50%',
@@ -4624,10 +4683,21 @@ body {
           /* 8 */ { title: 'Vista Ortogonal da Reforma', type: 'Render', src: 'assets/quarto-maria-vista-ortogonal-reforma.jpg',
             alt: 'Vista ortogonal em corte do Quarto Maria: interior com janela em arco, pendente de rattan, cama, bancada e arara' }
         ],
-        drawings: [],
+        // DESENHOS: a planta baixa e as vistas ortogonais abrem inteiras, sem corte, no painel
+        // "Desenhos". O painel mostra estes quatro e, em seguida, todas as outras fotos do projeto.
+        // "bg" é a cor de fundo da prancha: preenche as sobras em volta do desenho.
+        drawings: [
+          { title: 'Planta baixa', src: 'assets/quarto-maria-planta-baixa.jpg', bg: '#082F4E',
+            alt: 'Planta baixa do Quarto Maria, em escala 1:25, com os pontos de elétrica: quarto de 3,40 × 2,80 m, porta de 0,80 m, janela de 1,50 m, cama de casal e bancadas junto às paredes' },
+          { title: 'Vista Ortogonal da reforma Paisagismo externo', src: 'assets/quarto-maria-paisagismo-externo-1.jpg', bg: '#F4F7FE' },
+          { title: 'Vista Ortogonal da reforma Paisagismo externo 3', src: 'assets/quarto-maria-paisagismo-externo-3.jpg', bg: '#F4F7FE' },
+          { title: 'Vista Ortogonal da Reforma', src: 'assets/quarto-maria-vista-ortogonal-reforma.jpg', bg: '#F4F7FE' }
+        ],
         // REVISTA: seção abaixo das fotos, com as imagens diagramadas como páginas de revista.
         // Cada item de "paginas" é uma página, na ordem. Tipos:
-        //   'capa'       foto + nome da revista + título     -> foto, chamada (titulo e kicker opcionais)
+        //   'capa'       foto + nome da revista + título     -> foto, chamada (titulo e kicker opcionais);
+        //                "imagem" troca a foto por um arquivo próprio de capa (a "foto" continua sendo
+        //                a que amplia no celular) e "foco" escolhe o ponto que fica à mostra
         //   'colagem'    1 foto larga em cima e 3 embaixo    -> fotos: [larga, esquerda de cima, esquerda de baixo, em pé]
         //   'texto'      título, texto e ficha técnica       -> kicker, titulo, olho, texto: [...], ficha: [linhas de "info"]
         //   'dupla'      1 foto atravessando as duas páginas -> foto, kicker, texto (precisa cair em página PAR)
@@ -4641,7 +4711,7 @@ body {
           titulo: 'Quarto Maria, página a página',
           edicao: 'Nº 02 · 2026',
           paginas: [
-            /* pág. 1 */ { tipo: 'capa', foto: 0, chamada: 'Reforma, interiores e paisagismo externo' },
+            /* pág. 1 */ { tipo: 'capa', foto: 7, imagem: 'assets/quarto-maria-capa.jpg', foco: '50% 100%', chamada: 'Reforma, interiores e paisagismo externo' },
             /* pág. 2 */ { tipo: 'colagem', fotos: [1, 5, 4, 2] },
             /* pág. 3 */ { tipo: 'texto',
               kicker: 'O projeto',
@@ -4659,7 +4729,7 @@ body {
               kicker: 'À noite',
               titulo: 'Luz baixa, cor profunda',
               texto: ['Com a arandela acesa, o azul-marinho fecha o quarto em torno da cama. As almofadas estampadas e a manta roxa retomam as cores das paredes.'] },
-            /* pág. 7 */ { tipo: 'pranchas', fotos: [8, 7], kicker: 'Vistas ortogonais', fundo: '#F4F7FE' },
+            /* pág. 7 */ { tipo: 'pranchas', fotos: [8, 0], kicker: 'Vistas ortogonais', fundo: '#F4F7FE' },
             /* pág. 8 */ { tipo: 'contracapa' }   // sem "texto", entra a frase padrão; para trocar: texto: 'Sua frase.'
           ]
         }
@@ -5884,10 +5954,13 @@ body {
     function rvFoto(project, indice, opcoes = {}) {
       const imagem = rvImagem(project, indice);
       if (!imagem || !imagem.src) return '';
-      const foco = imagem.foco ? ` style="object-position:${escTexto(imagem.foco)}"` : '';
+      // opcoes.src troca o arquivo mostrado (capa com imagem própria); opcoes.foco troca o enquadramento.
+      const arquivo = opcoes.src || imagem.src;
+      const ponto = opcoes.foco || imagem.foco;
+      const foco = ponto ? ` style="object-position:${escTexto(ponto)}"` : '';
       const alt = opcoes.semAlt ? '' : escTexto(textoAlt(imagem, project));
       return `<button class="rv-foto" type="button" data-rv-foto="${Number(indice)}" data-rv-nome="${escTexto(imagem.title)}" aria-label="Ampliar ${escTexto(imagem.title)}">` +
-        `<img src="${escTexto(imagem.src)}" alt="${alt}" loading="eager" decoding="async" draggable="false"${foco}>` +
+        `<img src="${escTexto(arquivo)}" alt="${alt}" loading="eager" decoding="async" draggable="false"${foco}>` +
         (opcoes.tarja ? `<span class="rv-tarja">${escTexto(imagem.title)}</span>` : '') +
         '</button>';
     }
@@ -5948,7 +6021,7 @@ body {
               <span class="rv-capa-nome">${escTexto(nomeRevista)}</span>
               ${revista.edicao ? `<span class="rv-capa-edicao">${escTexto(revista.edicao)}</span>` : ''}
             </div>
-            ${rvFoto(project, pagina.foto)}
+            ${rvFoto(project, pagina.foto, { src: pagina.imagem, foco: pagina.foco })}
             <div class="rv-capa-chamada">
               <p class="rv-kicker">${escTexto(pagina.kicker || project.category || '')}</p>
               <h3>${escTexto(pagina.titulo || project.title)}</h3>
@@ -6018,7 +6091,7 @@ body {
             <p class="rv-cc-linha">Arquitetura &amp; Design · ${escTexto(identidade.cidade)}/${escTexto(identidade.estado)}</p>
             <span class="rv-cc-fio"></span>
             <p class="rv-cc-nota">${escTexto(frase)}</p>
-            ${arrobaInstagram ? `<p class="rv-cc-contato">${escTexto(arrobaInstagram)}</p>` : ''}
+            ${arrobaInstagram ? `<p class="rv-cc-contato"><a href="${escTexto(perfilInstagram)}" target="_blank" rel="noopener me" draggable="false" aria-label="Abrir o Instagram ${escTexto(arrobaInstagram)}">${escTexto(arrobaInstagram)}</a></p>` : ''}
           </div>`, { tipo: 'contracapa' });
           return;
         }
@@ -6152,8 +6225,9 @@ body {
           : (revistaViradas === total ? (revistaTemContracapa ? 'Contracapa' : 'Página ' + revistaTotal)
           : 'Páginas ' + (revistaViradas * 2) + '–' + (revistaViradas * 2 + 1) + ' de ' + revistaTotal);
         revistaDica.textContent = revistaViradas === 0
-          ? 'Clique na capa ou arraste a folha para abrir. As setas ← → do teclado também folheiam.'
-          : 'Clique na página, arraste a folha ou use as setas ← → do teclado. Clique em uma foto para ampliar.';
+          ? 'Clique na capa ou arraste a folha para abrir.'
+          : 'Clique na página ou arraste a folha para virar. Clique em uma foto para ampliar.';
+        // (o aviso das setas do teclado fica no canto de cima da mesa: ".revista-teclado")
       }
     }
 
@@ -6612,7 +6686,8 @@ body {
     revistaAnterior.addEventListener('click', () => folhearRevista(-1));
     revistaProxima.addEventListener('click', () => folhearRevista(1));
     revistaLivro.addEventListener('click', (event) => {
-      if (performance.now() - revistaFimDoArrasto < 350) return;   // clique que vem junto com o fim de um arraste
+      if (performance.now() - revistaFimDoArrasto < 350) { event.preventDefault(); return; }   // clique que vem junto com o fim de um arraste
+      if (event.target.closest('a')) return;   // link (o @ do Instagram, na contracapa): abre o link, não vira a página
       const celular = revistaTela.matches;
       const foto = event.target.closest('[data-rv-foto]');
       // No computador, clicar na capa abre a revista (a foto da capa não amplia).

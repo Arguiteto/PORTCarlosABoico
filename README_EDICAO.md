@@ -167,14 +167,14 @@ revista: {
 
 ### Tipos de página
 
-- `capa`: foto, nome da revista ("Caderno de Projetos") e título do projeto. `titulo` e `kicker` são opcionais; sem eles, entram o nome e a categoria do projeto.
+- `capa`: foto, nome da revista ("Caderno de Projetos") e título do projeto. `titulo` e `kicker` são opcionais; sem eles, entram o nome e a categoria do projeto. Com `imagem: 'assets/arquivo.jpg'`, a capa mostra esse arquivo no lugar da foto (a `foto` continua sendo a que amplia no celular), e `foco` escolhe o ponto que fica à mostra.
 - `colagem`: uma foto larga em cima e três embaixo (duas empilhadas à esquerda, uma em pé à direita). A ordem em `fotos` é: larga, esquerda de cima, esquerda de baixo, em pé. Aceita de 1 a 4 fotos. A legenda com os nomes é montada sozinha.
 - `texto`: `kicker` (linha pequena), `titulo`, `olho` (frase de abertura em itálico), `texto` (parágrafos) e `ficha`. Sem a linha `texto`, entra a descrição do projeto. Em `ficha`, liste as linhas de `info` que entram (`['Área', 'Tipologia']`) ou use `true` para todas.
 - `dupla`: uma foto atravessando as duas páginas, com um quadro de texto (`kicker` e `texto`). Precisa cair em **página par** (a da esquerda); fora disso vira página de foto inteira. No celular aparece como uma página só.
 - `foto-texto`: foto em cima, de ponta a ponta, e texto embaixo.
 - `pranchas`: até 3 imagens inteiras, sem corte, com o nome embaixo de cada uma. Em `fundo`, ponha a cor de fundo das imagens, para a página ficar da mesma cor (sem `fundo`, vale o `bg` da primeira imagem).
 - `foto`: uma foto ocupando a página inteira.
-- `contracapa`: logo, nome, cidade, uma frase e o Instagram (vêm de `const identidade`). Para trocar a frase: `texto: 'Sua frase.'`.
+- `contracapa`: logo, nome, cidade, uma frase e o Instagram (vêm de `const identidade`). O @ é um botão que abre o Instagram, com o mesmo link do botão da aba Contato. Para trocar a frase: `texto: 'Sua frase.'`.
 
 ### Projetos em andamento: revista preparada e bloqueada
 
@@ -288,10 +288,16 @@ modelo3dPosicao: 'lado',
 - O tamanho do quadro fica no CSS do `index.html`, no bloco "07B. MODELO 3D". Na posição `'lado'`, ele repete as medidas das fotos do carrossel; se mudar o tamanho das fotos, repita as medidas ali. Nas posições `'abaixo'` e `'acima'`, o tamanho está em `.modelo3d-box` (`width` e `height`).
 - O modelo do Salão Vitalina fica em `assets/vitalina-modelo.glb` (já aliviado para a web). O caminho está na linha `modelo` do `CONFIG`. Se esse arquivo faltar, o visualizador mostra uma casa de teste e o aviso "Modelo de teste".
 
+### Capa e desenhos do Quarto Maria
+
+- A capa é `assets/quarto-maria-capa.jpg`: a casinha em perspectiva montada em pé (1200 × 1960 px) sobre o fundo claro da própria imagem (`#F4F7FE`), com respiro em volta. É a mesma no hall, na aba Projetos e na capa da revista. Para trocar, salve outra imagem em pé com esse nome.
+- O painel "Desenhos" mostra a planta baixa (`assets/quarto-maria-planta-baixa.jpg`) e as três vistas ortogonais da lista `drawings` (inteiras, sem corte) e, em seguida, todas as outras fotos. Para trocar a planta, salve a nova imagem com o mesmo nome; se o fundo dela tiver outra cor, troque o `bg` na mesma linha.
+- Na revista, no computador, o canto de cima da mesa mostra o aviso "Use as setas do teclado para folhear". Ele some no celular e no tablet. A frase fica no HTML do `index.html` (procure por `revista-teclado`).
+
 ### Modelo do Quarto Maria
 
 - Visualizador: `viewer3d-quarto-maria.html`. Modelo: `assets/quarto-maria-modelo.glb`.
-- Cenas: "Fachada" (casa fechada, vista do jardim), "Planta" (telhado e forro sobem e somem; vista de cima) e "Interior" (o quarto aberto, em perspectiva).
+- Cenas: "Fachada" (casa fechada, vista do jardim) e "Planta" (telhado e forro sobem e somem; vista de cima).
 - O arquivo saiu do SketchUp com 107 MB, acima do que o GitHub aceita, e foi aliviado para 12,8 MB: menos triângulos nos seixos, nas plantas, nas telhas e nos objetos miúdos, e texturas menores. Saíram as peças soltas longe da casa (um piso de tijolo a 18 m dela e os objetos de luz do Enscape).
 - As peças foram reunidas em grupos com nome, que são os que as cenas usam: `Telhado` (telhas, toldo da janela e empenas), `Forro`, `Paredes`, `Pisos`, `Esquadrias`, `Mobiliario`, `Paisagismo` e `Muro`.
 - O muro do jardim só aparece visto de dentro, para não tampar a fachada.

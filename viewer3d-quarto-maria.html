@@ -5,8 +5,7 @@
   O QUE ESTE ARQUIVO FAZ:
   - Mostra o modelo exportado do SketchUp (.glb) com navegação parecida com a do SketchUp.
   - Troca de cena com transição tipo Morph: as peças se movem, mudam de escala e somem.
-  - Cenas deste projeto (Quarto Maria): "Fachada", "Planta" (telhado e forro sobem e somem)
-    e "Interior" (o quarto aberto, em perspectiva).
+  - Cenas deste projeto (Quarto Maria): "Fachada" e "Planta" (telhado e forro sobem e somem).
   - Opcional: cômodos clicáveis na cena "Planta" e cena "Implantação", com vista superior
     travada, hachuras e legenda (este projeto não usa).
 
@@ -273,21 +272,14 @@ const CONFIG = {
         'Telhado': { mover: [0, 0.45, 0], opacidade: 0 },
         'Forro':   { mover: [0, 0.45, 0], opacidade: 0 },
         'Muro':    { opacidade: 0 }
-      } },
-
-    { nome: 'Interior',                                  // sem telhado e sem forro, em perspectiva
-      camera: { giro: 0.6, altura: 0.48, zoom: 0.85 },
-      nos: {
-        'Telhado': { mover: [0, 0.45, 0], opacidade: 0 },
-        'Forro':   { mover: [0, 0.45, 0], opacidade: 0 },
-        'Muro':    { opacidade: 0 }
       } }
   ],
 
   /* CÔMODOS — botões que aparecem na cena com "comodos: true" e abrem a planta baixa.
-     Este projeto ainda não tem planta baixa na lista "drawings" do index.html, então a
-     lista fica vazia. Quando tiver, preencha (pos: [x, z] em metros; area é opcional)
-     e ponha "comodos: true" na cena Planta. Exemplo:
+     A planta baixa deste projeto é o primeiro desenho da lista "drawings" do index.html
+     (indice 0, logo abaixo). A lista de cômodos está vazia, então ninguém abre a planta
+     por aqui: ela abre pelo botão "Desenhos". Para ligar os botões de cômodo, preencha
+     (pos: [x, z] em metros; area é opcional) e ponha "comodos: true" na cena Planta. Exemplo:
      comodos: [ { nome: 'Quarto', pos: [1.85, -1.55], area: 9.5 }, { nome: 'Jardim', pos: [1.85, 1.0] } ]
      Para descobrir as coordenadas, abra este arquivo com ?ajuste=1 no fim do endereço e clique no ponto. */
   comodos: [],
