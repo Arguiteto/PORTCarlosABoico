@@ -20,7 +20,7 @@
   A não ser que você queira mudar o funcionamento do sistema.
 -->
 
-<!-- BUILD: revista-v2 -->
+<!-- BUILD: revista-v3 -->
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
@@ -2051,6 +2051,16 @@
       text-transform: uppercase;
       text-align: center;
     }
+
+    /* Página com fundo colorido (a cor vem de "fundo" ou do "bg" da imagem): o roxo e o cinza
+       das letras miúdas somem em cima de cor forte, então elas passam a usar uma tinta só,
+       escura em fundo médio e clara em fundo escuro (quem decide é rvTomDoFundo, bloco 12D). */
+    .revista-pagina.rv-fundo-medio { --rv-tinta: #1b1519; }
+    .revista-pagina.rv-fundo-escuro { --rv-tinta: #fbf8f4; }
+    .revista-pagina[class*="rv-fundo-"] .rv-kicker,
+    .revista-pagina[class*="rv-fundo-"] .rv-folio,
+    .revista-pagina[class*="rv-fundo-"] .rv-folio b,
+    .revista-pagina[class*="rv-fundo-"] figcaption { color: var(--rv-tinta); }
 
     /* CONTRACAPA */
     .rv-contracapa {
@@ -4622,9 +4632,9 @@ body {
         images: [
           { title: 'Projeto final', type: 'Render', src: project01CoverPhoto,
             alt: 'Render final do Salão Vitalina de Beleza: balcão branco, poltronas caramelo, lavatórios pretos diante de jardim vertical e espelhos com boiserie' },
-          { title: '1º Render para cliente', type: 'Render', src: project01PhotoLeft,
+          { title: '1º Render para cliente', type: 'Render', src: project01PhotoLeft, foco: '82% 50%',   // foco: ponto que fica à mostra quando a revista corta a foto
             alt: 'Primeiro render do Salão Vitalina apresentado à cliente: balcão branco, poltronas claras, lavatórios pretos e parede terracota com arcos dourados' },
-          { title: 'Render Conceito', type: 'Render', src: project01PhotoCenter,
+          { title: 'Render Conceito', type: 'Render', src: project01PhotoCenter, foco: '20% 50%',
             alt: 'Render conceito do Salão Vitalina: boiserie branca, lustre dourado, poltronas claras, balcão ripado e lavatórios pretos diante de painéis rosados' },
           { title: 'Render Conceito (Angular)', type: 'Render', src: project01PhotoRight,
             alt: 'Render conceito do Salão Vitalina em ângulo aberto: janela ampla, parede terracota com arcos dourados, lustre e cadeiras pretas com estrutura dourada' },
@@ -4633,7 +4643,38 @@ body {
         ],
         drawings: [
           { title: 'Planta baixa', src: project01PlantaBaixa, bg: project01PlantaFundo }
-        ]
+        ],
+        // REVISTA do Salão Vitalina: seção abaixo das fotos, com as imagens em páginas de revista.
+        // Os números em "foto" e "fotos" são a posição da imagem na lista "images" acima
+        // (0 = Projeto final, 1 = 1º Render, 2 = Render Conceito, 3 = Angular, 4 = Planta baixa).
+        // Os tipos de página e o que cada um aceita estão explicados no bloco do Quarto Maria
+        // e no README_EDICAO.md. Para tirar a revista deste projeto, apague o bloco inteiro.
+        revista: {
+          titulo: 'Salão Vitalina, página a página',
+          edicao: 'Nº 01 · 2026',
+          paginas: [
+            /* pág. 1 */ { tipo: 'capa', foto: 0, foco: '7% 50%', titulo: 'Salão Vitalina', chamada: 'Interiores para um salão de beleza em Lisboa' },
+            /* pág. 2 */ { tipo: 'texto',
+              kicker: 'O projeto',
+              titulo: 'Um salão em Lisboa com repertório francês',
+              olho: 'Interiores de 27,94 m² para uma cliente que vive na França e pediu essa vivência traduzida no ambiente.',
+              texto: [
+                'A composição parte da boiserie nas paredes, presente em todo o projeto. A ela se somam a marcenaria clara, os metais dourados e os estofados em couro.',
+                'A vegetação, com destaque para a kentia forsteriana, completa o repertório e suaviza o ambiente compacto.'
+              ],
+              ficha: ['Área', 'Localização', 'Tipologia', 'Referência', 'Programas'] },
+            /* pág. 3 */ { tipo: 'foto', foto: 2 },
+            /* págs. 4 e 5 */ { tipo: 'dupla', foto: 3,
+              kicker: 'Render conceito',
+              texto: 'Em ângulo aberto: a janela ampla, a parede terracota com arcos dourados, o lustre e as cadeiras pretas de estrutura dourada.' },
+            /* pág. 6 */ { tipo: 'foto-texto', foto: 1,
+              kicker: 'O processo',
+              titulo: 'Do primeiro render ao projeto final',
+              texto: ['O primeiro render apresentado à cliente já trazia o balcão branco, os lavatórios pretos e a parede terracota com arcos dourados. No projeto final, os lavatórios ficam diante de um jardim vertical e as poltronas ganham o tom caramelo.'] },
+            /* pág. 7 */ { tipo: 'pranchas', fotos: [4], kicker: 'O espaço em planta' },   // o fundo terracota vem do "bg" da planta
+            /* pág. 8 */ { tipo: 'contracapa' }
+          ]
+        }
       },
       // PROJETO 02 — Quarto Maria (reforma de quarto + paisagismo externo)
       {
@@ -5988,6 +6029,19 @@ body {
       }).join('');
     }
 
+    // Página com fundo colorido (ex.: a prancha terracota da planta do salão): diz se a letra
+    // deve ficar escura ou clara para continuar legível. Fundo bem claro não muda nada.
+    // Só entende cor escrita como '#RGB' ou '#RRGGBB'.
+    function rvTomDoFundo(cor) {
+      const m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(String(cor || '').trim());
+      if (!m) return '';
+      const hex = m[1].length === 3 ? m[1].replace(/./g, '$&$&') : m[1];
+      const canal = (i) => { const v = parseInt(hex.slice(i, i + 2), 16) / 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+      const luz = 0.2126 * canal(0) + 0.7152 * canal(2) + 0.0722 * canal(4);
+      if (luz > 0.6) return '';
+      return luz < 0.18 ? 'rv-fundo-escuro' : 'rv-fundo-medio';
+    }
+
     // Legenda da colagem, dizendo onde está cada foto.
     function rvLegendaColagem(project, fotos) {
       const nomes = fotos.map((indice) => { const im = rvImagem(project, indice); return im ? escTexto(im.title) : ''; });
@@ -6151,7 +6205,11 @@ body {
         [paginas[f * 2], paginas[f * 2 + 1]].forEach((pagina, lado) => {
           const el = document.createElement('div');
           el.className = 'revista-pagina ' + (lado === 0 ? 'frente' : 'verso') + (pagina.soComputador ? ' so-computador' : '');
-          if (pagina.fundo) el.style.background = pagina.fundo;
+          if (pagina.fundo) {
+            el.style.background = pagina.fundo;
+            const tom = rvTomDoFundo(pagina.fundo);   // fundo colorido: a letra troca de cor para continuar legível
+            if (tom) el.classList.add(tom);
+          }
           el.innerHTML = pagina.html +
             '<div class="revista-sombra" aria-hidden="true"></div>' +
             `<button class="revista-canto" type="button" aria-label="${lado === 0 ? 'Virar para a próxima página' : 'Voltar para a página anterior'}"></button>`;

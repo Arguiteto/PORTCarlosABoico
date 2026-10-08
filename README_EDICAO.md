@@ -143,7 +143,9 @@ Seção que aparece abaixo das fotos, com as imagens do projeto diagramadas como
 
 ### Onde fica
 
-- Dentro do projeto, em `const projects`, no bloco `revista`. Hoje aparece em "Quarto Maria".
+- Dentro do projeto, em `const projects`, no bloco `revista`. Hoje aparece em "Salão Vitalina de Beleza" e em "Quarto Maria".
+- A do Salão Vitalina tem 8 páginas: capa (projeto final), texto com ficha, render conceito em página inteira, render em ângulo aberto na página dupla, 1º render com o texto do processo, planta baixa e contracapa.
+- Página com fundo colorido (a planta terracota do salão, por exemplo): as letras miúdas trocam sozinhas para uma cor legível, escura em fundo médio e clara em fundo escuro. A cor do fundo vem de `fundo` na página ou do `bg` da imagem, escrita como `#RRGGBB`.
 - Para tirar a revista de um projeto, apague o bloco `revista` inteiro. Para pôr em outro, copie o bloco do Quarto Maria e troque as páginas.
 - Os números em `foto` e `fotos` são a **posição da imagem na lista `images`** do projeto: `0` é a primeira, `1` a segunda. Se mudar a ordem de `images`, confira os números da revista.
 - O nome que aparece junto de cada foto é o `title` dela na lista `images`.
