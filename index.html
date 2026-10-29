@@ -1427,6 +1427,7 @@
     .carimbo-janela img { display: block; width: 100%; height: 100%; object-fit: cover; }
     .carimbo-rodape { font: 600 9px/1 ui-monospace, Menlo, Consolas, monospace; letter-spacing: .08em; color: #1d1b19; }
     .revista-carimbo[hidden] { display: none; }
+    .revista-carimbo .carimbo-titulo { font-size: clamp(7px, .55vw, 9px); font-weight: 700; letter-spacing: .08em; }
 
     /* Verso do selo com o crédito: clicar vira o selo; clicar fora desvira. */
     .carimbo-selo:has(.carimbo-cred) { transition: transform .55s cubic-bezier(.3, .7, .3, 1); }
@@ -1455,8 +1456,23 @@
     .carimbo-selo.ver .carimbo-cred { opacity: 1; }
 
     /* Lacre "em andamento" na lista de projetos, no lugar das palavras. */
-    .lacre-andamento { display: inline-block; vertical-align: middle; width: 62px; margin: -18px 0 -18px 10px; }
-    .lacre-andamento .selo-croqui { position: relative; left: 0; top: 0; width: 100%; }
+    /* Carimbo de tinta vermelha "Em andamento": legível no tamanho da lista. */
+    .project-index-row .lacre-andamento {
+      display: inline-block;
+      vertical-align: middle;
+      margin: 0 6px 0 12px;
+      padding: 6px 11px 5px;
+      border: 2px solid #b8322a;
+      outline: 1px solid #b8322a;
+      outline-offset: 2px;
+      border-radius: 3px;
+      color: #b8322a;
+      font: 700 12px/1 ui-monospace, Menlo, Consolas, monospace !important;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      transform: rotate(-6deg);
+      opacity: .92;
+    }
 
     /* SÓ NO COMPUTADOR: no celular e no tablet o site fica como era antes dos selos e lacres. */
     .txt-andamento { display: none; }
@@ -5566,12 +5582,8 @@ body {
         </div>
       `;
 
-      // Projetos em andamento: um lacre de cera no lugar das palavras "em andamento".
-      systemBody.querySelectorAll('.lacre-andamento').forEach((el) => {
-        el.appendChild(criarSelo('andamento', ''));
-        el.setAttribute('role', 'img');
-        el.setAttribute('aria-label', 'Em andamento');
-      });
+      // Projetos em andamento: um carimbo de tinta no lugar das palavras "em andamento".
+      systemBody.querySelectorAll('.lacre-andamento').forEach((el) => { el.textContent = 'Em andamento'; });
 
       const cover = document.getElementById('projectIndexCover');
 
@@ -6558,7 +6570,7 @@ body {
         const el = document.createElement('div');
         el.className = 'revista-carimbo ' + (i % 2 ? 'direita' : 'esquerda') + (i > 1 ? ' baixo' : '');
         el.setAttribute('aria-hidden', 'true');
-        el.innerHTML = `<div class="carimbo-selo"><span class="carimbo-titulo">${s.titulo}</span>` +
+        el.innerHTML = `<div class="carimbo-selo"><span class="carimbo-titulo">MoodBoard</span>` +
           `<div class="carimbo-janela"><img src="${s.imagem}" alt="" style="transform:scale(${s.zoom || 1})"></div>` +
           `<span class="carimbo-rodape">2026 · CaB.</span>` +
           (s.credito ? `<span class="carimbo-cred">Artista de inspiração<b>${s.credito}</b></span>` : '') +
