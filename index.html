@@ -1470,7 +1470,9 @@
       .txt-andamento { display: inline; }
     }
     /* Mesa de selos abaixo do rodapé da página inicial. */
-    .mesa-selos { position: relative; height: clamp(440px, 38vw, 600px); margin: 0 var(--edge, 28px) 0; }
+    /* Fica preso ao pé da tela (não aumenta a página): uma linha só, visível sem rolar. */
+    .mesa-selos { position: fixed; left: 0; right: 0; bottom: 0; height: min(28vh, 250px); margin: 0; z-index: 1; pointer-events: none; }
+    .mesa-selos .mesa-item { pointer-events: auto; width: min(8vw, 19vh); }
     body:has(.home-view.is-hidden) .mesa-selos { display: none; }
     .mesa-item { position: absolute; width: clamp(120px, 11vw, 165px); filter: drop-shadow(var(--sx, 0) var(--sy, 10px) 12px rgba(60, 40, 20, .28)); }
     .mesa-item .carimbo-selo { transform: perspective(600px) rotateX(var(--rx)) rotateY(var(--ry)) rotateY(var(--flip, 0deg)) rotate(var(--giro)) scale(var(--sc)); }
@@ -4681,36 +4683,34 @@ body {
 
   <!-- ── MESA DE SELOS: abaixo do rodapé, só na página inicial (espaço para o moodboard) ── -->
   <section class="mesa-selos" aria-hidden="true">
-    <!-- Linha de cima -->
-    <div class="mesa-item" style="left: 2%; top: 4%; --giro: -7deg;">
+    <div class="mesa-item" style="left: 1.5%; top: 18%; --giro: -7deg;">
       <div class="carimbo-selo"><span class="carimbo-titulo">Referências</span><div class="carimbo-janela"><img src="assets/selo-retrato.png" alt=""></div><span class="carimbo-rodape">2026 · CaB.</span><span class="carimbo-cred">Artista de inspiração<b>Walson (@mrwalson)</b></span></div>
     </div>
-    <div class="mesa-item" style="left: 18%; top: 10%; --giro: 6deg;">
+    <div class="mesa-item" style="left: 11.3%; top: 32%; --giro: 6deg;">
       <div class="carimbo-selo"><span class="carimbo-titulo">Referências</span><div class="carimbo-janela"><img src="assets/selo-vaso.png" alt=""></div><span class="carimbo-rodape">2026 · CaB.</span></div>
     </div>
-    <div class="mesa-item" style="left: 47%; top: 2%; --giro: -4deg;">
+    <div class="mesa-item" style="left: 21.1%; top: 10%; --giro: -4deg;">
       <div class="carimbo-selo"><span class="carimbo-titulo">Referências</span><div class="carimbo-janela"><img src="assets/selo-cubo.webp" alt=""></div><span class="carimbo-rodape">2026 · CaB.</span></div>
     </div>
-    <div class="mesa-item" style="left: 64%; top: 9%; --giro: 5deg;">
+    <div class="mesa-item" style="left: 30.9%; top: 28%; --giro: 5deg;">
       <div class="carimbo-selo"><span class="carimbo-titulo">Referências</span><div class="carimbo-janela"><img src="assets/selo-cadeira.png" alt=""></div><span class="carimbo-rodape">2026 · CaB.</span></div>
     </div>
-    <div class="mesa-item" style="left: 81%; top: 3%; --giro: -6deg;">
+    <div class="mesa-item" style="left: 40.7%; top: 14%; --giro: -6deg;">
       <div class="carimbo-selo"><span class="carimbo-titulo">Referências</span><div class="carimbo-janela"><img src="assets/selo-cafe.jpg" alt=""></div><span class="carimbo-rodape">2026 · CaB.</span></div>
     </div>
-    <!-- Linha de baixo -->
-    <div class="mesa-item" style="left: 5%; top: 54%; --giro: 4deg;">
+    <div class="mesa-item" style="left: 50.5%; top: 34%; --giro: 4deg;">
       <div class="carimbo-selo"><span class="carimbo-titulo">Referências</span><div class="carimbo-janela"><img src="assets/selo-perola.png" alt=""></div><span class="carimbo-rodape">2026 · CaB.</span><span class="carimbo-cred">Artista de inspiração<b>Johannes Vermeer</b></span></div>
     </div>
-    <div class="mesa-item" style="left: 21%; top: 58%; --giro: -8deg;">
+    <div class="mesa-item" style="left: 60.3%; top: 8%; --giro: -8deg;">
       <div class="carimbo-selo"><span class="carimbo-titulo">Referências</span><div class="carimbo-janela"><img src="assets/selo-grito.png" alt=""></div><span class="carimbo-rodape">2026 · CaB.</span><span class="carimbo-cred">Artista de inspiração<b>Edvard Munch</b></span></div>
     </div>
-    <div class="mesa-item" style="left: 37%; top: 51%; --giro: 7deg;">
+    <div class="mesa-item" style="left: 70.1%; top: 26%; --giro: 7deg;">
       <div class="carimbo-selo"><span class="carimbo-titulo">Referências</span><div class="carimbo-janela"><img src="assets/selo-arcos.webp" alt=""></div><span class="carimbo-rodape">2026 · CaB.</span></div>
     </div>
-    <div class="mesa-item" style="left: 53%; top: 57%; --giro: -5deg;">
+    <div class="mesa-item" style="left: 79.9%; top: 20%; --giro: -5deg;">
       <div class="carimbo-selo"><span class="carimbo-titulo">Referências</span><div class="carimbo-janela"><img src="assets/selo-escada.webp" alt=""></div><span class="carimbo-rodape">2026 · CaB.</span></div>
     </div>
-    <div class="mesa-item" style="left: 69%; top: 52%; --giro: 6deg;">
+    <div class="mesa-item" style="left: 89.7%; top: 30%; --giro: 6deg;">
       <div class="carimbo-selo"><span class="carimbo-titulo">Referências</span><div class="carimbo-janela"><img src="assets/selo-casa-ogorman.webp" alt=""></div><span class="carimbo-rodape">2026 · CaB.</span><span class="carimbo-cred">Artista de inspiração<b>Juan O'Gorman</b></span></div>
     </div>
   </section>
@@ -6561,6 +6561,8 @@ body {
         el.innerHTML = `<div class="carimbo-selo"><span class="carimbo-titulo">${s.titulo}</span>` +
           `<div class="carimbo-janela"><img src="${s.imagem}" alt="" style="transform:scale(${s.zoom || 1})"></div>` +
           `<span class="carimbo-rodape">2026 · CaB.</span>` +
+          (s.credito ? `<span class="carimbo-cred">Artista de inspiração<b>${s.credito}</b></span>` : '') +
+          '</div>';
         ligarTiltSelo(el.firstChild);
         mesa.appendChild(el);
       });
