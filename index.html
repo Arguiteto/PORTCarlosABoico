@@ -1388,6 +1388,9 @@
     .selo-croqui:hover::after { opacity: 1; }
     .revista-selos { position: absolute; z-index: 60; width: 0; height: 0; }
     .revista-selos[hidden] { display: none; }
+    /* Enquanto a revista vira ou fecha, selos e lacres somem suavemente e voltam já no lugar certo. */
+    .revista-selos, .revista-carimbo { transition: opacity .35s ease; }
+    .revista-ajustando .revista-selos, .revista-ajustando .revista-carimbo { opacity: 0; transition: opacity .12s ease; }
     .selo-croqui.na-revista { left: -26px; top: -26px; width: clamp(60px, 6vw, 84px); }
     .selo-croqui.na-revista.segundo { left: -26px; top: calc(-34px + clamp(52px, 5.2vw, 72px)); transform: perspective(500px) rotateX(var(--rx)) rotateY(var(--ry)) rotateY(var(--flip, 0deg)) rotate(12deg) scale(var(--sc)); }
     .revista-selos.aberta .segundo { display: none; }
@@ -1499,7 +1502,11 @@
       .revista-moodboard-selos .carimbo-selo { --giro: -6deg; filter: drop-shadow(0 8px 10px rgba(60, 40, 20, .25)); transform: rotate(var(--giro)); }
       .revista-moodboard-selos .carimbo-selo:nth-child(even) { --giro: 7deg; }
       .mesa-selos { position: relative !important; height: auto !important; pointer-events: auto; margin: 6px 0 0 !important; }
-      .mesa-selos .mesa-item { position: relative; left: auto !important; top: auto !important; width: 31vw !important; max-width: 150px; margin: 0 -7px -18px; }
+      .mesa-selos .mesa-item { position: relative; left: auto !important; top: auto !important; width: 24vw !important; max-width: 120px; margin: 0 -5px -28px; }
+      .mesa-selos { padding: 18px 14px 40px !important; }
+      .mesa-selos .carimbo-selo { padding: 10px 9px 11px; gap: 4px; }
+      .mesa-selos .carimbo-titulo { font-size: 6px !important; letter-spacing: .06em !important; }
+      .mesa-selos .carimbo-rodape { font-size: 6px; }
     }
     /* Mesa de selos abaixo do rodapé da página inicial. */
     /* Fica preso ao pé da tela (não aumenta a página): uma linha só, visível sem rolar. */
@@ -6719,7 +6726,8 @@ body {
     const carrossel = document.querySelector('.carousel-shell');
     function moverMesaSelos() {
       const mesa = document.querySelector('.mesa-selos');
-      if (telaCelular.matches && carrossel) carrossel.after(mesa);
+      // fora da faixa do carrossel (que pode cortar o que passa da altura dela)
+      if (telaCelular.matches && carrossel) homeView.after(mesa);   // a home tem altura fixa e corta o que passa dela
       else rodape.after(mesa);
     }
     moverMesaSelos();
@@ -6777,7 +6785,11 @@ body {
       posicionarSelosRevista(celular);
       // Durante a virada a folha ainda está girando: confere de novo quando ela assenta.
       clearTimeout(posicionarSelosRevista.espera);
-      posicionarSelosRevista.espera = setTimeout(() => posicionarSelosRevista(revistaTela.matches), 900);
+      revistaLivro.parentElement.classList.add('revista-ajustando');
+      posicionarSelosRevista.espera = setTimeout(() => {
+        posicionarSelosRevista(revistaTela.matches);
+        revistaLivro.parentElement.classList.remove('revista-ajustando');   // reaparecem já no lugar
+      }, 900);
 
       // No computador, clicar na capa abre a revista; no celular, a foto da capa amplia.
       const fotoDaCapa = revistaLivro.querySelector('.rv-capa .rv-foto');
@@ -6897,7 +6909,7 @@ body {
       const resto = Math.abs(alvo - angulo) / 180;
       const ms = revistaSemMovimento.matches ? 0 : Math.max(130, Math.round(REVISTA_VIRADA_MS * resto));
       revistaOcupada = true;
-      revistaVirando = indice;
+      revistaVirando = indice; revistaLivro.parentElement.classList.add('revista-ajustando');   // selos somem durante a virada
       folha.classList.add('virando');
       folha.style.zIndex = String(revistaFolhas.length + 5);   // a folha que vira passa por cima das outras
       return animarFolha(indice, angulo, alvo, ms, geracao).then(() => {
@@ -6966,7 +6978,7 @@ body {
         }
         a.moveu = true;
         revistaOcupada = true;
-        revistaVirando = a.indice;
+        revistaVirando = a.indice; revistaLivro.parentElement.classList.add('revista-ajustando');   // selos somem durante a virada
         revistaFolhas[a.indice].style.zIndex = String(revistaFolhas.length + 5);
         revistaFolhas[a.indice].classList.add('virando');
         revistaLivro.classList.add('arrastando');
