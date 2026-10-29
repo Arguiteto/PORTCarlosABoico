@@ -1343,6 +1343,160 @@
 
     .modelo3d-box[hidden] { display: none; }
 
+    /* Lacre de cera "3D" no canto do quadro: inclina seguindo o mouse. */
+    .modelo3d-lacre {
+      --rx: 0deg; --ry: 0deg; --mx: 50%; --my: 50%; --sc: 1;
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      z-index: 3;
+      width: 78px;
+      border-radius: 50%;
+      cursor: pointer;
+      filter: drop-shadow(var(--sx, 0) var(--sy, 6px) 8px rgba(40, 20, 10, .3));
+      transform: perspective(500px) rotateX(var(--rx)) rotateY(var(--ry)) rotateY(var(--flip, 0deg)) rotate(-8deg) scale(var(--sc));
+      transition: transform .25s ease-out;
+    }
+    .modelo3d-lacre img { display: block; width: 100%; }
+    .modelo3d-lacre::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(circle at var(--mx) var(--my), rgba(255, 255, 255, .6), transparent 50%);
+      mix-blend-mode: soft-light;
+    }
+    .modelo3d-box.is-ampliado .modelo3d-lacre { display: none; }
+
+    /* Selo dourado no canto das plantas baixas (visualizador de imagens). */
+    .selo-croqui {
+      --rx: 0deg; --ry: 0deg; --mx: 50%; --my: 50%; --sc: 1;
+      position: absolute;
+      left: 14px;
+      top: 14px;
+      z-index: 3;
+      width: clamp(72px, 9vw, 110px);
+      border-radius: 50%;
+      cursor: pointer;
+      filter: drop-shadow(var(--sx, 0) var(--sy, 6px) 8px rgba(0, 0, 0, .35));
+      transform: perspective(500px) rotateX(var(--rx)) rotateY(var(--ry)) rotateY(var(--flip, 0deg)) rotate(-10deg) scale(var(--sc));
+      transition: transform .25s ease-out;
+    }
+    .selo-croqui svg { display: block; width: 100%; height: auto; }
+    /* O brilho só aparece com o mouse em cima; parado, a cera mostra a cor real. */
+    .selo-croqui:hover::after { opacity: 1; }
+    .revista-selos { position: absolute; z-index: 60; width: 0; height: 0; }
+    .revista-selos[hidden] { display: none; }
+    .selo-croqui.na-revista { left: -26px; top: -26px; width: clamp(60px, 6vw, 84px); }
+    .selo-croqui.na-revista.segundo { left: -26px; top: calc(-34px + clamp(52px, 5.2vw, 72px)); transform: perspective(500px) rotateX(var(--rx)) rotateY(var(--ry)) rotateY(var(--flip, 0deg)) rotate(12deg) scale(var(--sc)); }
+    .revista-selos.aberta .segundo { display: none; }
+    .revista-selos.no-celular { position: absolute; left: 34px !important; top: 26px !important; }
+
+    /* Selos de imagem (estilo selo postal) nas laterais da mesa da revista. */
+    /* Ficam atrás da revista: em telas estreitas, aberta, ela cobre os selos em vez de ser coberta. */
+    .revista-mesa .revista-livro { z-index: 2; }
+    .revista-carimbo { position: absolute; z-index: 1; width: clamp(110px, 11vw, 160px); filter: drop-shadow(var(--sx, 0) var(--sy, 10px) 12px rgba(60, 40, 20, .28)); }
+    .revista-carimbo.esquerda { left: clamp(14px, 4.5vw, 90px); top: 14%; }
+    .revista-carimbo.direita { right: clamp(14px, 4.5vw, 90px); top: 10%; }
+    .revista-carimbo.esquerda.baixo { top: 54%; left: clamp(24px, 6.5vw, 130px); }
+    .revista-carimbo.direita.baixo { top: 50%; right: clamp(24px, 6.5vw, 130px); }
+    .revista-carimbo.baixo .carimbo-selo { transform: perspective(600px) rotateX(var(--rx)) rotateY(var(--ry)) rotateY(var(--flip, 0deg)) rotate(5deg) scale(var(--sc)); }
+    .revista-carimbo.direita.baixo .carimbo-selo { transform: perspective(600px) rotateX(var(--rx)) rotateY(var(--ry)) rotateY(var(--flip, 0deg)) rotate(-6deg) scale(var(--sc)); }
+    .carimbo-selo {
+      --rx: 0deg; --ry: 0deg; --mx: 50%; --my: 50%; --sc: 1;
+      --serra: linear-gradient(#000 0 0) center / calc(100% - 18px) calc(100% - 18px) no-repeat, radial-gradient(circle 8px at 50% 50%, #0000 98%, #000) -14px -14px / 28px 28px round;
+      position: relative;
+      aspect-ratio: 9 / 10;
+      padding: 12% 12% 13%;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: #fbf8f2;
+      cursor: pointer;
+      -webkit-mask: var(--serra);
+      mask: var(--serra);
+      transform: perspective(600px) rotateX(var(--rx)) rotateY(var(--ry)) rotateY(var(--flip, 0deg)) rotate(-7deg) scale(var(--sc));
+      transition: transform .25s ease-out;
+    }
+    .revista-carimbo.direita .carimbo-selo { transform: perspective(600px) rotateX(var(--rx)) rotateY(var(--ry)) rotateY(var(--flip, 0deg)) rotate(8deg) scale(var(--sc)); }
+    .carimbo-selo::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at var(--mx) var(--my), rgba(255, 255, 255, .6), transparent 50%); mix-blend-mode: soft-light; }
+    .carimbo-titulo { font: 800 13px/1 Georgia, serif; text-transform: uppercase; color: #1d1b19; }
+    .carimbo-janela { flex: 1; min-height: 0; overflow: hidden; }
+    .carimbo-janela img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .carimbo-rodape { font: 600 9px/1 ui-monospace, Menlo, Consolas, monospace; letter-spacing: .08em; color: #1d1b19; }
+    .revista-carimbo[hidden] { display: none; }
+
+    /* Verso do selo com o crédito: clicar vira o selo; clicar fora desvira. */
+    .carimbo-selo:has(.carimbo-cred) { transition: transform .55s cubic-bezier(.3, .7, .3, 1); }
+    .carimbo-selo.ver { --flip: 180deg; }
+    .carimbo-cred {
+      position: absolute;
+      inset: 0;
+      padding: 14%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      text-align: center;
+      background: #fbf8f2;
+      color: #1d1b19;
+      font: 600 8px/1.3 ui-monospace, Menlo, Consolas, monospace;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      transform: scaleX(-1);
+      opacity: 0;
+      transition: opacity 0s linear .2s;
+      pointer-events: none;
+    }
+    .carimbo-cred b { font: italic 700 13px/1.2 Georgia, serif; letter-spacing: 0; text-transform: none; }
+    .carimbo-selo.ver .carimbo-cred { opacity: 1; }
+
+    /* Lacre "em andamento" na lista de projetos, no lugar das palavras. */
+    .lacre-andamento { display: inline-block; vertical-align: middle; width: 62px; margin: -18px 0 -18px 10px; }
+    .lacre-andamento .selo-croqui { position: relative; left: 0; top: 0; width: 100%; }
+
+    /* SÓ NO COMPUTADOR: no celular e no tablet o site fica como era antes dos selos e lacres. */
+    .txt-andamento { display: none; }
+    @media (max-width: 980px) {
+      .mesa-selos,
+      .revista-selos,
+      .revista-carimbo,
+      .modelo3d-lacre,
+      .selo-croqui,
+      .lacre-andamento { display: none !important; }
+      .txt-andamento { display: inline; }
+    }
+    /* Mesa de selos abaixo do rodapé da página inicial. */
+    .mesa-selos { position: relative; height: clamp(440px, 38vw, 600px); margin: 0 var(--edge, 28px) 0; }
+    body:has(.home-view.is-hidden) .mesa-selos { display: none; }
+    .mesa-item { position: absolute; width: clamp(120px, 11vw, 165px); filter: drop-shadow(var(--sx, 0) var(--sy, 10px) 12px rgba(60, 40, 20, .28)); }
+    .mesa-item .carimbo-selo { transform: perspective(600px) rotateX(var(--rx)) rotateY(var(--ry)) rotateY(var(--flip, 0deg)) rotate(var(--giro)) scale(var(--sc)); }
+    .mesa-item.lacre { width: clamp(90px, 8vw, 120px); filter: none; }
+    .mesa-item .carimbo-titulo { font-size: clamp(6px, .5vw, 8px); font-weight: 700; letter-spacing: .08em; }
+    .mesa-item.lacre .selo-croqui { position: relative; left: 0; top: 0; width: 100%; transform: perspective(500px) rotateX(var(--rx)) rotateY(var(--ry)) rotateY(var(--flip, 0deg)) rotate(var(--giro)) scale(var(--sc)); }
+    @media (max-width: 980px) {
+      .mesa-selos { height: 420px; }
+      .mesa-item { width: 82px; }
+      .mesa-item.lacre { width: 80px; }
+    }
+    @media (max-width: 980px) { .revista-carimbo { display: none; } }
+    .selo-croqui::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(circle at var(--mx) var(--my), rgba(255, 255, 255, .6), transparent 50%);
+      mix-blend-mode: soft-light;
+      opacity: 0;
+      transition: opacity .25s;
+    }
+    @media (prefers-reduced-motion: reduce) { .selo-croqui { transition: none; } }
+    @media (prefers-reduced-motion: reduce) { .modelo3d-lacre { transition: none; } }
+
     /* Quadro acima do carrossel: a folga passa para baixo dele. */
     .modelo3d-box.is-acima { margin: 0 auto 4px; }
 
@@ -4438,6 +4592,7 @@ body {
           <button class="modelo3d-close" type="button" id="closeModelo3d" aria-label="Voltar ao tamanho normal">×</button>
         </div>
         <div class="modelo3d-stage" id="modelo3dStage"></div>
+        <div class="modelo3d-lacre" id="modelo3dLacre"><img src="assets/lacre-3d.png" alt="Lacre de cera 3D" width="78" height="75"></div>
         <button class="modelo3d-ampliar" type="button" id="ampliarModelo3d" aria-label="Ampliar o modelo 3D" title="Ampliar">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-7 7M10 20H4v-6M4 20l7-7"/></svg>
         </button>
@@ -4523,6 +4678,42 @@ body {
     <span>© <span id="year"></span> Carlos A. Boico</span>
     <span>Arquitetura &amp; Design</span>
   </footer>
+
+  <!-- ── MESA DE SELOS: abaixo do rodapé, só na página inicial (espaço para o moodboard) ── -->
+  <section class="mesa-selos" aria-hidden="true">
+    <!-- Linha de cima -->
+    <div class="mesa-item" style="left: 2%; top: 4%; --giro: -7deg;">
+      <div class="carimbo-selo"><span class="carimbo-titulo">Referências</span><div class="carimbo-janela"><img src="assets/selo-retrato.png" alt=""></div><span class="carimbo-rodape">2026 · CaB.</span><span class="carimbo-cred">Artista de inspiração<b>Walson (@mrwalson)</b></span></div>
+    </div>
+    <div class="mesa-item" style="left: 18%; top: 10%; --giro: 6deg;">
+      <div class="carimbo-selo"><span class="carimbo-titulo">Referências</span><div class="carimbo-janela"><img src="assets/selo-vaso.png" alt=""></div><span class="carimbo-rodape">2026 · CaB.</span></div>
+    </div>
+    <div class="mesa-item" style="left: 47%; top: 2%; --giro: -4deg;">
+      <div class="carimbo-selo"><span class="carimbo-titulo">Referências</span><div class="carimbo-janela"><img src="assets/selo-cubo.webp" alt=""></div><span class="carimbo-rodape">2026 · CaB.</span></div>
+    </div>
+    <div class="mesa-item" style="left: 64%; top: 9%; --giro: 5deg;">
+      <div class="carimbo-selo"><span class="carimbo-titulo">Referências</span><div class="carimbo-janela"><img src="assets/selo-cadeira.png" alt=""></div><span class="carimbo-rodape">2026 · CaB.</span></div>
+    </div>
+    <div class="mesa-item" style="left: 81%; top: 3%; --giro: -6deg;">
+      <div class="carimbo-selo"><span class="carimbo-titulo">Referências</span><div class="carimbo-janela"><img src="assets/selo-cafe.jpg" alt=""></div><span class="carimbo-rodape">2026 · CaB.</span></div>
+    </div>
+    <!-- Linha de baixo -->
+    <div class="mesa-item" style="left: 5%; top: 54%; --giro: 4deg;">
+      <div class="carimbo-selo"><span class="carimbo-titulo">Referências</span><div class="carimbo-janela"><img src="assets/selo-perola.png" alt=""></div><span class="carimbo-rodape">2026 · CaB.</span><span class="carimbo-cred">Artista de inspiração<b>Johannes Vermeer</b></span></div>
+    </div>
+    <div class="mesa-item" style="left: 21%; top: 58%; --giro: -8deg;">
+      <div class="carimbo-selo"><span class="carimbo-titulo">Referências</span><div class="carimbo-janela"><img src="assets/selo-grito.png" alt=""></div><span class="carimbo-rodape">2026 · CaB.</span><span class="carimbo-cred">Artista de inspiração<b>Edvard Munch</b></span></div>
+    </div>
+    <div class="mesa-item" style="left: 37%; top: 51%; --giro: 7deg;">
+      <div class="carimbo-selo"><span class="carimbo-titulo">Referências</span><div class="carimbo-janela"><img src="assets/selo-arcos.webp" alt=""></div><span class="carimbo-rodape">2026 · CaB.</span></div>
+    </div>
+    <div class="mesa-item" style="left: 53%; top: 57%; --giro: -5deg;">
+      <div class="carimbo-selo"><span class="carimbo-titulo">Referências</span><div class="carimbo-janela"><img src="assets/selo-escada.webp" alt=""></div><span class="carimbo-rodape">2026 · CaB.</span></div>
+    </div>
+    <div class="mesa-item" style="left: 69%; top: 52%; --giro: 6deg;">
+      <div class="carimbo-selo"><span class="carimbo-titulo">Referências</span><div class="carimbo-janela"><img src="assets/selo-casa-ogorman.webp" alt=""></div><span class="carimbo-rodape">2026 · CaB.</span><span class="carimbo-cred">Artista de inspiração<b>Juan O'Gorman</b></span></div>
+    </div>
+  </section>
 
   <!-- ── JAVASCRIPT: CONTEÚDO E FUNCIONAMENTO DO SISTEMA ── -->
   <script>
@@ -4652,6 +4843,13 @@ body {
         revista: {
           titulo: 'Salão Vitalina, página a página',
           edicao: 'Nº 01 · 2026',
+          // LACRES no canto da capa (o primeiro também aparece com a revista aberta).
+          lacres: ['autoral', 'obra'],
+          selos: [
+            { imagem: 'assets/selo-fonte.webp', titulo: 'Fonte', credito: 'Mike Willcox' },
+            { imagem: 'assets/selo-palmeira.webp', titulo: 'Palmeira' },
+            { imagem: 'assets/selo-textura-dourada.webp', titulo: 'Textura' }
+          ],
           paginas: [
             /* pág. 1 */ { tipo: 'capa', foto: 0, foco: '7% 50%', titulo: 'Salão Vitalina', chamada: 'Interiores para um salão de beleza em Lisboa' },
             /* pág. 2 */ { tipo: 'texto',
@@ -4751,6 +4949,13 @@ body {
         revista: {
           titulo: 'Quarto Maria, página a página',
           edicao: 'Nº 02 · 2026',
+          // SELOS nas laterais da revista (só no computador): imagem + título.
+          selos: [
+            { imagem: 'assets/selo-azulejo.webp', titulo: 'Azulejo', zoom: 1.9 },
+            { imagem: 'assets/selo-cardume.webp', titulo: 'Cardume' },
+            { imagem: 'assets/selo-tijolo.webp', titulo: 'Tijolo' },
+            { imagem: 'assets/selo-azulejo-azul.webp', titulo: 'Textura' }
+          ],
           paginas: [
             /* pág. 1 */ { tipo: 'capa', foto: 7, imagem: 'assets/quarto-maria-capa.jpg', foco: '50% 100%', chamada: 'Reforma, interiores e paisagismo externo' },
             /* pág. 2 */ { tipo: 'colagem', fotos: [1, 5, 4, 2] },
@@ -5106,6 +5311,25 @@ body {
     const modelo3dStage = document.getElementById('modelo3dStage');
     const modelo3dTitle = document.getElementById('modelo3dTitle');
     const ampliarModelo3dButton = document.getElementById('ampliarModelo3d');
+
+    // Lacre do quadro 3D: inclina, brilha e projeta a sombra conforme o mouse.
+    const modelo3dLacre = document.getElementById('modelo3dLacre');
+    modelo3dLacre.addEventListener('pointermove', (e) => {
+      const r = modelo3dLacre.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width;
+      const y = (e.clientY - r.top) / r.height;
+      modelo3dLacre.style.setProperty('--ry', (x - .5) * 30 + 'deg');
+      modelo3dLacre.style.setProperty('--rx', (.5 - y) * 30 + 'deg');
+      modelo3dLacre.style.setProperty('--mx', x * 100 + '%');
+      modelo3dLacre.style.setProperty('--my', y * 100 + '%');
+      modelo3dLacre.style.setProperty('--sx', (.5 - x) * 12 + 'px');
+      modelo3dLacre.style.setProperty('--sy', (.5 - y) * 12 + 6 + 'px');
+      modelo3dLacre.style.setProperty('--sc', 1.08);
+    });
+    modelo3dLacre.addEventListener('pointerleave', () => {
+      ['--rx', '--ry'].forEach((p) => modelo3dLacre.style.setProperty(p, '0deg'));
+      modelo3dLacre.style.setProperty('--sc', 1);
+    });
     const closeModelo3dButton = document.getElementById('closeModelo3d');
     const projectStage = projectPage.querySelector('.project-stage');
     const projectMediaArea = projectPage.querySelector('.project-media-area');
@@ -5327,7 +5551,7 @@ body {
         <button class="project-index-row" type="button" data-project="${project.id}" data-cover-class="${getCoverClass(project)}" data-cover-src="${project.src || ''}" data-cover-title="${project.title}" data-andamento="${project.andamento ? '1' : ''}">
           <strong>${project.title}</strong>
           <span>${project.info?.Local || project.category || project.meta}</span>
-          <em>${project.meta}</em>
+          <em>${project.andamento ? project.meta.replace(/\s*·\s*Em andamento/i, '') + '<span class="txt-andamento"> · Em andamento</span><span class="lacre-andamento"></span>' : project.meta}</em>
         </button>
       `).join('');
 
@@ -5341,6 +5565,13 @@ body {
           <div class="project-index-list">${rowsHtml}</div>
         </div>
       `;
+
+      // Projetos em andamento: um lacre de cera no lugar das palavras "em andamento".
+      systemBody.querySelectorAll('.lacre-andamento').forEach((el) => {
+        el.appendChild(criarSelo('andamento', ''));
+        el.setAttribute('role', 'img');
+        el.setAttribute('aria-label', 'Em andamento');
+      });
 
       const cover = document.getElementById('projectIndexCover');
 
@@ -5820,6 +6051,95 @@ body {
       if (projectPage.classList.contains('is-active')) restartAutoCarousel();
     }
 
+    // Selos em SVG: "ouro" tem borda serrilhada; "cera" tem a borda irregular da cera derramada.
+    const SELOS = {
+      croqui: { tipo: 'ouro', topo: 'CROQUI ORIGINAL', base: 'FEITO À MÃO', miolo: '✎' },
+      autoral: { tipo: 'cera', topo: 'CARLOS A. BOICO · PROJETO AUTORAL', base: 'LEI 9.610/98', miolo: 'CB©' },
+      andamento: { tipo: 'cera', topo: 'EM ANDAMENTO', base: 'EM OBRA', miolo: '⚒' },
+      obra: { tipo: 'cera', cores: ['#c48a4f', '#8a5a2b', '#4e2f12', '#3a210c'], topo: 'OBRA ENTREGUE', base: 'CAMPO GRANDE · MS', miolo: '✓' }
+    };
+
+    let seloContador = 0;
+    function seloSvg(tipoSelo) {
+      // Ids únicos por cópia: um gradiente dentro de um bloco escondido não pinta as outras cópias.
+      const s = SELOS[tipoSelo], ouro = s.tipo === 'ouro', n = ouro ? 72 : 64;
+      const nome = tipoSelo + '-' + (++seloContador);
+      let semente = 11;
+      const sorteio = () => { semente = (semente * 9301 + 49297) % 233280; return semente / 233280; };
+      const pts = [];
+      for (let i = 0; i < n; i++) {
+        const a = i / n * Math.PI * 2;
+        const r = ouro ? (i % 2 ? 92 : 97) : 92 + Math.sin(a * 3 + semente) * 3 + sorteio() * 6;
+        pts.push([100 + Math.cos(a) * r, 100 + Math.sin(a) * r]);
+      }
+      const f = (v) => v.toFixed(1);
+      let borda;
+      if (ouro) {
+        borda = 'M' + pts.map((p) => f(p[0]) + ' ' + f(p[1])).join('L') + 'Z';
+      } else {
+        borda = `M${f((pts[0][0] + pts[n - 1][0]) / 2)} ${f((pts[0][1] + pts[n - 1][1]) / 2)}`;
+        pts.forEach((p, i) => {
+          const q = pts[(i + 1) % n];
+          borda += `Q${f(p[0])} ${f(p[1])} ${f((p[0] + q[0]) / 2)} ${f((p[1] + q[1]) / 2)}`;
+        });
+        borda += 'Z';
+      }
+      // Cera: [brilho, cor, sombra, tinta do relevo]; vermelha se o selo não disser outra.
+      const [claro, cor, escuro, tintaCera] = s.cores || ['#e0614f', '#b8322a', '#7a1712', '#6e130f'];
+      const tinta = ouro ? '#8a6410' : tintaCera;
+      const fundo = ouro
+        ? '<linearGradient id="sl-' + nome + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6c4"/><stop offset=".25" stop-color="#e9c46a"/><stop offset=".5" stop-color="#9c6f1b"/><stop offset=".7" stop-color="#fff0b8"/><stop offset="1" stop-color="#9c6f1b"/></linearGradient>'
+        : `<radialGradient id="sl-${nome}" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="${claro}"/><stop offset=".45" stop-color="${cor}"/><stop offset="1" stop-color="${escuro}"/></radialGradient>`;
+      const tamanhoTopo = s.topo.length > 22 ? 9 : 11;
+      return `<svg viewBox="0 0 200 200">
+        <defs>
+          ${fundo}
+          <filter id="sr-${nome}" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur in="SourceAlpha" stdDeviation="1.2" result="b"/><feSpecularLighting in="b" surfaceScale="3" specularConstant=".55" specularExponent="40" lighting-color="#fff" result="s"><feDistantLight azimuth="225" elevation="45"/></feSpecularLighting><feComposite in="s" in2="SourceAlpha" operator="in" result="s2"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="s2"/></feMerge></filter>
+          <path id="st-${nome}" d="M100 100 m-66 0 a66 66 0 1 1 132 0"/>
+          <path id="sb-${nome}" d="M100 100 m-74 0 a74 74 0 0 0 148 0"/>
+        </defs>
+        <path d="${borda}" fill="url(#sl-${nome})" filter="url(#sr-${nome})"/>
+        <g fill="${tinta}" filter="url(#sr-${nome})">
+          <circle cx="100" cy="100" r="${ouro ? 84 : 80}" fill="none" stroke="${tinta}" stroke-width="2"/>
+          <circle cx="100" cy="100" r="52" fill="none" stroke="${tinta}" stroke-width="1.5"/>
+          <text font-family="Georgia,serif" font-size="${tamanhoTopo}" letter-spacing="2" text-anchor="middle"><textPath href="#st-${nome}" startOffset="50%">${s.topo}</textPath></text>
+          <text font-family="Georgia,serif" font-size="10" letter-spacing="2" text-anchor="middle" dominant-baseline="hanging"><textPath href="#sb-${nome}" startOffset="50%">${s.base}</textPath></text>
+          <text x="34" y="104" font-size="9" text-anchor="middle">✦</text><text x="166" y="104" font-size="9" text-anchor="middle">✦</text>
+          <text x="100" y="${s.miolo.length > 1 ? 114 : 116}" font-family="Georgia,serif" font-style="italic" font-size="${s.miolo.length > 2 ? 34 : 46}" text-anchor="middle">${s.miolo}</text>
+        </g>
+      </svg>`;
+    }
+
+    // Monta um selo com o efeito do mouse; "classe" define a posição.
+    function criarSelo(nome, classe) {
+      const el = document.createElement('div');
+      el.className = 'selo-croqui ' + classe;
+      el.setAttribute('aria-hidden', 'true');
+      el.innerHTML = seloSvg(nome);
+      ligarTiltSelo(el);
+      return el;
+    }
+
+    // Inclinação, brilho e sombra seguindo o mouse (mesmo efeito do lacre 3D).
+    function ligarTiltSelo(el) {
+      el.addEventListener('pointermove', (e) => {
+        const r = el.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width;
+        const y = (e.clientY - r.top) / r.height;
+        el.style.setProperty('--ry', (x - .5) * 30 + 'deg');
+        el.style.setProperty('--rx', (.5 - y) * 30 + 'deg');
+        el.style.setProperty('--mx', x * 100 + '%');
+        el.style.setProperty('--my', y * 100 + '%');
+        el.style.setProperty('--sx', (.5 - x) * 12 + 'px');
+        el.style.setProperty('--sy', (.5 - y) * 12 + 6 + 'px');
+        el.style.setProperty('--sc', 1.08);
+      });
+      el.addEventListener('pointerleave', () => {
+        ['--rx', '--ry'].forEach((p) => el.style.setProperty(p, '0deg'));
+        el.style.setProperty('--sc', 1);
+      });
+    }
+
     function updatePhotoViewer() {
       const image = currentProject.images[currentPhotoIndex];
 
@@ -5831,6 +6151,11 @@ body {
         lightboxMedia.className = 'lightbox-media ' + mediaClass(image);
         lightboxMedia.setAttribute('style', mediaStyle(image));
         lightboxMedia.innerHTML = '';
+      }
+
+      // Plantas baixas recebem o selo dourado "Croqui original" no canto.
+      if (/planta\s+baixa/i.test(image.title + ' ' + (image.type || ''))) {
+        lightboxMedia.appendChild(criarSelo('croqui', ''));
       }
 
       lightboxProjectName.textContent = currentProject.title;
@@ -6219,6 +6544,27 @@ body {
         revistaFolhas.push(folha);
       }
 
+      // Selos no canto da revista (fora das páginas, que cortam o que passa da borda).
+      const selos = document.createElement('div');
+      selos.className = 'revista-selos';
+      const [lacre1, lacre2] = revista.lacres || ['autoral', 'croqui'];
+      selos.append(criarSelo(lacre1, 'na-revista'), criarSelo(lacre2, 'na-revista segundo'));
+      revistaLivro.appendChild(selos);
+
+      // Selos de imagem nas laterais da mesa (o CSS esconde no celular).
+      const mesa = revistaLivro.parentElement;
+      mesa.querySelectorAll('.revista-carimbo').forEach((el) => el.remove());
+      (revista.selos || []).forEach((s, i) => {
+        const el = document.createElement('div');
+        el.className = 'revista-carimbo ' + (i % 2 ? 'direita' : 'esquerda') + (i > 1 ? ' baixo' : '');
+        el.setAttribute('aria-hidden', 'true');
+        el.innerHTML = `<div class="carimbo-selo"><span class="carimbo-titulo">${s.titulo}</span>` +
+          `<div class="carimbo-janela"><img src="${s.imagem}" alt="" style="transform:scale(${s.zoom || 1})"></div>` +
+          `<span class="carimbo-rodape">2026 · CaB.</span>` +
+        ligarTiltSelo(el.firstChild);
+        mesa.appendChild(el);
+      });
+
       revistaLivro.scrollLeft = 0;
       atualizarRevista();
       conferirRevista();
@@ -6248,6 +6594,111 @@ body {
     }
 
     // Põe a revista no estado em que ela está (folhas viradas, contador, botões e dica).
+    // Selos de imagem só na faixa livre entre a revista e a borda da mesa: nunca por cima das páginas.
+    // Encolhem para caber; se a faixa ficar estreita demais, somem.
+    function encaixarCarimbos(fechada) {
+      const mesa = revistaLivro.parentElement;
+      const carimbos = mesa.querySelectorAll('.revista-carimbo');
+      if (!carimbos.length) return;
+      const paginas = fechada
+        ? [revistaFolhas[0].querySelector('.revista-pagina.frente')]
+        : [revistaFolhas[revistaViradas - 1]?.querySelector('.revista-pagina.verso'),
+           revistaFolhas[revistaViradas]?.querySelector('.revista-pagina.frente')];
+      const rects = paginas.filter(Boolean).map((p) => p.getBoundingClientRect());
+      if (!rects.length) return;
+      const m = mesa.getBoundingClientRect();
+      const folga = 20;   // distância mínima da revista e da borda da mesa
+      const livre = {
+        esquerda: Math.min(...rects.map((r) => r.left)) - m.left,
+        direita: m.right - Math.max(...rects.map((r) => r.right))
+      };
+      carimbos.forEach((el) => {
+        const lado = el.classList.contains('direita') ? 'direita' : 'esquerda';
+        // A rotação do selo pede ~15% de sobra além da largura.
+        const largura = Math.min(160, (livre[lado] - folga * 2) / 1.15);
+        el.hidden = largura < 90;
+        if (el.hidden) return;
+        el.style.width = largura + 'px';
+        el.style[lado === 'direita' ? 'right' : 'left'] = (livre[lado] - largura) / 2 + 'px';
+      });
+    }
+
+    // Fechada: lacre autoral + croqui no canto da capa. Aberta: só o lacre, no canto da página da esquerda.
+    function posicionarSelosRevista(celular) {
+      const selos = revistaLivro.querySelector('.revista-selos');
+      if (!selos) return;
+      const fechada = revistaViradas === 0;
+      const alvo = fechada
+        ? revistaFolhas[0].querySelector('.revista-pagina.frente')
+        : revistaFolhas[revistaViradas - 1].querySelector('.revista-pagina.verso');
+      encaixarCarimbos(fechada);
+      selos.hidden = !alvo;
+      if (selos.hidden) return;
+      // No celular a revista é uma faixa que rola: o lacre autoral fica fixo no canto da mesa.
+      selos.classList.toggle('aberta', !fechada || celular);
+      selos.classList.toggle('no-celular', celular);
+      if (celular) { selos.style.left = ''; selos.style.top = ''; return; }
+      // Mede pela diferença entre onde o selo está e onde a página está (o livro pode estar deslocado).
+      const atual = selos.getBoundingClientRect();
+      const r = alvo.getBoundingClientRect();
+      selos.style.left = ((parseFloat(selos.style.left) || 0) + r.left - atual.left) + 'px';
+      selos.style.top = ((parseFloat(selos.style.top) || 0) + r.top - atual.top) + 'px';
+    }
+
+    // Mesa de selos da página inicial: lacres em SVG e efeito do mouse em todos.
+    document.querySelectorAll('.mesa-item.lacre').forEach((el) => el.appendChild(criarSelo(el.dataset.lacre, '')));
+    document.querySelectorAll('.mesa-item .carimbo-selo').forEach(ligarTiltSelo);
+
+    // Selos caem do topo da tela e pousam na mesa (a borda de baixo da página) sempre que a página
+    // inicial carrega ou volta a aparecer. Cada um cai de um ponto, com giro e um quique leve.
+    function derrubarSelos() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      document.querySelectorAll('.mesa-item').forEach((el, i) => {
+        const r = el.getBoundingClientRect();
+        const altura = r.top + r.height + 120;           // começa acima da tela, fora de vista
+        const giro = (i % 2 ? 1 : -1) * (25 + (i * 17) % 40);
+        const desvio = ((i * 53) % 120) - 60;
+        el.animate([
+          { transform: `translate(${desvio}px, ${-altura}px) rotate(${giro}deg)` },
+          { transform: 'translate(0, 0) rotate(0deg)', offset: .78 },
+          { transform: 'translate(0, -14px) rotate(0deg)', offset: .88 },
+          { transform: 'translate(0, 0) rotate(0deg)' }
+        ], { duration: 1100 + (i % 4) * 120, delay: i * 90, easing: 'cubic-bezier(.45, 0, .7, 1)', fill: 'backwards' });
+      });
+    }
+    // A queda acontece quando a mesa aparece na tela (se estiver abaixo da dobra, cai ao rolar até ela).
+    const mesaSelos = document.querySelector('.mesa-selos');
+    let selosArmados = true;
+    const vigiaMesa = new IntersectionObserver((entradas) => {
+      if (selosArmados && entradas.some((e) => e.isIntersecting)) {
+        selosArmados = false;
+        derrubarSelos();
+      }
+    }, { threshold: .2 });
+    vigiaMesa.observe(mesaSelos);
+    // Voltar para a página inicial (a classe is-hidden sai da home): arma de novo.
+    new MutationObserver(() => {
+      if (homeView.classList.contains('is-hidden')) return;
+      selosArmados = true;
+      vigiaMesa.unobserve(mesaSelos);
+      requestAnimationFrame(() => vigiaMesa.observe(mesaSelos));
+    }).observe(homeView, { attributes: true, attributeFilter: ['class'] });
+
+    // Selos com crédito: clicar vira (mostra o artista de inspiração); clicar em outro lugar desvira.
+    document.addEventListener('click', (e) => {
+      const selo = e.target.closest('.carimbo-selo');
+      const abrir = selo && selo.querySelector('.carimbo-cred') && !selo.classList.contains('ver');
+      document.querySelectorAll('.carimbo-selo.ver').forEach((el) => el.classList.remove('ver'));
+      if (abrir) selo.classList.add('ver');
+    });
+
+    // A revista pode ser montada ainda escondida: reposiciona quando ela ganha tamanho na tela.
+    new ResizeObserver(() => posicionarSelosRevista(revistaTela.matches)).observe(revistaLivro);
+    // A capa desliza para o centro quando a revista fecha: acompanha o fim desse movimento.
+    revistaLivro.addEventListener('transitionend', (e) => {
+      if (!e.target.closest('.revista-selos')) posicionarSelosRevista(revistaTela.matches);
+    });
+
     function atualizarRevista() {
       const total = revistaFolhas.length;
       if (!total) return;
@@ -6264,6 +6715,10 @@ body {
       });
       revistaLivro.classList.toggle('na-capa', revistaViradas === 0);
       revistaLivro.classList.toggle('no-fim', revistaViradas === total);
+      posicionarSelosRevista(celular);
+      // Durante a virada a folha ainda está girando: confere de novo quando ela assenta.
+      clearTimeout(posicionarSelosRevista.espera);
+      posicionarSelosRevista.espera = setTimeout(() => posicionarSelosRevista(revistaTela.matches), 900);
 
       // No computador, clicar na capa abre a revista; no celular, a foto da capa amplia.
       const fotoDaCapa = revistaLivro.querySelector('.rv-capa .rv-foto');
